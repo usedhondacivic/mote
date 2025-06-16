@@ -1,7 +1,3 @@
-//! This example tests the RP Pico 2 W onboard LED.
-//!
-//! It does not work with the RP Pico 2 board. See `blinky.rs`.
-
 #![no_std]
 #![no_main]
 #![feature(type_alias_impl_trait)]
@@ -10,7 +6,8 @@
 use embassy_executor::Spawner;
 use {defmt_rtt as _, panic_probe as _};
 
-use crate::tasks::wifi::{self, AssignedResources, Cyw43Resources};
+use crate::tasks::{lidar, wifi};
+use crate::tasks::{AssignedResources, Cyw43Resources, RplidarC1Resources};
 
 mod tasks;
 
@@ -33,5 +30,6 @@ async fn main(spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
     let r = split_resources!(p);
 
-    wifi::init(spawner, r.wifi).await;
+    // wifi::init(spawner, r.wifi).await;
+    lidar::init(spawner, r.lidar_uart).await
 }

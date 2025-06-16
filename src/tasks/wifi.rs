@@ -1,34 +1,18 @@
-use assign_resources::assign_resources;
+use super::{Cyw43Resources, Irqs};
 use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
 use defmt::*;
 use embassy_executor::Spawner;
-use embassy_rp::bind_interrupts;
 use embassy_rp::gpio::{Level, Output};
-use embassy_rp::peripherals::{self, DMA_CH0, PIO0};
-use embassy_rp::pio::{InterruptHandler, Pio};
+use embassy_rp::peripherals::{DMA_CH0, PIO0};
+use embassy_rp::pio::Pio;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
-
-bind_interrupts!(struct Irqs {
-    PIO0_IRQ_0 => InterruptHandler<PIO0>;
-});
 
 #[embassy_executor::task]
 async fn cyw43_task(
     runner: cyw43::Runner<'static, Output<'static>, PioSpi<'static, PIO0, 0, DMA_CH0>>,
 ) -> ! {
     runner.run().await
-}
-
-assign_resources! {
-    wifi: Cyw43Resources{
-        pwr: PIN_23,
-        cs: PIN_25,
-        pio: PIO0,
-        dio: PIN_24,
-        clk: PIN_29,
-        dma: DMA_CH0
-    }
 }
 
 pub async fn init(spawner: Spawner, r: Cyw43Resources) {
@@ -65,4 +49,6 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     control
         .set_power_management(cyw43::PowerManagementMode::PowerSave)
         .await;
+
+    control.start_ap_open("mote", 5).await;
 }
