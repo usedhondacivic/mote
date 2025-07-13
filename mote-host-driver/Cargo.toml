@@ -1,6 +1,17 @@
 [package]
 name = "mote-host-driver"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2024"
 
 [dependencies]
+mote-messages = { path = "../mote-messages" }
+
+serde = "1.0.*"
+postcard = { version = "1.1.*", default-features = false, features = [
+    "use-std",
+] }
+heapless = "0.8.0"
+anyhow = "1.0.98"
+
+[dev-dependencies]
+rerun = "0.23.*"

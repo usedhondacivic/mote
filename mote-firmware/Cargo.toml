@@ -1,9 +1,11 @@
 [package]
 name = "mote-firmware"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2024"
 
 [dependencies]
+mote-messages = { path = "../mote-messages" }
+
 embassy-embedded-hal = { version = "0.3.0", features = ["defmt"] }
 embassy-executor = { version = "0.7.0", features = [
     "nightly",
@@ -53,7 +55,7 @@ rand_core = "0.6.4"
 rand = { version = "0.8.5", default-features = false }
 embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
 
-postcard = "1.0.0"
+postcard = "1.1.*"
 serde = { version = "1.0.*", default-features = false, features = ["derive"] }
 serde_with = { version = "3.14.0", default-features = false, features = [
     "macros",

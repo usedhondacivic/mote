@@ -3,24 +3,9 @@ use core::array;
 use defmt::*;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{Config, DataBits, Parity, StopBits, Uart};
-use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
+use mote_messages::Point;
 
 use super::{Irqs, RplidarC1Resources};
-
-#[derive(Serialize, Deserialize)]
-pub struct Point {
-    quality: u8,
-    angle: u16,
-    distance: u16,
-}
-
-#[serde_as]
-#[derive(Serialize, Deserialize)]
-pub struct Scan {
-    #[serde_as(as = "[_; 1000]")]
-    points: [Point; 1000],
-}
 
 #[embassy_executor::task]
 async fn lidar_state_machine_task(r: RplidarC1Resources) {
