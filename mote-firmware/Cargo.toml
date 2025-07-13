@@ -1,5 +1,5 @@
 [package]
-name = "mote"
+name = "mote-firmware"
 version = "0.1.0"
 edition = "2024"
 
