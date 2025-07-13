@@ -3,8 +3,7 @@ pub mod wifi;
 
 // Split resources between each of the tasks
 use assign_resources::assign_resources;
-use embassy_rp::bind_interrupts;
-use embassy_rp::peripherals;
+use embassy_rp::{bind_interrupts, peripherals};
 
 assign_resources! {
     wifi: Cyw43Resources{
@@ -24,7 +23,7 @@ assign_resources! {
     }
 }
 
-// And also bind interrupts
+// also bind interrupts
 use embassy_rp::peripherals::{PIO0, UART1};
 use embassy_rp::pio::InterruptHandler as PIOInterruptHandler;
 use embassy_rp::uart::InterruptHandler as UARTInterruptHandler;
