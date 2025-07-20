@@ -39,6 +39,10 @@ embassy-net = { version = "0.7.0", features = [
     "proto-ipv6",
     "multicast",
 ] }
+embassy-futures = { version = "0.1.0" }
+embassy-sync = { version = "0.7.0", features = ["defmt"] }
+heapless = "0.8"
+
 cyw43 = { version = "0.3.0", features = ["defmt", "firmware-logs"] }
 cyw43-pio = { version = "0.4.0", features = ["defmt"] }
 
@@ -50,12 +54,14 @@ cortex-m = { version = "0.7.6", features = ["inline-asm"] }
 cortex-m-rt = "0.7.0"
 panic-probe = { version = "1.0.0", features = ["print-defmt"] }
 static_cell = "2.1"
-heapless = "0.8"
 rand_core = "0.6.4"
 rand = { version = "0.8.5", default-features = false }
 embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
 
+# postcard does not reexport heapless, so care must be taken to keep them in lockstep
 postcard = "1.1.*"
+heapless-postcard = { package = "heapless", version = "0.7.1" }
+
 serde = { version = "1.0.*", default-features = false, features = ["derive"] }
 serde_with = { version = "3.14.0", default-features = false, features = [
     "macros",

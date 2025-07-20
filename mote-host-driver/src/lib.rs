@@ -11,11 +11,11 @@ pub struct Transmit {
     pub payload: Vec<u8>,
 }
 
-pub struct MiteCommunication {
+pub struct MoteCommunication {
     buffered_transmits: VecDeque<Transmit>,
 }
 
-impl MiteCommunication {
+impl MoteCommunication {
     pub fn new() -> Self {
         Self {
             buffered_transmits: VecDeque::new(),
@@ -40,6 +40,6 @@ impl MiteCommunication {
     }
 
     pub fn handle_recieve(packet: &[u8]) -> Result<MoteToHostMessage, postcard::Error> {
-        from_bytes(packet)?
+        Ok(from_bytes(packet)?)
     }
 }

@@ -3,34 +3,38 @@
 // Messages used by Mote for firmware <--> host communication
 
 use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
+
+pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 200;
 
 // Lidar Data
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Point {
     pub quality: u8,
+    // Actual heading = angle / 64.0 degrees
     pub angle: u16,
+    // Actual distance = distance / 4.0 mm
     pub distance: u16,
 }
 
-#[serde_as]
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Scan<const N: usize> {
-    #[serde_as(as = "[_; N]")]
-    pub points: [Point; N],
-}
-
 // Collector enums
-
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum MoteToHostMessage {
     Ping,
     PingResponse,
-    Scan(Scan<100>),
+    Scan(heapless::Vec<Point, MAX_POINTS_PER_SCAN_MESSAGE>),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum HostToMoteMessage {
     Ping,
     PingResponse,
+    EnableLidar,
+    DisableLidar,
+    EnableImu,
+    DisableImu,
+    EnableEncoders,
+    DisableEncoders,
+    EnableMotors,
+    DisableMotors,
+    SoftReset,
 }

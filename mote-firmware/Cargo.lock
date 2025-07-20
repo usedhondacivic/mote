@@ -110,7 +110,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f377753756ec12e76b52d2dd657437be0448cc9736402ffadd0b8b8b9602c8a1"
 dependencies = [
  "defmt 0.3.100",
- "embassy-sync",
+ "embassy-sync 0.6.2",
  "embedded-io",
  "embedded-io-async",
  "futures-intrusive",
@@ -238,7 +238,7 @@ dependencies = [
  "defmt 0.3.100",
  "embassy-futures",
  "embassy-net-driver-channel",
- "embassy-sync",
+ "embassy-sync 0.6.2",
  "embassy-time",
  "embedded-hal 1.0.0",
  "embedded-io-async",
@@ -384,7 +384,7 @@ checksum = "41fea5ef5bed4d3468dfd44f5c9fa4cda8f54c86d4fb4ae683eacf9d39e2ea12"
 dependencies = [
  "defmt 0.3.100",
  "embassy-futures",
- "embassy-sync",
+ "embassy-sync 0.6.2",
  "embassy-time",
  "embedded-hal 0.2.7",
  "embedded-hal 1.0.0",
@@ -446,7 +446,7 @@ dependencies = [
  "defmt 0.3.100",
  "document-features",
  "embassy-net-driver",
- "embassy-sync",
+ "embassy-sync 0.6.2",
  "embassy-time",
  "embedded-io-async",
  "embedded-nal-async",
@@ -472,7 +472,7 @@ checksum = "4818c32afec43e3cae234f324bad9a976c9aa7501022d26ff60a4017a1a006b7"
 dependencies = [
  "embassy-futures",
  "embassy-net-driver",
- "embassy-sync",
+ "embassy-sync 0.6.2",
 ]
 
 [[package]]
@@ -491,7 +491,7 @@ dependencies = [
  "embassy-embedded-hal",
  "embassy-futures",
  "embassy-hal-internal",
- "embassy-sync",
+ "embassy-sync 0.6.2",
  "embassy-time",
  "embassy-time-driver",
  "embassy-time-queue-utils",
@@ -523,6 +523,21 @@ checksum = "8d2c8cdff05a7a51ba0087489ea44b0b1d97a296ca6b1d6d1a33ea7423d34049"
 dependencies = [
  "cfg-if",
  "critical-section",
+ "embedded-io-async",
+ "futures-sink",
+ "futures-util",
+ "heapless 0.8.0",
+]
+
+[[package]]
+name = "embassy-sync"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cef1a8a1ea892f9b656de0295532ac5d8067e9830d49ec75076291fd6066b136"
+dependencies = [
+ "cfg-if",
+ "critical-section",
+ "defmt 1.0.1",
  "embedded-io-async",
  "futures-sink",
  "futures-util",
@@ -850,6 +865,7 @@ checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
 dependencies = [
  "defmt 0.3.100",
  "hash32 0.3.1",
+ "serde",
  "stable_deref_trait",
 ]
 
@@ -984,10 +1000,13 @@ dependencies = [
  "defmt-rtt",
  "embassy-embedded-hal",
  "embassy-executor",
+ "embassy-futures",
  "embassy-net",
  "embassy-rp",
+ "embassy-sync 0.7.0",
  "embassy-time",
  "embedded-io-async",
+ "heapless 0.7.17",
  "heapless 0.8.0",
  "leasehund",
  "mote-messages",
@@ -1004,8 +1023,8 @@ dependencies = [
 name = "mote-messages"
 version = "0.1.0"
 dependencies = [
+ "heapless 0.8.0",
  "serde",
- "serde_with",
 ]
 
 [[package]]

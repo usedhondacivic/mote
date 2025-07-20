@@ -32,3 +32,10 @@ bind_interrupts!(pub struct Irqs {
     UART1_IRQ  => UARTInterruptHandler<UART1>;
     PIO0_IRQ_0 => PIOInterruptHandler<PIO0>;
 });
+
+// and create communication channels
+use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
+use embassy_sync::channel::Channel;
+
+static MOTE_TO_HOST: Channel<CriticalSectionRawMutex, mote_messages::MoteToHostMessage, 32> = Channel::new();
+static HOST_TO_MOTE: Channel<CriticalSectionRawMutex, mote_messages::MoteToHostMessage, 32> = Channel::new();

@@ -1,62 +1,91 @@
-use core::str::from_utf8;
-
 use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
 use defmt::*;
 use embassy_executor::Spawner;
-use embassy_net::tcp::TcpSocket;
+use embassy_futures::select::{Either, select};
+use embassy_net::udp::{PacketMetadata, UdpMetadata, UdpSocket};
 use embassy_net::{Config, Stack, StackResources};
 use embassy_rp::clocks::RoscRng;
 use embassy_rp::gpio::{Level, Output};
 use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
-use embedded_io_async::Write;
 use leasehund::DhcpServer;
+use mote_messages::HostToMoteMessage;
+use postcard::{from_bytes, to_vec};
 use rand::RngCore;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use super::{Cyw43Resources, Irqs};
+use crate::tasks::MOTE_TO_HOST;
 
 const SERVER_PORT: u16 = 1738;
+
+async fn parse_message(
+    rx_message: &mote_messages::HostToMoteMessage,
+    endpoint: UdpMetadata,
+    socket: &mut UdpSocket<'static>,
+) -> Result<(), embassy_net::udp::SendError> {
+    match rx_message {
+        mote_messages::HostToMoteMessage::Ping => {
+            let buf: heapless_postcard::Vec<u8, 100> = to_vec(&mote_messages::MoteToHostMessage::PingResponse).unwrap();
+            info!("Parsed ping request, responding.");
+            socket.send_to(&buf, endpoint).await?;
+        }
+        mote_messages::HostToMoteMessage::PingResponse => {
+            info!("Received ping response from host.")
+        }
+        _ => {
+            error!("Received unhandled message type");
+        }
+    }
+    Ok(())
+}
 
 #[embassy_executor::task]
 async fn tcp_server_task(stack: Stack<'static>) -> ! {
     loop {
-        let mut rx_buffer = [0; 4096];
-        let mut tx_buffer = [0; 4096];
-        let mut buf = [0; 4096];
-        let mut socket = TcpSocket::new(stack, &mut rx_buffer, &mut tx_buffer);
-        // socket.set_timeout(Some(Duration::from_secs(10)));
+        static TX_BUFFER: StaticCell<[u8; 4096]> = StaticCell::new();
+        static TX_META: StaticCell<[PacketMetadata; 16]> = StaticCell::new();
+        let tx_buffer = &mut TX_BUFFER.init([0; 4096])[..];
+        let tx_meta = &mut TX_META.init([PacketMetadata::EMPTY; 16])[..];
 
-        if let Err(e) = socket.accept(SERVER_PORT).await {
-            warn!("accept error: {:?}", e);
+        static RX_BUFFER: StaticCell<[u8; 4096]> = StaticCell::new();
+        static RX_META: StaticCell<[PacketMetadata; 16]> = StaticCell::new();
+        let rx_buffer = &mut RX_BUFFER.init([0; 4096])[..];
+        let rx_meta = &mut RX_META.init([PacketMetadata::EMPTY; 16])[..];
+
+        let mut socket = UdpSocket::new(stack, rx_meta, rx_buffer, tx_meta, tx_buffer);
+
+        if let Err(e) = socket.bind(SERVER_PORT) {
+            warn!("bind error: {:?}", e);
             continue;
         }
 
-        info!("Received connection from {:?}", socket.remote_endpoint());
-
+        let mut message_buffer = [0; 4096];
+        let mut endpoint: Option<UdpMetadata> = None;
+        let mut serialize_buf: heapless_postcard::Vec<u8, 4096> = heapless_postcard::Vec::new();
         loop {
-            let n = match socket.read(&mut buf).await {
-                Ok(0) => {
-                    warn!("read EOF");
-                    break;
+            match select(socket.recv_from(&mut message_buffer), MOTE_TO_HOST.receive()).await {
+                Either::First(Ok((bytes_read, ep))) => {
+                    info!("Read {} bytes from {}.", bytes_read, ep);
+                    let rx_message: HostToMoteMessage = from_bytes(&message_buffer).unwrap();
+                    parse_message(&rx_message, ep, &mut socket).await.unwrap();
+                    endpoint = Some(ep);
                 }
-                Ok(n) => n,
-                Err(e) => {
-                    warn!("read error: {:?}", e);
-                    break;
+                Either::First(Err(err)) => error!("TCP server received error {}", err),
+                Either::Second(tx_message) => {
+                    // TODO:
+                    // * postcard serialized size is currently experimental and not implemented as
+                    // a constant fn. After that feature is stabilized, consider how to rightsize this buffer
+                    // * add anyhow and avoid this unwrap
+                    serialize_buf = to_vec(&tx_message).unwrap();
+                    if let Some(ep) = endpoint {
+                        if let Err(error) = socket.send_to(&serialize_buf, ep).await {
+                            error!("TX message failed, got {}", error);
+                        }
+                    }
                 }
-            };
-
-            info!("rxd {}", from_utf8(&buf[..n]).unwrap());
-
-            match socket.write_all(&buf[..n]).await {
-                Ok(()) => {}
-                Err(e) => {
-                    warn!("write error: {:?}", e);
-                    break;
-                }
-            };
+            }
         }
     }
 }
