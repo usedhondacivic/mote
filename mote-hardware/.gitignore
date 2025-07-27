@@ -1,0 +1,51 @@
+## KiCad 7 - https://www.kicad.org/
+
+## KiCad temporary files
+# eg: ~PROJECT.kicad_sch.lck
+~*.kicad_???.lck
+# eg: .~lock.PROJECT.csv#
+.~lock.*#
+\#auto_saved_files#
+fp-info-cache
+
+## KiCad backup directories and files
+# eg: PROJECT-backups/ (contains PROJECT-YYYY-MM-DD_hhmmss.zip files)
+*-backups/
+# eg: PROJECT.kicad_sch-bak  PROJECT.kicad_pcb-bak
+*.kicad_???-bak
+# eg: PROJECT.kicad_sch.bak  SYMBOL-LIB.kicad_sym.bak
+*.bak
+
+## KiCad local settings
+# eg: PROJECT.kicad_prl
+*.kicad_prl
+
+## Additional .gitignore for KiCAD-generated files
+# KiCad fabrication outputs
+*.drl
+*.g2
+*.g3
+*.gbl
+*.gbo
+*.gbp
+*.gbr
+*.gbs
+*.gm1
+*.gtl
+*.gto
+*.gtp
+*.gts
+*.pos
+*.rpt
+
+# other KiCad generated files
+*.csv
+*.html
+*.net
+*.pdf
+*.svg
+*.xml
+*.cmp
+*.dxf
+*.ps
+*.plt
