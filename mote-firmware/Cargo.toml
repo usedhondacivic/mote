@@ -67,7 +67,7 @@ serde_with = { version = "3.14.0", default-features = false, features = [
     "macros",
 ] }
 leasehund = "0.2.0"
-
+picoserve = { version = "0.16.0", features = ["embassy"] }
 
 [profile.release]
 debug = 2

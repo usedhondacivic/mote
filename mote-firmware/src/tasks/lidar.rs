@@ -155,7 +155,6 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                 LidarState::CheckHealth
             }
             LidarState::ProcessSample => {
-                info!("Processed full sample");
                 MOTE_TO_HOST
                     .send(mote_messages::MoteToHostMessage::Scan(scan_points.clone()))
                     .await;

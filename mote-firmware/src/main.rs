@@ -15,7 +15,7 @@ mod tasks;
 #[used]
 pub static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
     embassy_rp::binary_info::rp_program_name!(c"Mote"),
-    embassy_rp::binary_info::rp_program_description!(c"Low cost, high confidence robot for education"),
+    embassy_rp::binary_info::rp_program_description!(c"A low cost, high confidence robot for education"),
     embassy_rp::binary_info::rp_cargo_version!(),
     embassy_rp::binary_info::rp_program_build_attribute!(),
 ];

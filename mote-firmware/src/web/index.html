@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mote Configuration</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js" async defer></script>
+</head>
+
+<body>
+    <h1>Mote Configuration</h1>
+    <p>Welcome to the Mote configuration page.</p>
+
+    <p id="alert" hidden><b>Update requires Mote to reboot. Page will reload in 3 seconds...</b></p>
+
+    <h2>Identification</h2>
+    <p>MAC address: [mac]</p>
+    <label for="uid">Unique identifier:</label>
+    <input id="uid" type="text" name="unique_id" value="[uid]" oninput="uid_updated()">
+    <button id="uid_submit" onclick="uid_submit()" hidden>Update</button>
+
+    <h2>Connectivity</h2>
+    <p>Status: not connected</p>
+    <button onclick="fetch_networks()">Refresh</button>
+    <table id="wifi_table">
+        <tr>
+            <th>SSID</th>
+            <th>Strength</th>
+            <th>Security</th>
+        </tr>
+        <tr class="wifi_table_entry">
+            <td>None found</td>
+            <td>...</td>
+        </tr>
+        <!-- To be dynamically filled, see networks.json endpoint -->
+    </table>
+
+
+    <p id="selected_network" style="margin-bottom: 3px;">Network: none selected.</p>
+    <input type="text" name="password" placeholder="Network password..">
+    <button>Connect</button>
+
+    <h2>Diagnostics</h2>
+    <table id="bit_table">
+        <tr>
+            <th>Test</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Built in test not implemented</td>
+            <td>✅</td>
+        </tr>
+    </table>
+</body>
+
+</html>
