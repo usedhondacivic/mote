@@ -1,4 +1,5 @@
 pub mod lidar;
+pub mod web_usb_config;
 pub mod wifi;
 
 // Split resources between each of the tasks
@@ -20,6 +21,9 @@ assign_resources! {
         rx: PIN_5,
         tx_dma: DMA_CH1,
         rx_dma: DMA_CH2
+    },
+    web_usb: WebUsbConfigResources{
+
     }
 }
 
@@ -37,5 +41,7 @@ bind_interrupts!(pub struct Irqs {
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
 
-static MOTE_TO_HOST: Channel<CriticalSectionRawMutex, mote_messages::MoteToHostMessage, 32> = Channel::new();
-static HOST_TO_MOTE: Channel<CriticalSectionRawMutex, mote_messages::MoteToHostMessage, 32> = Channel::new();
+static MOTE_TO_HOST: Channel<CriticalSectionRawMutex, mote_messages::runtime::mote_to_host::Message, 32> =
+    Channel::new();
+static HOST_TO_MOTE: Channel<CriticalSectionRawMutex, mote_messages::runtime::host_to_mote::Message, 32> =
+    Channel::new();

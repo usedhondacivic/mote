@@ -1,9 +1,8 @@
-use cortex_m::prelude::_embedded_hal_blocking_serial_Write;
 use defmt::*;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{Config, DataBits, Parity, StopBits, Uart};
 use embassy_time::{Duration, TimeoutError, Timer, with_timeout};
-use mote_messages::{MAX_POINTS_PER_SCAN_MESSAGE, Point};
+use mote_messages::runtime::mote_to_host;
 
 use super::{Irqs, RplidarC1Resources};
 use crate::tasks::MOTE_TO_HOST;
@@ -31,7 +30,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 
     let mut state = LidarState::Reset;
 
-    let mut scan_points = heapless::Vec::<Point, MAX_POINTS_PER_SCAN_MESSAGE>::new();
+    let mut scan_points = heapless::Vec::<mote_to_host::Point, { mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE }>::new();
 
     loop {
         state = match state {
@@ -132,7 +131,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                             error!("Check bit data check failed for LiDAR data message. reseting...");
                         } else {
                             let angle = ((resp[2] as u16) << 7) | ((resp[1] as u16 & 0xFE) >> 1);
-                            if let Ok(()) = scan_points.push(Point {
+                            if let Ok(()) = scan_points.push(mote_to_host::Point {
                                 quality: (resp[0] & !0b11) >> 2,
                                 angle: angle,
                                 distance: u16::from_le_bytes(resp[3..5].try_into().unwrap_or([0x00, 0x00])),
@@ -156,7 +155,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
             }
             LidarState::ProcessSample => {
                 MOTE_TO_HOST
-                    .send(mote_messages::MoteToHostMessage::Scan(scan_points.clone()))
+                    .send(mote_to_host::Message::Scan(scan_points.clone()))
                     .await;
                 scan_points.clear();
                 LidarState::ReceiveSample

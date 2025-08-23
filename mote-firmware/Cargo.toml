@@ -58,7 +58,7 @@ rand_core = "0.6.4"
 rand = { version = "0.8.5", default-features = false }
 embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
 
-# postcard does not reexport heapless, so care must be taken to keep them in lockstep
+# postcard does not re-export heapless, so care must be taken to keep them in lockstep
 postcard = "1.1.*"
 heapless-postcard = { package = "heapless", version = "0.7.1" }
 
@@ -67,7 +67,6 @@ serde_with = { version = "3.14.0", default-features = false, features = [
     "macros",
 ] }
 leasehund = "0.2.0"
-picoserve = { version = "0.16.0", features = ["embassy"] }
 
 [profile.release]
 debug = 2

@@ -6,7 +6,7 @@
 use embassy_executor::Spawner;
 use {defmt_rtt as _, panic_probe as _};
 
-use crate::tasks::{AssignedResources, Cyw43Resources, RplidarC1Resources, lidar, wifi};
+use crate::tasks::{AssignedResources, Cyw43Resources, RplidarC1Resources, WebUsbConfigResources, lidar, wifi};
 
 mod tasks;
 

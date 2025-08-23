@@ -1,7 +1,7 @@
 // Sans-io message handling library for interacting with Mote
 // IO handling should be implemented by the consumer. See ../examples.
 
-use mote_messages::{HostToMoteMessage, MoteToHostMessage};
+use mote_messages::runtime::{host_to_mote, mote_to_host};
 
 use postcard::{from_bytes, to_allocvec};
 use std::{collections::VecDeque, net::SocketAddr};
@@ -25,7 +25,7 @@ impl MoteCommunication {
     pub fn send(
         &mut self,
         dst: SocketAddr,
-        message: HostToMoteMessage,
+        message: host_to_mote::Message,
     ) -> Result<(), postcard::Error> {
         self.buffered_transmits.push_back(Transmit {
             dst: dst,
@@ -39,7 +39,7 @@ impl MoteCommunication {
         self.buffered_transmits.pop_front()
     }
 
-    pub fn handle_recieve(packet: &[u8]) -> Result<MoteToHostMessage, postcard::Error> {
+    pub fn handle_recieve(packet: &[u8]) -> Result<mote_to_host::Message, postcard::Error> {
         Ok(from_bytes(packet)?)
     }
 }
