@@ -11,7 +11,6 @@ use embassy_rp::pio::Pio;
 use leasehund::DhcpServer;
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 use postcard::{from_bytes, to_vec};
-use rand::RngCore;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -76,7 +75,8 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
                 Either::Second(tx_message) => {
                     // TODO:
                     // * postcard serialized size is currently experimental and not implemented as
-                    // a constant fn. After that feature is stabilized, consider how to rightsize this buffer
+                    // a constant fn. After that feature is stabilized, consider how to rightsize
+                    // this buffer
                     // * add anyhow and avoid this unwrap
                     serialize_buf = to_vec(&tx_message).unwrap();
                     if let Some(ep) = endpoint {
@@ -118,10 +118,13 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     // let fw = include_bytes!("../cyw43-firmware/43439A0.bin");
     // let clm = include_bytes!("../cyw43-firmware/43439A0_clm.bin");
 
-    // To make flashing faster for development, you may want to flash the firmwares independently
-    // at hardcoded addresses, instead of baking them into the program with `include_bytes!`:
-    //     probe-rs download ../../cyw43-firmware/43439A0.bin --binary-format bin --chip RP235x --base-address 0x10100000
-    //     probe-rs download ../../cyw43-firmware/43439A0_clm.bin --binary-format bin --chip RP235x --base-address 0x10140000
+    // To make flashing faster for development, you may want to flash the firmwares
+    // independently at hardcoded addresses, instead of baking them into the
+    // program with `include_bytes!`:     probe-rs download
+    // ../../cyw43-firmware/43439A0.bin --binary-format bin --chip RP235x
+    // --base-address 0x10100000     probe-rs download
+    // ../../cyw43-firmware/43439A0_clm.bin --binary-format bin --chip RP235x
+    // --base-address 0x10140000
     let fw = unsafe { core::slice::from_raw_parts(0x10100000 as *const u8, 230321) };
     let clm = unsafe { core::slice::from_raw_parts(0x10140000 as *const u8, 4752) };
 

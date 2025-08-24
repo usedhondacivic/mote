@@ -7,7 +7,7 @@ use embassy_executor::Spawner;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::{
-    AssignedResources, Cyw43Resources, RplidarC1Resources, WebUsbConfigResources, lidar, web_usb_config, wifi,
+    AssignedResources, Cyw43Resources, RplidarC1Resources, UsbSerialResources, lidar, usb_serial, wifi,
 };
 
 mod tasks;
@@ -27,7 +27,7 @@ async fn main(spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
     let r = split_resources!(p);
 
-    web_usb_config::init(spawner, r.web_usb).await;
+    usb_serial::init(spawner, r.usb_serial).await;
     wifi::init(spawner, r.wifi).await;
     lidar::init(spawner, r.lidar_uart).await
 }

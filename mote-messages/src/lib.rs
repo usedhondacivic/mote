@@ -12,7 +12,7 @@ pub mod runtime {
         pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 200;
 
         // Lidar Data
-        #[derive(Serialize, Deserialize, Debug, Clone)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct Point {
             pub quality: u8,
             // Actual heading = angle / 64.0 degrees
@@ -21,7 +21,7 @@ pub mod runtime {
             pub distance: u16,
         }
 
-        #[derive(Serialize, Deserialize, Debug, Clone)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub enum Message {
             Ping,
             PingResponse,
@@ -33,7 +33,7 @@ pub mod runtime {
     pub mod host_to_mote {
         use serde::{Deserialize, Serialize};
 
-        #[derive(Serialize, Deserialize, Debug)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub enum Message {
             Ping,
             PingResponse,
@@ -56,7 +56,7 @@ pub mod configuration {
         use serde::{Deserialize, Serialize};
 
         // TODO: These should have richer types
-        #[derive(Serialize, Deserialize, Debug)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct BIT {
             pub lidar: bool,
             pub imu: bool,
@@ -64,19 +64,21 @@ pub mod configuration {
             pub encoders: bool,
         }
 
-        #[derive(Serialize, Deserialize, Debug)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct NetworkConnection {
             pub ssid: heapless::String<32>,
+            pub strength: u8,
             pub connected: bool,
         }
 
-        #[derive(Serialize, Deserialize, Debug)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct State {
             pub built_in_test: BIT,
-            pub network_connection: Option<NetworkConnection>,
+            pub current_network_connection: Option<NetworkConnection>,
+            pub available_network_connections: heapless::Vec<NetworkConnection, 10>,
         }
 
-        #[derive(Serialize, Deserialize, Debug)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub enum Message {
             State(State),
         }
@@ -85,13 +87,18 @@ pub mod configuration {
     pub mod host_to_mote {
         use serde::{Deserialize, Serialize};
 
-        #[derive(Serialize, Deserialize, Debug)]
-        pub struct SetNetworkConnectionConfig {}
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
+        pub struct SetNetworkConnectionConfig {
+            pub ssid: heapless::String<32>,
+            pub password: heapless::String<64>,
+        }
 
-        #[derive(Serialize, Deserialize, Debug)]
-        pub struct SetUID {}
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
+        pub struct SetUID {
+            pub uid: heapless::String<10>,
+        }
 
-        #[derive(Serialize, Deserialize, Debug)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub enum Message {
             SetNetworkConnectionConfig(SetNetworkConnectionConfig),
             SetUID(SetUID),

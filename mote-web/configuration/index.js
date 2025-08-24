@@ -80,10 +80,27 @@ window.onload = function() {
     fetch_bit();
 };
 
-async function test_webusb() {
-    const device = await navigator.usb.requestDevice({ filters: [{ vendorId: 0xf569 }] });
-    await device.open();
-    await device.claimInterface(1);
-    device.transferIn(1, 64).then(data => console.log(data));
-    await device.transferOut(1, new Uint8Array([1, 2, 3]));
+async function test_webserial() {
+    const port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+
+    const textEncoder = new TextEncoderStream();
+    const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+    const writer = textEncoder.writable.getWriter();
+
+    await writer.write('Hello mote');
+
+    // Optional: Read from the serial port
+    const textDecoder = new TextDecoderStream();
+    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+    const reader = textDecoder.readable.getReader();
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            reader.releaseLock();
+            break;
+        }
+        console.log('Received:', value);
+    }
 }

@@ -1,5 +1,5 @@
 pub mod lidar;
-pub mod web_usb_config;
+pub mod usb_serial;
 pub mod wifi;
 
 // Split resources between each of the tasks
@@ -22,7 +22,7 @@ assign_resources! {
         tx_dma: DMA_CH1,
         rx_dma: DMA_CH2
     },
-    web_usb: WebUsbConfigResources{
+    usb_serial: UsbSerialResources{
         usb: USB
     }
 }
