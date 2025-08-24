@@ -1,5 +1,8 @@
 # Mote
 
+[![Rust Build and Test](https://github.com/usedhondacivic/mote/actions/workflows/rust.yml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/rust.yml)
+[![Deploy Docs](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml)
+
 A low cost, high confidence mobile robot optimized for education.
 
 Mote addresses the budget and reliability requirements of classroom learning through robust design and high confidence tooling.  
