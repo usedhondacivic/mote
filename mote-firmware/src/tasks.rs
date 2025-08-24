@@ -4,7 +4,7 @@ pub mod wifi;
 
 // Split resources between each of the tasks
 use assign_resources::assign_resources;
-use embassy_rp::{bind_interrupts, peripherals};
+use embassy_rp::{Peri, bind_interrupts, peripherals};
 
 assign_resources! {
     wifi: Cyw43Resources{
@@ -23,18 +23,20 @@ assign_resources! {
         rx_dma: DMA_CH2
     },
     web_usb: WebUsbConfigResources{
-
+        usb: USB
     }
 }
 
 // also bind interrupts
-use embassy_rp::peripherals::{PIO0, UART1};
+use embassy_rp::peripherals::{PIO0, UART1, USB};
 use embassy_rp::pio::InterruptHandler as PIOInterruptHandler;
 use embassy_rp::uart::InterruptHandler as UARTInterruptHandler;
+use embassy_rp::usb::InterruptHandler as USBInterruptHandler;
 
 bind_interrupts!(pub struct Irqs {
     UART1_IRQ  => UARTInterruptHandler<UART1>;
     PIO0_IRQ_0 => PIOInterruptHandler<PIO0>;
+    USBCTRL_IRQ => USBInterruptHandler<USB>;
 });
 
 // and create communication channels
