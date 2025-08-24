@@ -1,0 +1,11 @@
+[book]
+authors = ["usedhondacivic"]
+language = "en"
+src = "src"
+title = "Mote"
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
+git-repository-url = "https://github.com/usedhondacivic/mote/tree/main/mote-web/mote-book"
+edit-url-template = "https://github.com/usedhondacivic/mote/edit/main/mote-web/mote-book/{path}"
