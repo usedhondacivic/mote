@@ -79,3 +79,11 @@ window.onload = function() {
     // Fetch BIT results on page load
     fetch_bit();
 };
+
+async function test_webusb() {
+    const device = await navigator.usb.requestDevice({ filters: [{ vendorId: 0xf569 }] });
+    await device.open();
+    await device.claimInterface(1);
+    device.transferIn(1, 64).then(data => console.log(data));
+    await device.transferOut(1, new Uint8Array([1, 2, 3]));
+}

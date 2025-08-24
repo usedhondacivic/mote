@@ -19,11 +19,11 @@
     <p>MAC address: [mac]</p>
     <label for="uid">Unique identifier:</label>
     <input id="uid" type="text" name="unique_id" value="[uid]" oninput="uid_updated()">
-    <button id="uid_submit" onclick="uid_submit()" hidden>Update</button>
+    <button id="uid_submit" onclick="await uid_submit()" hidden>Update</button>
 
     <h2>Connectivity</h2>
     <p>Status: not connected</p>
-    <button onclick="fetch_networks()">Refresh</button>
+    <button onclick="test_webusb()">Refresh</button>
     <table id="wifi_table">
         <tr>
             <th>SSID</th>
