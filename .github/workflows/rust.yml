@@ -11,12 +11,10 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Build mote-firmware
-      run: cargo build --release --verbose --manifest-path=mote-firmware/Cargo.toml
+      run: cd mote-firmware && cargo build --release --verbose && cd ..
     - name: Build mote-host-driver examples
-      run: cargo build --examples --verbose --manifest-path=mote-host-driver/Cargo.toml
+      run: cd mote-host-driver && cargo build --examples --verbose && cd ..
