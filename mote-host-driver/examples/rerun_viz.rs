@@ -12,7 +12,7 @@ use std::{
 use rerun::external::glam;
 
 use anyhow::Context;
-use mote_host_driver::MoteCommunication;
+use mote_host_driver::HostRuntimeLink;
 
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 
@@ -20,7 +20,7 @@ fn main() -> anyhow::Result<()> {
     let socket = UdpSocket::bind("0.0.0.0:34254").unwrap();
     socket.set_read_timeout(Some(Duration::from_millis(2500)))?;
 
-    let mut comms = MoteCommunication::new();
+    let mut comms = HostRuntimeLink::new();
 
     // Send one ping command
     let socket_addr = "192.168.1.1:1738"
@@ -51,7 +51,8 @@ fn main() -> anyhow::Result<()> {
         let (num_read, source) = socket.recv_from(&mut buf)?;
         println!("Received {} bytes from {}", num_read, source);
 
-        let message = MoteCommunication::handle_recieve(&buf[..num_read])?;
+        let message = comms.handle_recieve(&buf[..num_read])?;
+
         // Check what kind of message we got
         match message {
             mote_to_host::Message::PingResponse => {

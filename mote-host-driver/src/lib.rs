@@ -1,45 +1,98 @@
+#![no_std]
+
 // Sans-io message handling library for interacting with Mote
 // IO handling should be implemented by the consumer. See ../examples.
 
-use mote_messages::runtime::{host_to_mote, mote_to_host};
+use core::{fmt::Debug, marker::PhantomData, net::SocketAddr};
 
-use postcard::{from_bytes, to_allocvec};
-use std::{collections::VecDeque, net::SocketAddr};
+use heapless_postcard::{Deque, Vec};
+use mote_messages::{configuration, runtime};
+use postcard::{from_bytes, to_vec};
+use serde::{Deserialize, Serialize};
 
-pub struct Transmit {
-    pub dst: SocketAddr,
-    pub payload: Vec<u8>,
+const MTU: usize = 1500;
+
+// Data structure representing a transmission
+// Returned by sansio driver for the application to transmit
+#[derive(Debug)]
+pub struct Transmit<T: Debug> {
+    pub dst: T,
+    pub payload: Vec<u8, MTU>,
 }
 
-pub struct MoteCommunication {
-    buffered_transmits: VecDeque<Transmit>,
+// The driver
+// You probably do not want to directly construct this. Instead, use the type aliases:
+// HostRuntimeLink
+// HostConfigurationLink
+// MoteRuntimeLink
+// MoteConfigurationLink
+pub struct SansIo<T, I, O>
+where
+    T: Debug,                     // Transmission type
+    I: for<'de> Deserialize<'de>, // Input type
+    O: Serialize,                 // Output type
+{
+    buffered_transmits: Deque<Transmit<T>, 10>,
+    in_type: PhantomData<I>,
+    out_type: PhantomData<O>,
 }
 
-impl MoteCommunication {
+impl<T, I, O> SansIo<T, I, O>
+where
+    T: Debug,                     // Transmission type
+    I: for<'de> Deserialize<'de>, // Input type
+    O: Serialize,                 // Output type
+{
+    // Generate a new link
     pub fn new() -> Self {
         Self {
-            buffered_transmits: VecDeque::new(),
+            buffered_transmits: Deque::new(),
+            in_type: PhantomData,
+            out_type: PhantomData,
         }
     }
 
-    pub fn send(
-        &mut self,
-        dst: SocketAddr,
-        message: host_to_mote::Message,
-    ) -> Result<(), postcard::Error> {
-        self.buffered_transmits.push_back(Transmit {
-            dst: dst,
-            payload: to_allocvec(&message)?,
-        });
+    // Queue a message to be sent
+    pub fn send(&mut self, dst: T, message: O) -> Result<(), postcard::Error> {
+        self.buffered_transmits
+            .push_back(Transmit {
+                dst: dst,
+                payload: to_vec(&message)?,
+            })
+            .unwrap();
 
         return Ok(());
     }
 
-    pub fn poll_transmit(&mut self) -> Option<Transmit> {
+    // Get the next message to be sent
+    pub fn poll_transmit(&mut self) -> Option<Transmit<T>> {
         self.buffered_transmits.pop_front()
     }
 
-    pub fn handle_recieve(packet: &[u8]) -> Result<mote_to_host::Message, postcard::Error> {
+    // Receive a message from raw bytes
+    pub fn handle_recieve(&self, packet: &[u8]) -> Result<I, postcard::Error> {
         Ok(from_bytes(packet)?)
     }
 }
+
+// Used by the host to talk to mote during runtime
+pub type HostRuntimeLink =
+    SansIo<SocketAddr, runtime::mote_to_host::Message, runtime::host_to_mote::Message>;
+
+// Used by mote to talk to the host during runtime
+pub type MoteRuntimeLink =
+    SansIo<SocketAddr, runtime::host_to_mote::Message, runtime::mote_to_host::Message>;
+
+// Used by the host to talk to mote during configuration
+pub type HostConfigurationLink = SansIo<
+    Transmit<()>,
+    configuration::mote_to_host::Message,
+    configuration::host_to_mote::Message,
+>;
+
+// Used by mote to talk to the host during configuration
+pub type MoteConfigurationLink = SansIo<
+    Transmit<()>,
+    configuration::host_to_mote::Message,
+    configuration::mote_to_host::Message,
+>;
