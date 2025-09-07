@@ -1,5 +1,5 @@
 [package]
-name = "mote-host-driver"
+name = "mote-sansio-driver"
 version = "0.0.0"
 edition = "2024"
 

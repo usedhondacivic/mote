@@ -1,4 +1,4 @@
-// Example usage of mote-host-driver
+// Example usage of mote-sansio-driver
 
 // This example publishes sensor data to rerun for visualization using a single thread
 // For more complicated real integrations you'd most likely want to use a async runtime
@@ -12,7 +12,7 @@ use std::{
 use rerun::external::glam;
 
 use anyhow::Context;
-use mote_host_driver::HostRuntimeLink;
+use mote_sansio_driver::HostRuntimeLink;
 
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 

@@ -3808,7 +3808,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "mote-host-driver"
+name = "mote-messages"
+version = "0.1.0"
+dependencies = [
+ "defmt 1.0.1",
+ "heapless 0.8.0",
+ "serde",
+]
+
+[[package]]
+name = "mote-sansio-driver"
 version = "0.0.0"
 dependencies = [
  "anyhow",
@@ -3817,15 +3826,6 @@ dependencies = [
  "mote-messages",
  "postcard",
  "rerun",
- "serde",
-]
-
-[[package]]
-name = "mote-messages"
-version = "0.1.0"
-dependencies = [
- "defmt 1.0.1",
- "heapless 0.8.0",
  "serde",
 ]
 
