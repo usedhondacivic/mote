@@ -1,0 +1,7 @@
+a {
+    color: aquamarine;
+}
+
+a:hover {
+    cursor: pointer;
+}

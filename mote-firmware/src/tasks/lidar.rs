@@ -30,7 +30,8 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 
     let mut state = LidarState::Reset;
 
-    let mut scan_points = heapless::Vec::<mote_to_host::Point, { mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE }>::new();
+    let mut scan_points =
+        heapless_postcard::Vec::<mote_to_host::Point, { mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE }>::new();
 
     loop {
         state = match state {
