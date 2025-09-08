@@ -1,0 +1,17 @@
+[package]
+name = "configuration"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mote-sansio-driver = { path = "../../mote-sansio-driver" }
+mote-messages = { path = "../../mote-messages" }
+
+postcard = "1.1.3"
+wasm-bindgen = "0.2"
+heapless = { version = "0.7.*", features = ["defmt-impl", "serde"] }
+serde-wasm-bindgen = "0.6.5"
+anyhow = "1.0.99"

@@ -5,5 +5,5 @@ edition = "2024"
 
 [dependencies]
 defmt = "1.0.1"
-heapless = { version = "0.8.0", features = ["serde", "defmt-03"] }
+heapless = { version = "0.7.*", features = ["serde", "defmt-impl"] }
 serde = { version = "1.0.*", default-features = false, features = ["derive"] }

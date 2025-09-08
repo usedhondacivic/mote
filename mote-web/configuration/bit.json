@@ -1,5 +1,0 @@
-{
-    "LiDAR init": "pass",
-    "IMU init": "warning",
-    "WIFI init": "fail"
-}

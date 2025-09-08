@@ -10,7 +10,7 @@ serde = "1.0.*"
 # postcard does not re-export heapless, so care must be taken to keep them in lockstep
 postcard = "1.1.*"
 heapless-postcard = { package = "heapless", version = "0.7.1" }
-anyhow = "1.0.98"
+anyhow = "1.0.*"
 
 [dev-dependencies]
 heapless = "0.8"

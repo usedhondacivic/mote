@@ -70,7 +70,7 @@ where
     }
 
     // Receive a message from raw bytes
-    pub fn handle_recieve(&self, packet: &[u8]) -> Result<I, postcard::Error> {
+    pub fn handle_receive(&self, packet: &[u8]) -> Result<I, postcard::Error> {
         Ok(from_bytes(packet)?)
     }
 }
@@ -83,16 +83,19 @@ pub type HostRuntimeLink =
 pub type MoteRuntimeLink =
     SansIo<SocketAddr, runtime::host_to_mote::Message, runtime::mote_to_host::Message>;
 
+#[derive(Debug)]
+pub struct SerialEndpoint;
+
 // Used by the host to talk to mote during configuration
 pub type HostConfigurationLink = SansIo<
-    Transmit<()>,
+    SerialEndpoint,
     configuration::mote_to_host::Message,
     configuration::host_to_mote::Message,
 >;
 
 // Used by mote to talk to the host during configuration
 pub type MoteConfigurationLink = SansIo<
-    Transmit<()>,
+    SerialEndpoint,
     configuration::host_to_mote::Message,
     configuration::mote_to_host::Message,
 >;
