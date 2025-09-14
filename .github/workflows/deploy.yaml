@@ -56,8 +56,8 @@ jobs:
       - name: Collect artifacts
         run: |
           mkdir output
-          cp -r mote-web/mote-book/book/* output/
-          cp -r mote-web/configuration output/
+          mv mote-web/mote-book/book/* output
+          mv mote-web/configuration/index.html mote-web/configuration/pkg mote-web/configuration/scripts mote-web/configuration/styles mote-web/configuration/index.html output/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

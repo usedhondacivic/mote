@@ -68,14 +68,18 @@ async function write() {
 }
 
 // UI event handlers
-export async function set_uid(uid) {
-    link.send(
-        {
-            SetUID: {
-                uid: uid
-            }
-        });
-    await write();
+export async function set_uid(uid, error_handler) {
+    if (uid.length > 3) {
+        link.send(
+            {
+                SetUID: {
+                    uid: uid
+                }
+            });
+        await write();
+    } else {
+        error_handler()
+    }
 }
 
 export function select_ssid() {
@@ -86,8 +90,9 @@ export function network_connect() {
     console.log("network_connect");
 }
 
-export function rescan() {
+export async function rescan() {
     link.send("RequestNetworkScan");
+    await write();
 }
 
 export function poll_transmit() {

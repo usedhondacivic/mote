@@ -51,8 +51,11 @@
 
 
         document.querySelector('#set_uid').addEventListener('click', () => {
-            let uid = document.querySelector('#uid').value;
-            set_uid(uid);
+            let uid = document.querySelector('#uid_input').value;
+            document.querySelector('#uid_length_error').hidden = true;
+            set_uid(uid, () => {
+                document.querySelector('#uid_length_error').hidden = false;
+            });
 
         });
         document.querySelector('#rescan').addEventListener('click', () => {rescan()});
@@ -79,11 +82,13 @@
 
     <h2>Identification</h2>
 
-    <label for="uid">Unique identifier:</label>
+    <p>Unique identifier: mote-<span id="uid">placeholder for now</span> </p>
     <div class="grid">
-        <input id="uid" type="text" name="unique_id" value="some_unique_id" maxlength="20" style="flex-grow: 1;">
+        <input id="uid_input" type="text" placeholder="Enter a new identifier, then click update -&gt;" maxlength="20"
+            style="flex-grow: 1;">
         <button id="set_uid" style="flex-basis: auto;">Update</button>
     </div>
+    <span id="uid_length_error" style="color: salmon" hidden>✖ &lt;- IDs must be &gt;3 characters</span>
 
 
     <h2>Connectivity</h2>
@@ -118,6 +123,7 @@
         </ul>
     </ul>
 
+    <p>Network SSID: <span id="connecting_network_ssid">placeholder for now</span> </p>
     <div class="grid">
         <input type="text" name="password" placeholder="Network password.." style="flex-grow: 1;">
         <button id="network_connect" style="flex-basis: auto;">Connect</button>
