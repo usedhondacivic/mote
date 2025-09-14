@@ -9,10 +9,39 @@
 </head>
 
 <body>
-    <script type="module">
+    <script defer type="module">
         import {serial_connect, set_uid, network_connect, rescan} from './scripts/index.js'
 
-        // Bind event listeners
+        /* Spinners / loading */
+
+        document.querySelector('#rescan').addEventListener('click', () => {rescan()});
+        document.querySelector('#network_connect').addEventListener('click', () => {network_connect()});
+
+        let data_views = document.querySelectorAll('.data_view > :not(.spinner)');
+        let spinners = document.querySelectorAll('.data_view > .spinner');
+        function show_data_view() {
+            spinners.forEach(spinner => {spinner.style.display = 'none'});
+            data_views.forEach(data_view => {data_view.style.display = 'block'});
+        }
+
+        function hide_data_view() {
+            spinners.forEach(spinner => {spinner.style.display = 'block'});
+            data_views.forEach(data_view => {data_view.style.display = 'none'});
+        }
+
+        let spinner_states = ["⢀⠀", "⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨", "⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀"];
+        spinners.forEach(spinner => {
+            spinner.dataset.spinner_state = 0;
+        });
+        setInterval(() => {
+            spinners.forEach(spinner => {
+                spinner.dataset.spinner_state = (Number(spinner.dataset.spinner_state) + 1) % spinner_states.length;
+                spinner.innerHTML = spinner_states[spinner.dataset.spinner_state];
+            });
+        }, 100);
+        hide_data_view();
+
+        /* UI Event listeners */
 
         // serial connect / disconnect / telem recv
         let serial_connection_state = document.querySelector('#serial_connection_state');
@@ -23,17 +52,22 @@
                 (e) => {
                     serial_connection_state.innerHTML = "connected";
                     serial_connection_state.style.color = "lightgreen";
+                    show_data_view();
                 },
                 (e) => {
                     serial_connection_state.innerHTML = "disconnected";
                     serial_connection_state.style.color = "salmon";
+                    hide_data_view();
                 },
                 (telem) => {
                     last_connection_time = new Date();
+                    show_data_view();
                     console.log(telem);
                 }
             )
         });
+
+        // Update telem last recv
         setInterval(() => {
             if (!last_connection_time) {
                 telemetry_last_received.style.color = "salmon";
@@ -50,6 +84,7 @@
         }, 100);
 
 
+        // Error message for short uid
         document.querySelector('#set_uid').addEventListener('click', () => {
             let uid = document.querySelector('#uid_input').value;
             document.querySelector('#uid_length_error').hidden = true;
@@ -58,9 +93,6 @@
             });
 
         });
-        document.querySelector('#rescan').addEventListener('click', () => {rescan()});
-        document.querySelector('#network_connect').addEventListener('click', () => {network_connect()});
-
     </script>
 
     <h1 style="margin-bottom: 0px;">Hello!</h1>
@@ -68,7 +100,7 @@
         and run diagnostics.</p>
     <p>To start, connect your robot to your computer using USB. Then click connect.</p>
 
-    <ul class=" tree">
+    <ul class="tree">
         <p style="margin: 0px;"><strong>Mote</strong></p>
         <ul>
             <li>Serial: <span style="color: salmon" id="serial_connection_state">disconnected</span></li>
@@ -81,93 +113,106 @@
     <p id="alert" hidden><b>Update requires Mote to reboot. Page will reload in 3 seconds...</b></p>
 
     <h2>Identification</h2>
-
-    <p>Unique identifier: mote-<span id="uid">placeholder for now</span> </p>
-    <div class="grid">
-        <input id="uid_input" type="text" placeholder="Enter a new identifier, then click update -&gt;" maxlength="20"
-            style="flex-grow: 1;">
-        <button id="set_uid" style="flex-basis: auto;">Update</button>
+    <div class="data_view">
+        <span class="spinner">⢀⠀</span>
+        <div style="display: none;">
+            <p>Unique identifier: mote-<span id="uid">placeholder for now</span> </p>
+            <div class="grid">
+                <input id="uid_input" type="text" placeholder="Enter a new identifier, then click update -&gt;"
+                    maxlength="20" style="flex-grow: 1;">
+                <button id="set_uid" style="flex-basis: auto;">Update</button>
+            </div>
+            <span id="uid_length_error" style="color: salmon" hidden>✖ &lt;- IDs must be &gt;3 characters</span>
+        </div>
     </div>
-    <span id="uid_length_error" style="color: salmon" hidden>✖ &lt;- IDs must be &gt;3 characters</span>
-
 
     <h2>Connectivity</h2>
 
-    <p>Click on a network to connect.</p>
+    <div class="data_view">
+        <span class="spinner">⢀⠀</span>
+        <div style="display: none;">
+            <p>Click on a network to connect.</p>
 
-    <ul class="tree">
-        <p style="margin: 0px;"><strong>Detected Networks</strong></p>
-        <ul>
-            <li>
-                <p style="margin: 0px;"><span style="color: lightgreen">Placeholder SSID</span> &lt;- Currently
-                    connected!</p>
+            <ul class="tree">
+                <p style="margin: 0px;"><strong>Detected Networks</strong></p>
                 <ul>
-                    <li>Strength: </li>
-                    <li>Security: </li>
+                    <li>
+                        <p style="margin: 0px;"><span style="color: lightgreen">Placeholder SSID</span> &lt;- Currently
+                            connected!</p>
+                        <ul>
+                            <li>Strength: </li>
+                            <li>Security: </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p style="margin: 0px;"><a>Placeholder SSID</a></p>
+                        <ul>
+                            <li>Strength: </li>
+                            <li>Security: </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p style="margin: 0px;"><a>Placeholder SSID</a></p>
+                        <ul>
+                            <li>Strength: </li>
+                            <li>Security: </li>
+                        </ul>
+                    </li>
                 </ul>
-            </li>
-            <li>
-                <p style="margin: 0px;"><a>Placeholder SSID</a></p>
-                <ul>
-                    <li>Strength: </li>
-                    <li>Security: </li>
-                </ul>
-            </li>
-            <li>
-                <p style="margin: 0px;"><a>Placeholder SSID</a></p>
-                <ul>
-                    <li>Strength: </li>
-                    <li>Security: </li>
-                </ul>
-            </li>
-        </ul>
-    </ul>
+            </ul>
 
-    <p>Network SSID: <span id="connecting_network_ssid">placeholder for now</span> </p>
-    <div class="grid">
-        <input type="text" name="password" placeholder="Network password.." style="flex-grow: 1;">
-        <button id="network_connect" style="flex-basis: auto;">Connect</button>
-        <button id="rescan" style="flex-basis: auto;">Rescan</button>
+            <p>Network SSID: <span id="connecting_network_ssid">placeholder for now</span> </p>
+            <div class="grid">
+                <input type="text" name="password" placeholder="Network password.." style="flex-grow: 1;">
+                <button id="network_connect" style="flex-basis: auto;">Connect</button>
+                <button id="rescan" style="flex-basis: auto;">Rescan</button>
+            </div>
+        </div>
     </div>
 
     <h2>Diagnostics</h2>
-    <p>Tests are run on startup. Reboot Mote to refresh.</p>
-    <ul class=" tree">
-        <p style="margin: 0px;"><strong>Subsystems</strong></p>
-        <ul>
-            <li>
-                <p style="margin: 0px;">WiFi</p>
+    <div class="data_view">
+        <span class="spinner">⢀⠀</span>
+        <div style="display: none;">
+            <p>Tests are run on startup. Reboot Mote to refresh.</p>
+            <ul class=" tree">
+                <p style="margin: 0px;"><strong>Subsystems</strong></p>
                 <ul>
-                    <li>Init <span style="color: lightgreen">✓</span></li>
-                    <li>Connected <span style="color: lightgreen">✓</span></li>
+                    <li>
+                        <p style="margin: 0px;">WiFi</p>
+                        <ul>
+                            <li>Init <span style="color: lightgreen">✓</span></li>
+                            <li>Connected <span style="color: lightgreen">✓</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p style="margin: 0px;">LiDAR</p>
+                        <ul>
+                            <li>Init <span style="color: lightgreen">✓</span></li>
+                            <li>Status <span style="color: lightgreen">✓</span></li>
+                            <li>Enable <span style="color: salmon">✖</span> </li>
+                            <li>Read Data <span style="color: salmon">✖</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p style="margin: 0px;">IMU</p>
+                        <ul>
+                            <li>Init <span style="color: lightgreen">✓</span></li>
+                            <li>WhoAmI Check <span style="color: lightgreen">✓</span></li>
+                            <li>Read Data <span style="color: lightgreen">✓</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p style="margin: 0px;">Wheel Encoders</p>
+                        <ul>
+                            <li>Left Init <span style="color: lightgreen">✓</span></li>
+                            <li>Right Init <span style="color: lightgreen">✓</span></li>
+                        </ul>
+                    </li>
                 </ul>
-            </li>
-            <li>
-                <p style="margin: 0px;">LiDAR</p>
-                <ul>
-                    <li>Init <span style="color: lightgreen">✓</span></li>
-                    <li>Status <span style="color: lightgreen">✓</span></li>
-                    <li>Enable <span style="color: salmon">✖</span> </li>
-                    <li>Read Data <span style="color: salmon">✖</span></li>
-                </ul>
-            </li>
-            <li>
-                <p style="margin: 0px;">IMU</p>
-                <ul>
-                    <li>Init <span style="color: lightgreen">✓</span></li>
-                    <li>WhoAmI Check <span style="color: lightgreen">✓</span></li>
-                    <li>Read Data <span style="color: lightgreen">✓</span></li>
-                </ul>
-            </li>
-            <li>
-                <p style="margin: 0px;">Wheel Encoders</p>
-                <ul>
-                    <li>Left Init <span style="color: lightgreen">✓</span></li>
-                    <li>Right Init <span style="color: lightgreen">✓</span></li>
-                </ul>
-            </li>
-        </ul>
-    </ul>
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>

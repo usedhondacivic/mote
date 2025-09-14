@@ -8,7 +8,7 @@ use embassy_usb::UsbDevice;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
 use mote_messages::configuration::{host_to_mote, mote_to_host};
-use postcard::{from_bytes, from_bytes_cobs, take_from_bytes_cobs, to_slice, to_slice_cobs, to_vec};
+use postcard::{take_from_bytes_cobs, to_slice_cobs};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -18,8 +18,6 @@ use super::{Irqs, UsbSerialResources};
 async fn usb_task(mut usb: UsbDevice<'static, UsbDriver<'static, USB>>) -> ! {
     usb.run().await
 }
-
-fn write_state() {}
 
 struct Disconnected {}
 
@@ -50,11 +48,9 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                 serialization_buffer
                     .extend_from_slice(&serial_buffer[..bytes_read])
                     .unwrap();
-                info!("{:x}", serialization_buffer);
                 while let Some(end) = serialization_buffer.iter().position(|&x| x == 0) {
                     let mut idx = 0;
                     loop {
-                        info!("{:x}", serialization_buffer[idx..end + 1]);
                         match take_from_bytes_cobs::<host_to_mote::Message>(&mut serialization_buffer[idx..end + 1]) {
                             Ok((msg, remainder)) => {
                                 info!("Got: {:?}", msg);
@@ -80,7 +76,6 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                 if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&packet)).await {
                     res?;
                 }
-                info!("tick");
                 Ok(())
             }
         }?;

@@ -8,5 +8,5 @@ a:hover {
 
 span {
     transition: color 0.5s ease-in-out;
-    color: unset
+    color: unset;
 }
