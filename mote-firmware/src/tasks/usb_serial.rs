@@ -1,14 +1,14 @@
-use defmt::{info, unwrap};
+use defmt::{info, unwrap, warn};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_rp::peripherals::USB;
 use embassy_rp::usb::{Driver as UsbDriver, Instance as UsbInstance};
-use embassy_time::{Duration, Ticker};
+use embassy_time::{Duration, Ticker, with_timeout};
 use embassy_usb::UsbDevice;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
-use mote_messages::configuration::host_to_mote;
-use postcard::from_bytes;
+use mote_messages::configuration::{host_to_mote, mote_to_host};
+use postcard::{from_bytes, from_bytes_cobs, take_from_bytes_cobs, to_slice, to_slice_cobs, to_vec};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -38,7 +38,6 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
     // TODO: postcard serialized size is currently experimental and not implemented
     // as a constant fn. After that feature is stabilized, consider how to rightsize
     // this buffer
-    let mut message_aggegator = heapless::HistoryBuffer::<u8, 256>::new();
     let mut serialization_buffer = heapless::Vec::<u8, 256>::new();
     let mut serial_buffer = [0; 64];
 
@@ -48,33 +47,43 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
     loop {
         match select(class.read_packet(&mut serial_buffer), ticker.next()).await {
             Either::First(Ok(bytes_read)) => {
-                message_aggegator.extend(&serial_buffer[..bytes_read]);
-                serialization_buffer.clear();
                 serialization_buffer
-                    .extend_from_slice(message_aggegator.as_slices().0)
+                    .extend_from_slice(&serial_buffer[..bytes_read])
                     .unwrap();
-                serialization_buffer
-                    .extend_from_slice(message_aggegator.as_slices().1)
-                    .unwrap();
-                match from_bytes(&serialization_buffer) {
-                    Ok(host_to_mote::Message::SetUID(uid)) => {
-                        info!("Recieved SetUID request: {:?}", uid);
+                info!("{:x}", serialization_buffer);
+                while let Some(end) = serialization_buffer.iter().position(|&x| x == 0) {
+                    let mut idx = 0;
+                    loop {
+                        info!("{:x}", serialization_buffer[idx..end + 1]);
+                        match take_from_bytes_cobs::<host_to_mote::Message>(&mut serialization_buffer[idx..end + 1]) {
+                            Ok((msg, remainder)) => {
+                                info!("Got: {:?}", msg);
+                                serialization_buffer = heapless::Vec::from_slice(remainder).unwrap();
+                                break;
+                            }
+                            Err(postcard::Error::DeserializeBadEncoding) => {
+                                idx += 1;
+                            }
+                            Err(err) => {
+                                warn!("{:x}", err);
+                                serialization_buffer.clear();
+                                break;
+                            }
+                        }
                     }
-                    Ok(host_to_mote::Message::SetNetworkConnectionConfig(config)) => {
-                        info!("Recieved SetNetworkconfig request: {:?}", config);
-                    }
-                    _ => (),
                 }
                 Ok(())
             }
             Either::First(Err(error)) => Err(error),
-            Either::Second(_) => Ok(()),
+            Either::Second(_) => {
+                let packet = to_slice_cobs(&mote_to_host::Message::Test, &mut serial_buffer).unwrap();
+                if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&packet)).await {
+                    res?;
+                }
+                info!("tick");
+                Ok(())
+            }
         }?;
-
-        let n = class.read_packet(&mut serial_buffer).await?;
-        let data = &serial_buffer[..n];
-        info!("data: {:x}", data);
-        class.write_packet(data).await?;
     }
 }
 

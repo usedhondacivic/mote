@@ -5,3 +5,8 @@ a {
 a:hover {
     cursor: pointer;
 }
+
+span {
+    transition: color 0.5s ease-in-out;
+    color: unset
+}

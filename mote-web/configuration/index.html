@@ -10,20 +10,54 @@
 
 <body>
     <script type="module">
-        import init, {ConfigurationLink} from './pkg/configuration.js';
+        import {serial_connect, set_uid, network_connect, rescan} from './scripts/index.js'
 
-        async function run() {
-            await init();
-            let link = new ConfigurationLink();
-            link.send(
-                {
-                    SetUID: {
-                        uid: "testing"
-                    }
-                });
-        }
+        // Bind event listeners
 
-        run();
+        // serial connect / disconnect / telem recv
+        let serial_connection_state = document.querySelector('#serial_connection_state');
+        let telemetry_last_received = document.querySelector('#telemetry_last_received_time');
+        let last_connection_time;
+        document.querySelector('#serial_connect').addEventListener('click', () => {
+            serial_connect(
+                (e) => {
+                    serial_connection_state.innerHTML = "connected";
+                    serial_connection_state.style.color = "lightgreen";
+                },
+                (e) => {
+                    serial_connection_state.innerHTML = "disconnected";
+                    serial_connection_state.style.color = "salmon";
+                },
+                (telem) => {
+                    last_connection_time = new Date();
+                    console.log(telem);
+                }
+            )
+        });
+        setInterval(() => {
+            if (!last_connection_time) {
+                telemetry_last_received.style.color = "salmon";
+                telemetry_last_received.innerHTML = "never"
+                return;
+            }
+            let latency = new Date() - last_connection_time;
+            if (latency < 2000) {
+                telemetry_last_received.style.color = "lightgreen";
+            } else {
+                telemetry_last_received.style.color = "salmon";
+            }
+            telemetry_last_received.innerHTML = (latency / 1000).toFixed(2) + "s ago"
+        }, 100);
+
+
+        document.querySelector('#set_uid').addEventListener('click', () => {
+            let uid = document.querySelector('#uid').value;
+            set_uid(uid);
+
+        });
+        document.querySelector('#rescan').addEventListener('click', () => {rescan()});
+        document.querySelector('#network_connect').addEventListener('click', () => {network_connect()});
+
     </script>
 
     <h1 style="margin-bottom: 0px;">Hello!</h1>
@@ -31,23 +65,24 @@
         and run diagnostics.</p>
     <p>To start, connect your robot to your computer using USB. Then click connect.</p>
 
-    <div class="grid">
-        <p style="flex-basis: auto;"><span style="color: salmon">Mote Not Connected</span> | </p>
-        <div style="display: flex; justify-content: center; flex-grow: 1;">
-            <button style="margin-top: -1ch;">Connect</button>
-        </div>
-        <p style="flex-basis: auto;"> | <span style="color: salmon">Last Updated: Never</span></p>
-    </div>
+    <ul class=" tree">
+        <p style="margin: 0px;"><strong>Mote</strong></p>
+        <ul>
+            <li>Serial: <span style="color: salmon" id="serial_connection_state">disconnected</span></li>
+            <li>Telemetry last received: <span style="color: salmon" id="telemetry_last_received_time">never</span></li>
+        </ul>
+    </ul>
+
+    <button id="serial_connect">Connect</button>
+
     <p id="alert" hidden><b>Update requires Mote to reboot. Page will reload in 3 seconds...</b></p>
 
     <h2>Identification</h2>
 
-    <p>MAC address: 00:1A:2B:3C:4D:5E</p>
     <label for="uid">Unique identifier:</label>
     <div class="grid">
-        <input id="uid" type="text" name="unique_id" value="some_unique_id" oninput="uid_updated()"
-            style="flex-grow: 1;">
-        <button id="uid_submit" onclick="await uid_submit()" style="flex-basis: auto;">Update</button>
+        <input id="uid" type="text" name="unique_id" value="some_unique_id" maxlength="20" style="flex-grow: 1;">
+        <button id="set_uid" style="flex-basis: auto;">Update</button>
     </div>
 
 
@@ -85,9 +120,9 @@
 
     <div class="grid">
         <input type="text" name="password" placeholder="Network password.." style="flex-grow: 1;">
-        <button style="flex-basis: auto;">Connect</button>
+        <button id="network_connect" style="flex-basis: auto;">Connect</button>
+        <button id="rescan" style="flex-basis: auto;">Rescan</button>
     </div>
-    <button>Rescan</button>
 
     <h2>Diagnostics</h2>
     <p>Tests are run on startup. Reboot Mote to refresh.</p>
@@ -97,12 +132,15 @@
             <li>
                 <p style="margin: 0px;">WiFi</p>
                 <ul>
+                    <li>Init <span style="color: lightgreen">✓</span></li>
                     <li>Connected <span style="color: lightgreen">✓</span></li>
                 </ul>
             </li>
             <li>
                 <p style="margin: 0px;">LiDAR</p>
                 <ul>
+                    <li>Init <span style="color: lightgreen">✓</span></li>
+                    <li>Status <span style="color: lightgreen">✓</span></li>
                     <li>Enable <span style="color: salmon">✖</span> </li>
                     <li>Read Data <span style="color: salmon">✖</span></li>
                 </ul>
@@ -110,8 +148,16 @@
             <li>
                 <p style="margin: 0px;">IMU</p>
                 <ul>
-                    <li>Enable <span style="color: lightgreen">✓</span></li>
+                    <li>Init <span style="color: lightgreen">✓</span></li>
+                    <li>WhoAmI Check <span style="color: lightgreen">✓</span></li>
                     <li>Read Data <span style="color: lightgreen">✓</span></li>
+                </ul>
+            </li>
+            <li>
+                <p style="margin: 0px;">Wheel Encoders</p>
+                <ul>
+                    <li>Left Init <span style="color: lightgreen">✓</span></li>
+                    <li>Right Init <span style="color: lightgreen">✓</span></li>
                 </ul>
             </li>
         </ul>

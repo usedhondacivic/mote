@@ -51,7 +51,7 @@ fn main() -> anyhow::Result<()> {
         let (num_read, source) = socket.recv_from(&mut buf)?;
         println!("Received {} bytes from {}", num_read, source);
 
-        let message = comms.handle_receive(&buf[..num_read])?;
+        let message = comms.handle_receive(&mut buf[..num_read])?;
 
         // Check what kind of message we got
         match message {

@@ -81,6 +81,7 @@ pub mod configuration {
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub enum Message {
             State(State),
+            Test,
         }
     }
 
@@ -95,13 +96,14 @@ pub mod configuration {
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct SetUID {
-            pub uid: heapless::String<10>,
+            pub uid: heapless::String<20>,
         }
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub enum Message {
             SetNetworkConnectionConfig(SetNetworkConnectionConfig),
             SetUID(SetUID),
+            RequestNetworkScan,
         }
     }
 }

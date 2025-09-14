@@ -7,7 +7,7 @@ use core::{fmt::Debug, marker::PhantomData, net::SocketAddr};
 
 use heapless_postcard::{Deque, Vec};
 use mote_messages::{configuration, runtime};
-use postcard::{from_bytes, to_vec};
+use postcard::{from_bytes_cobs, to_vec_cobs};
 use serde::{Deserialize, Serialize};
 
 const MTU: usize = 1500;
@@ -57,7 +57,7 @@ where
         self.buffered_transmits
             .push_back(Transmit {
                 dst: dst,
-                payload: to_vec(&message)?,
+                payload: to_vec_cobs(&message)?,
             })
             .unwrap();
 
@@ -70,8 +70,8 @@ where
     }
 
     // Receive a message from raw bytes
-    pub fn handle_receive(&self, packet: &[u8]) -> Result<I, postcard::Error> {
-        Ok(from_bytes(packet)?)
+    pub fn handle_receive(&self, packet: &mut [u8]) -> Result<I, postcard::Error> {
+        Ok(from_bytes_cobs(packet)?)
     }
 }
 
