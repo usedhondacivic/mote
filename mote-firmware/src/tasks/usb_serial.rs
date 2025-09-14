@@ -13,6 +13,7 @@ use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use super::{Irqs, UsbSerialResources};
+use crate::tasks::CONFIGURATION_STATE;
 
 #[embassy_executor::task]
 async fn usb_task(mut usb: UsbDevice<'static, UsbDriver<'static, USB>>) -> ! {
@@ -72,9 +73,16 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
             }
             Either::First(Err(error)) => Err(error),
             Either::Second(_) => {
-                let packet = to_slice_cobs(&mote_to_host::Message::Test, &mut serial_buffer).unwrap();
-                if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&packet)).await {
-                    res?;
+                if let Ok(configuration_state) =
+                    with_timeout(Duration::from_millis(500), CONFIGURATION_STATE.lock()).await
+                {
+                    let message = mote_to_host::Message::State(configuration_state.clone());
+                    let packet = to_slice_cobs(&message, &mut serial_buffer).unwrap();
+                    info!("Sending {:x}", packet);
+                    info!("Sending {:?}", *configuration_state);
+                    if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&packet)).await {
+                        res?;
+                    }
                 }
                 Ok(())
             }

@@ -47,3 +47,21 @@ static MOTE_TO_HOST: Channel<CriticalSectionRawMutex, mote_messages::runtime::mo
     Channel::new();
 static HOST_TO_MOTE: Channel<CriticalSectionRawMutex, mote_messages::runtime::host_to_mote::Message, 32> =
     Channel::new();
+
+// and init global configuration state
+use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
+use embassy_sync::mutex::Mutex;
+use heapless::Vec;
+use mote_messages::configuration::mote_to_host::{BITCollection, State};
+
+static CONFIGURATION_STATE: Mutex<ThreadModeRawMutex, State> = Mutex::new(State {
+    uid: heapless::String::<20>::new(),
+    current_network_connection: None,
+    available_network_connections: Vec::new(),
+    built_in_test: BITCollection {
+        lidar: Vec::new(),
+        imu: Vec::new(),
+        wifi: Vec::new(),
+        encoders: Vec::new(),
+    },
+});

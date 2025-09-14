@@ -1,4 +1,4 @@
-use postcard::{from_bytes, from_bytes_cobs, take_from_bytes_cobs};
+use postcard::from_bytes_cobs;
 use wasm_bindgen::prelude::*;
 
 use mote_messages::configuration::{host_to_mote, mote_to_host};
@@ -48,10 +48,9 @@ impl ConfigurationLink {
     }
 
     pub fn handle_receive(&self, bytes: JsValue) -> JsValue {
+        let mut bytes: Vec<u8> = serde_wasm_bindgen::from_value(bytes).unwrap();
         console_log!("[RX] Configuration link received: {:?}", bytes);
-        let mut bytes: heapless::Vec<u8, 1500> =
-            serde_wasm_bindgen::from_value(bytes.clone()).unwrap();
-        let message: mote_to_host::Message = from_bytes_cobs(&mut bytes).unwrap();
+        let message: Result<mote_to_host::Message, _> = from_bytes_cobs(&mut bytes);
         console_log!("[RX] Configuration link unpacked: {:?}", message);
         serde_wasm_bindgen::to_value(&message).unwrap()
     }

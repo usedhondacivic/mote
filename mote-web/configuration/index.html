@@ -18,17 +18,18 @@
         document.querySelector('#network_connect').addEventListener('click', () => {network_connect()});
 
         let data_views = document.querySelectorAll('.data_view > :not(.spinner)');
-        let spinners = document.querySelectorAll('.data_view > .spinner');
+        let data_view_spinners = document.querySelectorAll('.data_view > .spinner');
         function show_data_view() {
-            spinners.forEach(spinner => {spinner.style.display = 'none'});
+            data_view_spinners.forEach(spinner => {spinner.style.display = 'none'});
             data_views.forEach(data_view => {data_view.style.display = 'block'});
         }
 
         function hide_data_view() {
-            spinners.forEach(spinner => {spinner.style.display = 'block'});
+            data_view_spinners.forEach(spinner => {spinner.style.display = 'block'});
             data_views.forEach(data_view => {data_view.style.display = 'none'});
         }
 
+        let spinners = document.querySelectorAll('.data_view .spinner');
         let spinner_states = ["⢀⠀", "⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨", "⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀"];
         spinners.forEach(spinner => {
             spinner.dataset.spinner_state = 0;
@@ -46,23 +47,26 @@
         // serial connect / disconnect / telem recv
         let serial_connection_state = document.querySelector('#serial_connection_state');
         let telemetry_last_received = document.querySelector('#telemetry_last_received_time');
+        let connect_button = document.querySelector('#serial_connect');
         let last_connection_time;
-        document.querySelector('#serial_connect').addEventListener('click', () => {
+        connect_button.addEventListener('click', () => {
             serial_connect(
                 (e) => {
                     serial_connection_state.innerHTML = "connected";
                     serial_connection_state.style.color = "lightgreen";
+                    connect_button.style.display = "none";
                     show_data_view();
                 },
                 (e) => {
                     serial_connection_state.innerHTML = "disconnected";
                     serial_connection_state.style.color = "salmon";
+                    connect_button.style.display = "block";
                     hide_data_view();
                 },
                 (telem) => {
                     last_connection_time = new Date();
                     show_data_view();
-                    console.log(telem);
+                    handle_telem_recv(telem);
                 }
             )
         });
@@ -93,6 +97,83 @@
             });
 
         });
+
+        // Handle network selection
+        let selected_network;
+        let network_input_block = document.querySelector('#network_password_input_block');
+        let network_input_placeholder = document.querySelector('#network_password_input_block > .placeholder');
+        let network_input_content = document.querySelectorAll('#network_password_input_block > :not(.placeholder)');
+        function network_on_click(netork) {
+            selected_network = network;
+            network_input_placeholder.style.display = 'none';
+            network_input_content.forEach(item => {item.style.display = 'block'});
+        }
+
+        /* Data view update */
+
+        let uid = document.querySelector('#uid');
+        let network_list = document.querySelector('#network_list');
+        let bit_list = document.querySelector('#built_in_test_list');
+        function handle_telem_recv(telem) {
+            let state = telem?.Ok?.State;
+            if (state) {
+                // Identification
+                uid.innerHTML = state?.uid;
+
+                // Connectivity
+                network_list.innerHTML = "";
+                if (state?.available_network_connections.length == 0) {
+                    network_input_block.style.display = 'none';
+                    network_list.innerHTML = `
+                    <li>
+                        <p style="margin: 0px;">No networks available</p>
+                    </li>
+                    `;
+                } else {
+                    network_input_block.style.display = 'block';
+                    state?.available_network_connections?.forEach(connection => {
+                        network_list.innerHTML += `
+                        <li>
+                            <p style="margin: 0px;">
+                                <a onclick='network_on_click(${connection})'>
+                                    ${connection?.ssid}${connection == state?.current_network_connection ? "<- currently connected" : ""}
+                                </a>
+                            </p>
+                            <ul>
+                                <li>Strength: ${connection?.strength}</li>
+                                <li>Security: ${connection?.security}</li>
+                            </ul>
+                        </li>
+                        `;
+                    });
+                }
+
+                // Built In Test (BIT)
+                bit_list.innerHTML = "";
+                let result_map = {
+                    "Waiting": ["yellow", `<span class=".spinner">⢀⠀</span>`],
+                    "Pass": ["lightgreen", "✓"],
+                    "Fail": ["salmon", "✖"],
+                };
+                Object.keys(state?.built_in_test).forEach(test_name => {
+                    let check_list = "";
+                    state?.built_in_test[test_name]?.forEach(check => {
+                        let content = result_map[check.result];
+                        check_list += `<li>${check.name}: <span style="color: ${content[0]}>${content[1]}</span></li>`;
+                        check_list += "\n";
+                    });
+                    bit_list.innerHTML += `
+                    <li>
+                        <p style="margin: 0px;">${test_name}</p>
+                        <ul>
+                            ${check_list != "" ? check_list : "<li>No checks found!</li>"}
+                        </ul>
+                    </li>
+                    `;
+                })
+            }
+        }
+
     </script>
 
     <h1 style="margin-bottom: 0px;">Hello!</h1>
@@ -131,11 +212,9 @@
     <div class="data_view">
         <span class="spinner">⢀⠀</span>
         <div style="display: none;">
-            <p>Click on a network to connect.</p>
-
             <ul class="tree">
                 <p style="margin: 0px;"><strong>Detected Networks</strong></p>
-                <ul>
+                <ul id="network_list">
                     <li>
                         <p style="margin: 0px;"><span style="color: lightgreen">Placeholder SSID</span> &lt;- Currently
                             connected!</p>
@@ -161,11 +240,14 @@
                 </ul>
             </ul>
 
-            <p>Network SSID: <span id="connecting_network_ssid">placeholder for now</span> </p>
-            <div class="grid">
-                <input type="text" name="password" placeholder="Network password.." style="flex-grow: 1;">
-                <button id="network_connect" style="flex-basis: auto;">Connect</button>
-                <button id="rescan" style="flex-basis: auto;">Rescan</button>
+            <div id="network_password_input_block" style="display: none;">
+                <p class="placeholder">Click on a network to connect.</p>
+                <p>Network SSID: <span id="connecting_network_ssid">placeholder for now</span> </p>
+                <div class="grid">
+                    <input type="text" name="password" placeholder="Network password.." style="flex-grow: 1;">
+                    <button id="network_connect" style="flex-basis: auto;">Connect</button>
+                    <button id="rescan" style="flex-basis: auto;">Rescan</button>
+                </div>
             </div>
         </div>
     </div>
@@ -177,7 +259,7 @@
             <p>Tests are run on startup. Reboot Mote to refresh.</p>
             <ul class=" tree">
                 <p style="margin: 0px;"><strong>Subsystems</strong></p>
-                <ul>
+                <ul id="built_in_test_list">
                     <li>
                         <p style="margin: 0px;">WiFi</p>
                         <ul>

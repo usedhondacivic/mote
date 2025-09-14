@@ -55,34 +55,44 @@ pub mod configuration {
     pub mod mote_to_host {
         use serde::{Deserialize, Serialize};
 
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct NetworkConnection {
             pub ssid: heapless::String<32>,
             pub strength: u8,
             pub connected: bool,
         }
-
-        // TODO: These should have richer types
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub struct BIT {
-            pub lidar: bool,
-            pub imu: bool,
-            pub wifi: bool,
-            pub encoders: bool,
+        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
+        pub enum BITResult {
+            Waiting,
+            Pass,
+            Fail,
         }
 
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
+        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
+        pub struct BIT {
+            pub name: heapless::String<10>,
+            pub result: BITResult,
+        }
+
+        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
+        pub struct BITCollection {
+            pub lidar: heapless::Vec<BIT, 5>,
+            pub imu: heapless::Vec<BIT, 5>,
+            pub wifi: heapless::Vec<BIT, 5>,
+            pub encoders: heapless::Vec<BIT, 5>,
+        }
+
+        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct State {
             pub uid: heapless::String<20>,
             pub current_network_connection: Option<NetworkConnection>,
             pub available_network_connections: heapless::Vec<NetworkConnection, 10>,
-            pub built_in_test: BIT,
+            pub built_in_test: BITCollection,
         }
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub enum Message {
             State(State),
-            Test,
         }
     }
 
