@@ -55,6 +55,13 @@ pub mod configuration {
     pub mod mote_to_host {
         use serde::{Deserialize, Serialize};
 
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
+        pub struct NetworkConnection {
+            pub ssid: heapless::String<32>,
+            pub strength: u8,
+            pub connected: bool,
+        }
+
         // TODO: These should have richer types
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct BIT {
@@ -65,17 +72,11 @@ pub mod configuration {
         }
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub struct NetworkConnection {
-            pub ssid: heapless::String<32>,
-            pub strength: u8,
-            pub connected: bool,
-        }
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct State {
-            pub built_in_test: BIT,
+            pub uid: heapless::String<20>,
             pub current_network_connection: Option<NetworkConnection>,
             pub available_network_connections: heapless::Vec<NetworkConnection, 10>,
+            pub built_in_test: BIT,
         }
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
