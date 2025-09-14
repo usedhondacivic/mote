@@ -46,6 +46,13 @@ jobs:
         run: |
           cd mote-web/mote-book
           mdbook test
+      - name: Install wasm-pack
+        run: |
+          cargo install wasm-pack --vers "^0.13" --locked
+      - name: Build configuration wasm
+        run: |
+          cd mote-web/configuration
+          wasm-pack build --target web
       - name: Collect artifacts
         run: |
           mkdir output
