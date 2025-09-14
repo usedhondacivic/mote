@@ -55,9 +55,9 @@ jobs:
           wasm-pack build --target web
       - name: Collect artifacts
         run: |
-          mkdir output
-          mv mote-web/mote-book/book/* output
-          mv mote-web/configuration/index.html mote-web/configuration/pkg mote-web/configuration/scripts mote-web/configuration/styles mote-web/configuration/index.html output/
+          mkdir -p output/configuration
+          cp -r mote-web/mote-book/book/* output
+          cp -r mote-web/configuration/index.html mote-web/configuration/pkg mote-web/configuration/scripts mote-web/configuration/styles mote-web/configuration/index.html output/configuration
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
