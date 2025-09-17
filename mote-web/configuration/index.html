@@ -6,41 +6,27 @@
     <link rel="stylesheet" href="styles/index.css">
 
     <title>Mote Configuration</title>
-</head>
-
-<body>
     <script defer type="module">
         import {serial_connect, set_uid, network_connect, rescan} from './scripts/index.js'
 
         /* Spinners / loading */
 
-        document.querySelector('#rescan').addEventListener('click', () => {rescan()});
-        document.querySelector('#network_connect').addEventListener('click', () => {network_connect()});
-
-        let data_views = document.querySelectorAll('.data_view > :not(.spinner)');
-        let data_view_spinners = document.querySelectorAll('.data_view > .spinner');
-        function show_data_view() {
-            data_view_spinners.forEach(spinner => {spinner.style.display = 'none'});
-            data_views.forEach(data_view => {data_view.style.display = 'block'});
-        }
-
-        function hide_data_view() {
-            data_view_spinners.forEach(spinner => {spinner.style.display = 'block'});
-            data_views.forEach(data_view => {data_view.style.display = 'none'});
-        }
-
-        let spinners = document.querySelectorAll('.data_view .spinner');
-        let spinner_states = ["⢀⠀", "⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨", "⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀"];
-        spinners.forEach(spinner => {
-            spinner.dataset.spinner_state = 0;
-        });
+        let long_spinners = document.querySelectorAll('.spinner');
+        let short_spinners = document.querySelectorAll('.short_spinner');
+        let long_spinner_state = 0;
+        let long_spinner_states = ["⢀⠀", "⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨", "⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀"];
+        let short_spinner_state = 0;
+        let short_spinner_states = ["⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽", "⣾"];
         setInterval(() => {
-            spinners.forEach(spinner => {
-                spinner.dataset.spinner_state = (Number(spinner.dataset.spinner_state) + 1) % spinner_states.length;
-                spinner.innerHTML = spinner_states[spinner.dataset.spinner_state];
+            long_spinners.forEach(spinner => {
+                spinner.innerHTML = long_spinner_states[long_spinner_state % long_spinner_states.length];
             });
+            short_spinners.forEach(spinner => {
+                spinner.innerHTML = short_spinner_states[short_spinner_state % short_spinner_states.length];
+            });
+            short_spinner_state++;
+            long_spinner_state++;
         }, 100);
-        hide_data_view();
 
         /* UI Event listeners */
 
@@ -55,17 +41,14 @@
                     serial_connection_state.innerHTML = "connected";
                     serial_connection_state.style.color = "lightgreen";
                     connect_button.style.display = "none";
-                    show_data_view();
                 },
                 (e) => {
                     serial_connection_state.innerHTML = "disconnected";
                     serial_connection_state.style.color = "salmon";
                     connect_button.style.display = "block";
-                    hide_data_view();
                 },
                 (telem) => {
                     last_connection_time = new Date();
-                    show_data_view();
                     handle_telem_recv(telem);
                 }
             )
@@ -89,18 +72,16 @@
 
 
         // Error message for short uid
-        document.querySelector('#set_uid').addEventListener('click', () => {
-            let uid = document.querySelector('#uid_input').value;
-            document.querySelector('#uid_length_error').hidden = true;
-            set_uid(uid, () => {
-                document.querySelector('#uid_length_error').hidden = false;
-            });
-
-        });
+        // document.querySelector('#set_uid').addEventListener('click', () => {
+        //     let uid = document.querySelector('#uid_input').value;
+        //     document.querySelector('#uid_length_error').hidden = true;
+        //     set_uid(uid, () => {
+        //         document.querySelector('#uid_length_error').hidden = false;
+        //     });
+        // });
 
         // Handle network selection
         let selected_network;
-        let network_input_block = document.querySelector('#network_password_input_block');
         let network_input_placeholder = document.querySelector('#network_password_input_block > .placeholder');
         let network_input_content = document.querySelectorAll('#network_password_input_block > :not(.placeholder)');
         function network_on_click(netork) {
@@ -111,19 +92,23 @@
 
         /* Data view update */
 
-        let uid = document.querySelector('#uid');
+        let identification_list = document.querySelector('#identification_list');
         let network_list = document.querySelector('#network_list');
         let bit_list = document.querySelector('#built_in_test_list');
         function handle_telem_recv(telem) {
             let state = telem?.Ok?.State;
             if (state) {
                 // Identification
-                uid.innerHTML = state?.uid;
+                identification_list.innerHTML = "";
+                identification_list.innerHTML += `
+                    <li>
+                        Unique ID: ${state?.uid}
+                    </li>
+                `;
 
                 // Connectivity
                 network_list.innerHTML = "";
                 if (state?.available_network_connections.length == 0) {
-                    network_input_block.style.display = 'none';
                     network_list.innerHTML = `
                     <li>
                         <p style="margin: 0px;">No networks available</p>
@@ -151,7 +136,7 @@
                 // Built In Test (BIT)
                 bit_list.innerHTML = "";
                 let result_map = {
-                    "Waiting": ["yellow", `<span class=".spinner">⢀⠀</span>`],
+                    "Waiting": ["#FDFD96", `<span class="short_spinner">${short_spinner_states[(short_spinner_state) % short_spinner_states.length]}</span>`],
                     "Pass": ["lightgreen", "✓"],
                     "Fail": ["salmon", "✖"],
                 };
@@ -159,7 +144,7 @@
                     let check_list = "";
                     state?.built_in_test[test_name]?.forEach(check => {
                         let content = result_map[check.result];
-                        check_list += `<li>${check.name}: <span style="color: ${content[0]}>${content[1]}</span></li>`;
+                        check_list += `<li><span style="color: ${content[0]};">${content[1]}</span> ${check.name}</li>`;
                         check_list += "\n";
                     });
                     bit_list.innerHTML += `
@@ -171,129 +156,73 @@
                     </li>
                     `;
                 })
+
+                // New spinners may have been added
+                long_spinners = document.querySelectorAll('.spinner');
+                short_spinners = document.querySelectorAll('.short_spinner');
             }
         }
 
     </script>
+</head>
 
-    <h1 style="margin-bottom: 0px;">Hello!</h1>
-    <p>Welcome to the Mote configuration page. You can use this website to edit settings, connect your robot to WiFi,
-        and run diagnostics.</p>
-    <p>To start, connect your robot to your computer using USB. Then click connect.</p>
-
-    <ul class="tree">
-        <p style="margin: 0px;"><strong>Mote</strong></p>
+<body>
+    <div style="margin-top: 10ch;" class="tree">
         <ul>
-            <li>Serial: <span style="color: salmon" id="serial_connection_state">disconnected</span></li>
-            <li>Telemetry last received: <span style="color: salmon" id="telemetry_last_received_time">never</span></li>
-        </ul>
-    </ul>
-
-    <button id="serial_connect">Connect</button>
-
-    <p id="alert" hidden><b>Update requires Mote to reboot. Page will reload in 3 seconds...</b></p>
-
-    <h2>Identification</h2>
-    <div class="data_view">
-        <span class="spinner">⢀⠀</span>
-        <div style="display: none;">
-            <p>Unique identifier: mote-<span id="uid">placeholder for now</span> </p>
-            <div class="grid">
-                <input id="uid_input" type="text" placeholder="Enter a new identifier, then click update -&gt;"
-                    maxlength="20" style="flex-grow: 1;">
-                <button id="set_uid" style="flex-basis: auto;">Update</button>
-            </div>
-            <span id="uid_length_error" style="color: salmon" hidden>✖ &lt;- IDs must be &gt;3 characters</span>
-        </div>
-    </div>
-
-    <h2>Connectivity</h2>
-
-    <div class="data_view">
-        <span class="spinner">⢀⠀</span>
-        <div style="display: none;">
-            <ul class="tree">
+            <p style="margin: 0px;"><strong>Mote</strong></p>
+            <li class="preconnection">
+                Serial: <span style="color: salmon" id="serial_connection_state">disconnected</span>
+            </li>
+            <li>
+                Telemetry last received: <span style="color: salmon" id="telemetry_last_received_time">never</span>
+            </li>
+            <li>
+                <p style="margin: 0px;"><strong>Identification</strong></p>
+                <ul id="identification_list">
+                    <li><span class="spinner">⢀⠀</span></li>
+                </ul>
+            </li>
+            <li>
                 <p style="margin: 0px;"><strong>Detected Networks</strong></p>
                 <ul id="network_list">
-                    <li>
-                        <p style="margin: 0px;"><span style="color: lightgreen">Placeholder SSID</span> &lt;- Currently
-                            connected!</p>
-                        <ul>
-                            <li>Strength: </li>
-                            <li>Security: </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <p style="margin: 0px;"><a>Placeholder SSID</a></p>
-                        <ul>
-                            <li>Strength: </li>
-                            <li>Security: </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <p style="margin: 0px;"><a>Placeholder SSID</a></p>
-                        <ul>
-                            <li>Strength: </li>
-                            <li>Security: </li>
-                        </ul>
-                    </li>
+                    <!-- <li> -->
+                    <!--     <p style="margin: 0px;"><span style="color: lightgreen">Placeholder SSID</span> -->
+                    <!--         &lt;- -->
+                    <!--         Currently -->
+                    <!--         connected!</p> -->
+                    <!--     <ul> -->
+                    <!--         <li>Strength: </li> -->
+                    <!--         <li>Security: </li> -->
+                    <!--     </ul> -->
+                    <!-- </li> -->
+                    <!-- <li> -->
+                    <!--     <p style="margin: 0px;"><a>Placeholder SSID</a></p> -->
+                    <!--     <ul> -->
+                    <!--         <li>Strength: </li> -->
+                    <!--         <li>Security: </li> -->
+                    <!--     </ul> -->
+                    <!-- </li> -->
+                    <!-- <li> -->
+                    <!--     <p style="margin: 0px;"><a>Placeholder SSID</a></p> -->
+                    <!--     <ul> -->
+                    <!--         <li>Strength: </li> -->
+                    <!--         <li>Security: </li> -->
+                    <!--     </ul> -->
+                    <!-- </li> -->
+                    <li><span class="spinner">⢀⠀</span></li>
                 </ul>
-            </ul>
-
-            <div id="network_password_input_block" style="display: none;">
-                <p class="placeholder">Click on a network to connect.</p>
-                <p>Network SSID: <span id="connecting_network_ssid">placeholder for now</span> </p>
-                <div class="grid">
-                    <input type="text" name="password" placeholder="Network password.." style="flex-grow: 1;">
-                    <button id="network_connect" style="flex-basis: auto;">Connect</button>
-                    <button id="rescan" style="flex-basis: auto;">Rescan</button>
-                </div>
-            </div>
-        </div>
+            </li>
+            <li>
+                <p style="margin: 0px;"><strong>Diagnositics</strong></p>
+                <ul id="built_in_test_list">
+                    <li><span class="spinner">⢀⠀</span></li>
+                </ul>
+            </li>
+        </ul>
     </div>
 
-    <h2>Diagnostics</h2>
-    <div class="data_view">
-        <span class="spinner">⢀⠀</span>
-        <div style="display: none;">
-            <p>Tests are run on startup. Reboot Mote to refresh.</p>
-            <ul class=" tree">
-                <p style="margin: 0px;"><strong>Subsystems</strong></p>
-                <ul id="built_in_test_list">
-                    <li>
-                        <p style="margin: 0px;">WiFi</p>
-                        <ul>
-                            <li>Init <span style="color: lightgreen">✓</span></li>
-                            <li>Connected <span style="color: lightgreen">✓</span></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <p style="margin: 0px;">LiDAR</p>
-                        <ul>
-                            <li>Init <span style="color: lightgreen">✓</span></li>
-                            <li>Status <span style="color: lightgreen">✓</span></li>
-                            <li>Enable <span style="color: salmon">✖</span> </li>
-                            <li>Read Data <span style="color: salmon">✖</span></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <p style="margin: 0px;">IMU</p>
-                        <ul>
-                            <li>Init <span style="color: lightgreen">✓</span></li>
-                            <li>WhoAmI Check <span style="color: lightgreen">✓</span></li>
-                            <li>Read Data <span style="color: lightgreen">✓</span></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <p style="margin: 0px;">Wheel Encoders</p>
-                        <ul>
-                            <li>Left Init <span style="color: lightgreen">✓</span></li>
-                            <li>Right Init <span style="color: lightgreen">✓</span></li>
-                        </ul>
-                    </li>
-                </ul>
-            </ul>
-        </div>
+    <div>
+        <button id="serial_connect">Connect</button>
     </div>
 </body>
 

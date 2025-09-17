@@ -54,7 +54,7 @@ use embassy_sync::mutex::Mutex;
 use heapless::Vec;
 use mote_messages::configuration::mote_to_host::{BITCollection, State};
 
-static CONFIGURATION_STATE: Mutex<ThreadModeRawMutex, State> = Mutex::new(State {
+pub static CONFIGURATION_STATE: Mutex<ThreadModeRawMutex, State> = Mutex::new(State {
     uid: heapless::String::<20>::new(),
     current_network_connection: None,
     available_network_connections: Vec::new(),

@@ -9,13 +9,14 @@ use embassy_rp::gpio::{Level, Output};
 use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
 use leasehund::DhcpServer;
+use mote_messages::configuration::mote_to_host::{BIT, BITResult};
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 use postcard::{from_bytes, to_vec};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use super::{Cyw43Resources, Irqs};
-use crate::tasks::MOTE_TO_HOST;
+use crate::tasks::{CONFIGURATION_STATE, MOTE_TO_HOST};
 
 const SERVER_PORT: u16 = 1738;
 
@@ -161,6 +162,38 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
 
     // Generate random seed
     let seed = RoscRng.next_u64();
+
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: heapless::String::try_from("Init").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let connection = BIT {
+            name: heapless::String::try_from("Network").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let tcp = BIT {
+            name: heapless::String::try_from("TCP Up").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let multicast = BIT {
+            name: heapless::String::try_from("UDPMCAST").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let client = BIT {
+            name: heapless::String::try_from("Client").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        for test in [init, connection, tcp, multicast, client] {
+            configuration_state
+                .built_in_test
+                .wifi
+                .push(test)
+                .expect("Failed to add test");
+        }
+    }
 
     // Init network stack
     static RESOURCES: StaticCell<StackResources<3>> = StaticCell::new();

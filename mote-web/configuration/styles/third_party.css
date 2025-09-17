@@ -142,10 +142,11 @@ table {
  **/
 :root {
     --font-family: "JetBrains Mono", monospace;
-    --line-height: 1.20rem;
-    --border-thickness: 1px;
+    --line-height: 1.30rem;
+    --border-thickness: 2px;
     --text-color: #000;
     --text-color-alt: #666;
+    --tree-color: #888;
     --background-color: #fff;
     --background-color-alt: #eee;
 
@@ -573,7 +574,7 @@ label input {
     position: relative;
     padding-left: 1.5ch;
     margin-left: 1.5ch;
-    border-left: var(--border-thickness) solid var(--text-color);
+    border-left: var(--border-thickness) solid var(--tree-color);
 }
 
 .tree ul li:before {
@@ -583,21 +584,22 @@ label input {
     left: 0;
     content: "";
     width: 1ch;
-    border-bottom: var(--border-thickness) solid var(--text-color);
+    border-bottom: var(--border-thickness) solid var(--tree-color);
 }
 
 .tree ul li:last-child {
-    border-left: none;
+    border-left: 2px solid black;
+    padding-left: 1.5ch;
 }
 
 .tree ul li:last-child:after {
     position: absolute;
     display: block;
-    top: 0;
-    left: 0;
+    top: 0px;
+    left: calc(-1 * var(--border-thickness));
     content: "";
-    height: calc(var(--line-height) / 2);
-    border-left: var(--border-thickness) solid var(--text-color);
+    height: calc(var(--line-height) / 2 + var(--border-thickness));
+    border-left: var(--border-thickness) solid var(--tree-color);
 }
 
 .grid {

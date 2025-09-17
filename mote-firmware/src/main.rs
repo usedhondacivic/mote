@@ -7,7 +7,8 @@ use embassy_executor::Spawner;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::{
-    AssignedResources, Cyw43Resources, RplidarC1Resources, UsbSerialResources, lidar, usb_serial, wifi,
+    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, RplidarC1Resources, UsbSerialResources, lidar, usb_serial,
+    wifi,
 };
 
 mod tasks;
@@ -26,6 +27,12 @@ pub static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
 async fn main(spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
     let r = split_resources!(p);
+
+    /* Set initial configuration state */
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        (*configuration_state).uid = heapless::String::try_from("mote-:3").expect("Failed to assign to uid.");
+    }
 
     usb_serial::init(spawner, r.usb_serial).await;
     wifi::init(spawner, r.wifi).await;

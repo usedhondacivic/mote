@@ -70,7 +70,7 @@ pub mod configuration {
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct BIT {
-            pub name: heapless::String<10>,
+            pub name: heapless::String<20>,
             pub result: BITResult,
         }
 
@@ -107,7 +107,7 @@ pub mod configuration {
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct SetUID {
-            pub uid: heapless::String<20>,
+            pub uid: heapless::String<25>,
         }
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
