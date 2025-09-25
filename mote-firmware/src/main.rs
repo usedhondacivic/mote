@@ -11,6 +11,7 @@ use crate::tasks::{
     wifi,
 };
 
+mod helpers;
 mod tasks;
 
 // Program metadata for `picotool info`.

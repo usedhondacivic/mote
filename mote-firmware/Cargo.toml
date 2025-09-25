@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 mote-messages = { path = "../mote-messages" }
+mote-sansio-driver = { path = "../mote-sansio-driver" }
 
 embassy-embedded-hal = { version = "0.4.0", features = ["defmt"] }
 embassy-executor = { version = "0.8.0", features = [

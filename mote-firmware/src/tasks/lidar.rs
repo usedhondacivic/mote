@@ -2,10 +2,12 @@ use defmt::*;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{Config, DataBits, Parity, StopBits, Uart};
 use embassy_time::{Duration, TimeoutError, Timer, with_timeout};
+use mote_messages::configuration::mote_to_host::{BIT, BITResult};
 use mote_messages::runtime::mote_to_host;
 
 use super::{Irqs, RplidarC1Resources};
-use crate::tasks::MOTE_TO_HOST;
+use crate::helpers::update_bit_result;
+use crate::tasks::{CONFIGURATION_STATE, MOTE_TO_HOST};
 
 enum LidarState {
     Start,
@@ -166,5 +168,36 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 }
 
 pub async fn init(spawner: Spawner, r: RplidarC1Resources) {
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: heapless::String::try_from("Init").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let check_health = BIT {
+            name: heapless::String::try_from("Check Health").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let measurements = BIT {
+            name: heapless::String::try_from("Receiving Data").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        for test in [init, check_health, measurements] {
+            configuration_state
+                .built_in_test
+                .lidar
+                .push(test)
+                .expect("Failed to add test");
+        }
+    }
+
+    // Start task
     unwrap!(spawner.spawn(lidar_state_machine_task(r)));
+
+    // Update init state
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        update_bit_result(&mut configuration_state.built_in_test.lidar, "Init", BITResult::Pass);
+    }
 }

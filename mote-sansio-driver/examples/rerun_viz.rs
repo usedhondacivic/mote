@@ -51,42 +51,42 @@ fn main() -> anyhow::Result<()> {
         let (num_read, source) = socket.recv_from(&mut buf)?;
         println!("Received {} bytes from {}", num_read, source);
 
-        let message = comms.handle_receive(&mut buf[..num_read])?;
+        if let Some(message) = comms.handle_receive(&mut buf[..num_read])? {
+            // Check what kind of message we got
+            match message {
+                mote_to_host::Message::PingResponse => {
+                    println!("Got ping response from Mote.");
+                }
+                mote_to_host::Message::Ping => {
+                    println!("Mote pinged PC.");
+                    comms.send(socket_addr, host_to_mote::Message::PingResponse)?;
+                }
+                mote_to_host::Message::Scan(scan_data) => {
+                    // We got a LiDAR scan message, lets push the points to rerun for visualization
+                    let points: heapless::Vec<
+                        glam::Vec2,
+                        { mote_messages::runtime::mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE },
+                    > = scan_data
+                        .iter()
+                        .map(|point| {
+                            glam::Vec2::from_angle((point.angle as f32 / 64.0).to_radians())
+                                * (point.distance as f32 * 4.0)
+                                / 100.0
+                        })
+                        .collect();
 
-        // Check what kind of message we got
-        match message {
-            mote_to_host::Message::PingResponse => {
-                println!("Got ping response from Mote.");
-            }
-            mote_to_host::Message::Ping => {
-                println!("Mote pinged PC.");
-                comms.send(socket_addr, host_to_mote::Message::PingResponse)?;
-            }
-            mote_to_host::Message::Scan(scan_data) => {
-                // We got a LiDAR scan message, lets push the points to rerun for visualization
-                let points: heapless::Vec<
-                    glam::Vec2,
-                    { mote_messages::runtime::mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE },
-                > = scan_data
-                    .iter()
-                    .map(|point| {
-                        glam::Vec2::from_angle((point.angle as f32 / 64.0).to_radians())
-                            * (point.distance as f32 * 4.0)
-                            / 100.0
-                    })
-                    .collect();
+                    let colors: heapless::Vec<
+                        rerun::Color,
+                        { mote_messages::runtime::mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE },
+                    > = points.iter().map(|_| rerun::Color::WHITE).collect();
 
-                let colors: heapless::Vec<
-                    rerun::Color,
-                    { mote_messages::runtime::mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE },
-                > = points.iter().map(|_| rerun::Color::WHITE).collect();
-
-                rec.log(
-                    "my_points",
-                    &rerun::Points2D::new(points)
-                        .with_colors(colors)
-                        .with_radii([1.0]),
-                )?;
+                    rec.log(
+                        "my_points",
+                        &rerun::Points2D::new(points)
+                            .with_colors(colors)
+                            .with_radii([1.0]),
+                    )?;
+                }
             }
         }
     }

@@ -6,12 +6,12 @@ edition = "2024"
 [dependencies]
 mote-messages = { path = "../mote-messages" }
 
-serde = "1.0.*"
+serde = { version = "1.0.*", default-features = false, features = ["derive"] }
 # postcard does not re-export heapless, so care must be taken to keep them in lockstep
 postcard = "1.1.*"
 heapless-postcard = { package = "heapless", version = "0.7.1" }
-anyhow = "1.0.*"
 
 [dev-dependencies]
 heapless = "0.8"
 rerun = { version = "0.23.*", features = ["web_viewer"] }
+anyhow = "1.0"

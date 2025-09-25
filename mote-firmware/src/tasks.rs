@@ -52,10 +52,10 @@ static HOST_TO_MOTE: Channel<CriticalSectionRawMutex, mote_messages::runtime::ho
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::mutex::Mutex;
 use heapless::Vec;
-use mote_messages::configuration::mote_to_host::{BITCollection, State};
+use mote_messages::configuration::mote_to_host::{BITCollection, State, UID};
 
 pub static CONFIGURATION_STATE: Mutex<ThreadModeRawMutex, State> = Mutex::new(State {
-    uid: heapless::String::<20>::new(),
+    uid: UID::new(),
     current_network_connection: None,
     available_network_connections: Vec::new(),
     built_in_test: BITCollection {

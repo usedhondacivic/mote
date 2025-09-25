@@ -95,29 +95,44 @@
         let identification_list = document.querySelector('#identification_list');
         let network_list = document.querySelector('#network_list');
         let bit_list = document.querySelector('#built_in_test_list');
+
+        // We have preact at home
+        let state_cache;
+
         function handle_telem_recv(telem) {
+            let identification_list_content = "";
+            let network_list_content = "";
+            let bit_list_content = "";
             let state = telem?.Ok?.State;
             if (state) {
+                if (JSON.stringify(state) === JSON.stringify(state_cache)) {
+                    // No DOM update required
+                    return;
+                }
+
                 // Identification
-                identification_list.innerHTML = "";
-                identification_list.innerHTML += `
+                if (state?.uid !== state_cache?.uid) {
+                    identification_list_content = "";
+                    identification_list_content += `
                     <li>
                         Unique ID: ${state?.uid}
                     </li>
                 `;
+                    identification_list.innerHTML = identification_list_content;
+                }
 
                 // Connectivity
-                network_list.innerHTML = "";
-                if (state?.available_network_connections.length == 0) {
-                    network_list.innerHTML = `
+                if (JSON.stringify(state?.available_network_connections) !== JSON.stringify(state_cache?.available_network_connections)) {
+                    if (state?.available_network_connections.length == 0) {
+                        network_list_content = `
                     <li>
                         <p style="margin: 0px;">No networks available</p>
                     </li>
                     `;
-                } else {
-                    network_input_block.style.display = 'block';
-                    state?.available_network_connections?.forEach(connection => {
-                        network_list.innerHTML += `
+                    } else {
+                        network_input_block.style.display = 'block';
+                        state?.available_network_connections?.forEach(connection => {
+                            network_list_content += `
                         <li>
                             <p style="margin: 0px;">
                                 <a onclick='network_on_click(${connection})'>
@@ -130,32 +145,39 @@
                             </ul>
                         </li>
                         `;
-                    });
+                        });
+                    }
+                    network_list.innerHTML = network_list_content;
                 }
 
                 // Built In Test (BIT)
-                bit_list.innerHTML = "";
                 let result_map = {
                     "Waiting": ["#FDFD96", `<span class="short_spinner">${short_spinner_states[(short_spinner_state) % short_spinner_states.length]}</span>`],
                     "Pass": ["lightgreen", "✓"],
                     "Fail": ["salmon", "✖"],
                 };
-                Object.keys(state?.built_in_test).forEach(test_name => {
-                    let check_list = "";
-                    state?.built_in_test[test_name]?.forEach(check => {
-                        let content = result_map[check.result];
-                        check_list += `<li><span style="color: ${content[0]};">${content[1]}</span> ${check.name}</li>`;
-                        check_list += "\n";
-                    });
-                    bit_list.innerHTML += `
-                    <li>
-                        <p style="margin: 0px;">${test_name}</p>
-                        <ul>
-                            ${check_list != "" ? check_list : "<li>No checks found!</li>"}
-                        </ul>
-                    </li>
-                    `;
-                })
+                if (JSON.stringify(state?.built_in_test) !== JSON.stringify(state_cache?.built_in_test)) {
+                    Object.keys(state?.built_in_test).forEach(test_name => {
+                        let check_list = "";
+                        state?.built_in_test[test_name]?.forEach(check => {
+                            let content = result_map[check.result];
+                            check_list += `<li><span style="color: ${content[0]};">${content[1]}</span> ${check.name}</li>`;
+                            check_list += "\n";
+                        });
+                        bit_list_content += `
+                        <li>
+                            <p style="margin: 0px;">${test_name}</p>
+                            <ul>
+                                ${check_list != "" ? check_list : "<li>No checks found!</li>"}
+                            </ul>
+                        </li>
+                        `;
+                    })
+                    bit_list.innerHTML = bit_list_content;
+                }
+
+                // Update cache
+                state_cache = state;
 
                 // New spinners may have been added
                 long_spinners = document.querySelectorAll('.spinner');

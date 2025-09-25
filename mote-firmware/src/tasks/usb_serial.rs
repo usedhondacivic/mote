@@ -1,4 +1,4 @@
-use defmt::{info, unwrap, warn};
+use defmt::{info, unwrap};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_rp::peripherals::USB;
@@ -8,7 +8,7 @@ use embassy_usb::UsbDevice;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
 use mote_messages::configuration::{host_to_mote, mote_to_host};
-use postcard::{take_from_bytes_cobs, to_slice_cobs};
+use mote_sansio_driver::{MoteConfigurationLink, SerialEndpoint};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -31,43 +31,35 @@ impl From<EndpointError> for Disconnected {
     }
 }
 
+async fn handle_host_message(msg: &host_to_mote::Message) {
+    match msg {
+        host_to_mote::Message::SetNetworkConnectionConfig(set_network_connection_config) => todo!(),
+        host_to_mote::Message::SetUID(set_uid) => {
+            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+            configuration_state.uid = set_uid.uid.clone();
+        }
+        host_to_mote::Message::RequestNetworkScan => todo!(),
+    }
+}
+
 async fn handle_serial<'d, T: UsbInstance + 'd>(
     class: &mut CdcAcmClass<'d, UsbDriver<'d, T>>,
 ) -> Result<(), Disconnected> {
-    // TODO: postcard serialized size is currently experimental and not implemented
-    // as a constant fn. After that feature is stabilized, consider how to rightsize
-    // this buffer
-    let mut serialization_buffer = heapless::Vec::<u8, 256>::new();
+    // 64 bytes is the serial MTU
     let mut serial_buffer = [0; 64];
 
     // Periodic timer for telemetering state
     let mut ticker = Ticker::every(Duration::from_secs(1));
 
+    // Link to the host
+    let mut link = MoteConfigurationLink::new();
+
     loop {
         match select(class.read_packet(&mut serial_buffer), ticker.next()).await {
             Either::First(Ok(bytes_read)) => {
-                serialization_buffer
-                    .extend_from_slice(&serial_buffer[..bytes_read])
-                    .unwrap();
-                while let Some(end) = serialization_buffer.iter().position(|&x| x == 0) {
-                    let mut idx = 0;
-                    loop {
-                        match take_from_bytes_cobs::<host_to_mote::Message>(&mut serialization_buffer[idx..end + 1]) {
-                            Ok((msg, remainder)) => {
-                                info!("Got: {:?}", msg);
-                                serialization_buffer = heapless::Vec::from_slice(remainder).unwrap();
-                                break;
-                            }
-                            Err(postcard::Error::DeserializeBadEncoding) => {
-                                idx += 1;
-                            }
-                            Err(err) => {
-                                warn!("{:x}", err);
-                                serialization_buffer.clear();
-                                break;
-                            }
-                        }
-                    }
+                let result = link.handle_receive(&mut serial_buffer[..bytes_read]);
+                if let Ok(Some(message)) = result {
+                    handle_host_message(&message).await;
                 }
                 Ok(())
             }
@@ -77,16 +69,18 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                     with_timeout(Duration::from_millis(500), CONFIGURATION_STATE.lock()).await
                 {
                     let message = mote_to_host::Message::State(configuration_state.clone());
-                    let packet = to_slice_cobs(&message, &mut serial_buffer).unwrap();
-                    info!("Sending {:x}", packet);
-                    info!("Sending {:?}", *configuration_state);
-                    if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&packet)).await {
-                        res?;
-                    }
+                    link.send(SerialEndpoint, message).unwrap();
+                    info!("Queueing for send {:?}", *configuration_state);
                 }
                 Ok(())
             }
         }?;
+
+        while let Some(transmit) = link.poll_transmit() {
+            if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&transmit.payload)).await {
+                res?;
+            }
+        }
     }
 }
 

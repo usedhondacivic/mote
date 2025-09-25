@@ -9,7 +9,7 @@ pub mod runtime {
     pub mod mote_to_host {
         use serde::{Deserialize, Serialize};
 
-        pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 200;
+        pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 20;
 
         // Lidar Data
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
@@ -74,17 +74,21 @@ pub mod configuration {
             pub result: BITResult,
         }
 
+        pub type BITList = heapless::Vec<BIT, 5>;
+
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct BITCollection {
-            pub lidar: heapless::Vec<BIT, 5>,
-            pub imu: heapless::Vec<BIT, 5>,
-            pub wifi: heapless::Vec<BIT, 5>,
-            pub encoders: heapless::Vec<BIT, 5>,
+            pub lidar: BITList,
+            pub imu: BITList,
+            pub wifi: BITList,
+            pub encoders: BITList,
         }
+
+        pub type UID = heapless::String<25>;
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct State {
-            pub uid: heapless::String<20>,
+            pub uid: UID,
             pub current_network_connection: Option<NetworkConnection>,
             pub available_network_connections: heapless::Vec<NetworkConnection, 10>,
             pub built_in_test: BITCollection,
@@ -99,6 +103,8 @@ pub mod configuration {
     pub mod host_to_mote {
         use serde::{Deserialize, Serialize};
 
+        use crate::configuration::mote_to_host::UID;
+
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct SetNetworkConnectionConfig {
             pub ssid: heapless::String<32>,
@@ -107,7 +113,7 @@ pub mod configuration {
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub struct SetUID {
-            pub uid: heapless::String<25>,
+            pub uid: UID,
         }
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]

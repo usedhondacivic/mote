@@ -1,3 +1,5 @@
+use core::net::{IpAddr, Ipv4Addr, SocketAddr};
+
 use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
 use defmt::*;
 use embassy_executor::Spawner;
@@ -11,6 +13,7 @@ use embassy_rp::pio::Pio;
 use leasehund::DhcpServer;
 use mote_messages::configuration::mote_to_host::{BIT, BITResult};
 use mote_messages::runtime::{host_to_mote, mote_to_host};
+use mote_sansio_driver::MoteRuntimeLink;
 use postcard::{from_bytes, to_vec};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
@@ -63,27 +66,32 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
 
         let mut message_buffer = [0; 4096];
         let mut endpoint: Option<UdpMetadata> = None;
-        let mut serialize_buf: heapless_postcard::Vec<u8, 4096> = heapless_postcard::Vec::new();
+
+        let mut link = MoteRuntimeLink::new();
+
         loop {
             match select(socket.recv_from(&mut message_buffer), MOTE_TO_HOST.receive()).await {
                 Either::First(Ok((bytes_read, ep))) => {
                     info!("Read {} bytes from {}.", bytes_read, ep);
-                    let rx_message: host_to_mote::Message = from_bytes(&message_buffer).unwrap();
-                    parse_message(&rx_message, ep, &mut socket).await.unwrap();
-                    endpoint = Some(ep);
+                    if let Ok(Some(message)) = link.handle_receive(&mut message_buffer[..bytes_read]) {
+                        parse_message(&message, ep, &mut socket).await.unwrap();
+                        endpoint = Some(ep);
+                    }
                 }
                 Either::First(Err(err)) => error!("TCP server received error {}", err),
                 Either::Second(tx_message) => {
-                    // TODO:
-                    // * postcard serialized size is currently experimental and not implemented as
-                    // a constant fn. After that feature is stabilized, consider how to rightsize
-                    // this buffer
-                    // * add anyhow and avoid this unwrap
-                    serialize_buf = to_vec(&tx_message).unwrap();
-                    if let Some(ep) = endpoint {
-                        if let Err(error) = socket.send_to(&serialize_buf, ep).await {
-                            error!("TX message failed, got {}", error);
-                        }
+                    link.send(
+                        SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080),
+                        tx_message,
+                    )
+                    .unwrap();
+                }
+            }
+
+            if let Some(ep) = endpoint {
+                if let Some(transmit) = link.poll_transmit() {
+                    if let Err(error) = socket.send_to(&transmit.payload, ep).await {
+                        error!("TX message failed, got {:?}", error);
                     }
                 }
             }
@@ -171,19 +179,19 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
             result: BITResult::Waiting,
         };
         let connection = BIT {
-            name: heapless::String::try_from("Network").expect("Failed to assign name to BIT"),
+            name: heapless::String::try_from("Wifi Driver UP").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
         let tcp = BIT {
-            name: heapless::String::try_from("TCP Up").expect("Failed to assign name to BIT"),
+            name: heapless::String::try_from("TCP UP").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
         let multicast = BIT {
-            name: heapless::String::try_from("UDPMCAST").expect("Failed to assign name to BIT"),
+            name: heapless::String::try_from("UDP Multicast UP").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
         let client = BIT {
-            name: heapless::String::try_from("Client").expect("Failed to assign name to BIT"),
+            name: heapless::String::try_from("Client Connected").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
         for test in [init, connection, tcp, multicast, client] {
