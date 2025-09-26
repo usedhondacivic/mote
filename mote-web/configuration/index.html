@@ -122,6 +122,12 @@
                 }
 
                 // Connectivity
+                let current_connection = state?.current_network_connection?.replace(/\0/g, '').trim();
+                state?.available_network_connections.sort((a, b) => {
+                    if (a?.ssid.replace(/\0/g, '').trim() == current_connection) {return -1};
+                    if (b?.ssid.replace(/\0/g, '').trim() == current_connection) {return 1};
+                    return a?.strength - b?.strength;
+                });
                 if (JSON.stringify(state?.available_network_connections) !== JSON.stringify(state_cache?.available_network_connections)) {
                     if (state?.available_network_connections.length == 0) {
                         network_list_content = `
@@ -130,18 +136,19 @@
                     </li>
                     `;
                     } else {
-                        network_input_block.style.display = 'block';
+                        // network_input_block.style.display = 'block';
                         state?.available_network_connections?.forEach(connection => {
+                            console.log(escape(connection?.ssid.replace(/\0/g, '').trim()) + " | " + escape(state?.current_network_connection.replace(/\0/g, '').trim()));
+                            console.log(connection?.ssid.trim() == state?.current_network_connection.trim());
                             network_list_content += `
                         <li>
                             <p style="margin: 0px;">
                                 <a onclick='network_on_click(${connection})'>
-                                    ${connection?.ssid}${connection == state?.current_network_connection ? "<- currently connected" : ""}
-                                </a>
+                                    ${connection?.ssid}
+                                </a> ${connection?.ssid.replace(/\0/g, '').trim() == current_connection ? "<- currently connected" : ""}
                             </p>
                             <ul>
                                 <li>Strength: ${connection?.strength}</li>
-                                <li>Security: ${connection?.security}</li>
                             </ul>
                         </li>
                         `;

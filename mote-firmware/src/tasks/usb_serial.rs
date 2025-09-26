@@ -70,7 +70,6 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                 {
                     let message = mote_to_host::Message::State(configuration_state.clone());
                     link.send(SerialEndpoint, message).unwrap();
-                    info!("Queueing for send {:?}", *configuration_state);
                 }
                 Ok(())
             }

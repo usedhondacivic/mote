@@ -30,7 +30,7 @@ where
     O: Serialize,                 // Output type
 {
     buffered_transmits: Deque<Transmit<T, MTU>, 10>,
-    deserialization_buffer: Vec<u8, B>,
+    serialization_buffer: Vec<u8, B>,
     in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 }
@@ -45,7 +45,7 @@ where
     pub fn new() -> Self {
         Self {
             buffered_transmits: Deque::new(),
-            deserialization_buffer: Vec::new(),
+            serialization_buffer: Vec::new(),
             in_type: PhantomData,
             out_type: PhantomData,
         }
@@ -74,33 +74,31 @@ where
     // Receive a message from raw bytes
     pub fn handle_receive(&mut self, packet: &mut [u8]) -> Result<Option<I>, postcard::Error> {
         // Push the recieved bytes into the serialization buffer
-        if let Err(_) = self.deserialization_buffer.extend_from_slice(packet) {
+        if let Err(_) = self.serialization_buffer.extend_from_slice(packet) {
             // We can't add to the buffer because it is full
             // Clear it and append
-            self.deserialization_buffer.clear();
-            self.deserialization_buffer
-                .extend_from_slice(packet)
-                .unwrap();
+            self.serialization_buffer.clear();
+            self.serialization_buffer.extend_from_slice(packet).unwrap();
         }
 
         // Check if the buffer contains the COBS delimiter (zero)
-        while let Some(end) = self.deserialization_buffer.iter().position(|&x| x == 0) {
+        while let Some(end) = self.serialization_buffer.iter().position(|&x| x == 0) {
             // If it does, attempt to deserialize
             // If deserialization fails, try again ignoring an additional byte from the start of
             // the buffer
             // This allows us to discard malformed packets
             let mut idx = 0;
             loop {
-                match take_from_bytes_cobs::<I>(&mut self.deserialization_buffer[idx..end + 1]) {
+                match take_from_bytes_cobs::<I>(&mut self.serialization_buffer[idx..end + 1]) {
                     Ok((msg, remainder)) => {
-                        self.deserialization_buffer = Vec::from_slice(remainder).unwrap();
+                        self.serialization_buffer = Vec::from_slice(remainder).unwrap();
                         return Ok(Some(msg));
                     }
                     Err(postcard::Error::DeserializeBadEncoding) => {
                         idx += 1;
                     }
                     Err(err) => {
-                        self.deserialization_buffer.clear();
+                        self.serialization_buffer.clear();
                         return Err(err);
                     }
                 }
@@ -145,7 +143,7 @@ pub type HostConfigurationLink = SansIo<
 pub type MoteConfigurationLink = SansIo<
     SerialEndpoint,
     64,
-    250,
+    1000,
     configuration::host_to_mote::Message,
     configuration::mote_to_host::Message,
 >;

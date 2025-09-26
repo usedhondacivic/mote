@@ -1,27 +1,30 @@
+use core::cmp::min;
 use core::net::{IpAddr, Ipv4Addr, SocketAddr};
 
+use cyw43::JoinOptions;
 use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
 use defmt::*;
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
+use embassy_net::Stack;
 use embassy_net::udp::{PacketMetadata, UdpMetadata, UdpSocket};
-use embassy_net::{Config, Stack, StackResources};
-use embassy_rp::clocks::RoscRng;
 use embassy_rp::gpio::{Level, Output};
 use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
-use leasehund::DhcpServer;
-use mote_messages::configuration::mote_to_host::{BIT, BITResult};
+use mote_messages::configuration::mote_to_host::{BIT, BITResult, NetworkConnection};
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 use mote_sansio_driver::MoteRuntimeLink;
-use postcard::{from_bytes, to_vec};
+use postcard::to_vec;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use super::{Cyw43Resources, Irqs};
+use crate::helpers::update_bit_result;
 use crate::tasks::{CONFIGURATION_STATE, MOTE_TO_HOST};
 
 const SERVER_PORT: u16 = 1738;
+
+async fn run_network_scan() {}
 
 async fn parse_message(
     rx_message: &host_to_mote::Message,
@@ -109,21 +112,39 @@ async fn net_task(mut runner: embassy_net::Runner<'static, cyw43::NetDriver<'sta
     runner.run().await
 }
 
-#[embassy_executor::task]
-async fn dhcp_server_task(stack: Stack<'static>) -> ! {
-    let mut dhcp_server: DhcpServer<32, 4> = DhcpServer::new_with_dns(
-        embassy_net::Ipv4Address::new(192, 168, 1, 1),   // Server IP
-        embassy_net::Ipv4Address::new(255, 255, 255, 0), // Subnet mask
-        embassy_net::Ipv4Address::new(192, 168, 1, 1),   // Router/Gateway
-        embassy_net::Ipv4Address::new(8, 8, 8, 8),       // DNS server
-        embassy_net::Ipv4Address::new(192, 168, 1, 100), // IP pool start
-        embassy_net::Ipv4Address::new(192, 168, 1, 200), // IP pool end
-    );
-
-    dhcp_server.run(stack).await;
-}
-
 pub async fn init(spawner: Spawner, r: Cyw43Resources) {
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: heapless::String::try_from("Init").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let connection = BIT {
+            name: heapless::String::try_from("Connected to Network").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let tcp = BIT {
+            name: heapless::String::try_from("TCP UP").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let multicast = BIT {
+            name: heapless::String::try_from("UDP Multicast UP").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        let client = BIT {
+            name: heapless::String::try_from("Client Connected").expect("Failed to assign name to BIT"),
+            result: BITResult::Waiting,
+        };
+        for test in [init, connection, tcp, multicast, client] {
+            configuration_state
+                .built_in_test
+                .wifi
+                .push(test)
+                .expect("Failed to add test");
+        }
+    }
+
     // let fw = include_bytes!("../cyw43-firmware/43439A0.bin");
     // let clm = include_bytes!("../cyw43-firmware/43439A0_clm.bin");
 
@@ -161,59 +182,95 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
         .set_power_management(cyw43::PowerManagementMode::PowerSave)
         .await;
 
-    // Use a link-local address for communication without an external DHCP server
-    let config = Config::ipv4_static(embassy_net::StaticConfigV4 {
-        address: embassy_net::Ipv4Cidr::new(embassy_net::Ipv4Address::new(192, 168, 1, 1), 16),
-        dns_servers: heapless::Vec::new(),
-        gateway: None,
-    });
-
-    // Generate random seed
-    let seed = RoscRng.next_u64();
-
-    // Init BIT
+    // Update current network
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
-            name: heapless::String::try_from("Init").expect("Failed to assign name to BIT"),
-            result: BITResult::Waiting,
-        };
-        let connection = BIT {
-            name: heapless::String::try_from("Wifi Driver UP").expect("Failed to assign name to BIT"),
-            result: BITResult::Waiting,
-        };
-        let tcp = BIT {
-            name: heapless::String::try_from("TCP UP").expect("Failed to assign name to BIT"),
-            result: BITResult::Waiting,
-        };
-        let multicast = BIT {
-            name: heapless::String::try_from("UDP Multicast UP").expect("Failed to assign name to BIT"),
-            result: BITResult::Waiting,
-        };
-        let client = BIT {
-            name: heapless::String::try_from("Client Connected").expect("Failed to assign name to BIT"),
-            result: BITResult::Waiting,
-        };
-        for test in [init, connection, tcp, multicast, client] {
-            configuration_state
-                .built_in_test
-                .wifi
-                .push(test)
-                .expect("Failed to add test");
+        update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
+    }
+
+    while let Err(err) = control
+        .join("<network ssid>", JoinOptions::new("<network password>".as_bytes()))
+        .await
+    {
+        info!("join failed with status={}", err.status);
+    }
+
+    // Update current network
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        configuration_state.current_network_connection =
+            Some(heapless::String::try_from("pew pew zing balm pop pew splat").expect(""));
+        update_bit_result(
+            &mut configuration_state.built_in_test.wifi,
+            "Connected to Network",
+            BITResult::Pass,
+        );
+    }
+
+    let mut scanner = control.scan(Default::default()).await;
+    while let Some(bss) = scanner.next().await {
+        if let Ok(ssid_str) = str::from_utf8(&bss.ssid) {
+            info!("scanned {} == {:x} -- {}", ssid_str, bss.bssid, bss.ssid);
+            if bss.ssid.iter().all(|&n| n == 0) {
+                continue;
+            }
+
+            // Update available networks
+            {
+                let mut configuration_state = CONFIGURATION_STATE.lock().await;
+
+                let new_connection = NetworkConnection {
+                    ssid: heapless::String::try_from(ssid_str)
+                        .expect("Failed to create SSID from the value returned by the scan."),
+                    strength: -bss.rssi as u8,
+                };
+
+                // Check if this network is already listed
+                if let Some(item) = configuration_state
+                    .available_network_connections
+                    .iter_mut()
+                    .find(|i| i.ssid == new_connection.ssid)
+                {
+                    item.strength = min(item.strength, new_connection.strength);
+                    continue;
+                }
+
+                // If we've run out of entries, drop the weakest
+                if configuration_state.available_network_connections.is_full() {
+                    let (weakest_index, weakest) = configuration_state
+                        .available_network_connections
+                        .iter()
+                        .enumerate()
+                        .max_by_key(|&(_index, val)| val.strength)
+                        .unwrap();
+
+                    if weakest.strength > new_connection.strength {
+                        configuration_state.available_network_connections.remove(weakest_index);
+                    }
+                }
+
+                let _ = configuration_state.available_network_connections.push(new_connection);
+            }
         }
     }
 
-    // Init network stack
-    static RESOURCES: StaticCell<StackResources<3>> = StaticCell::new();
-    let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
-    unwrap!(spawner.spawn(net_task(runner)));
-
-    // Start a DCHP server
-    unwrap!(spawner.spawn(dhcp_server_task(stack)));
-
-    // Open an AP for the client
-    control.start_ap_open("mote", 5).await;
-
-    // Start the core tcp server
-    unwrap!(spawner.spawn(tcp_server_task(stack)));
+    // let config = Config::dhcpv4(Default::default());
+    //
+    // // Generate random seed
+    // let seed = RoscRng.next_u64();
+    //
+    // // Init network stack
+    // static RESOURCES: StaticCell<StackResources<3>> = StaticCell::new();
+    // let (stack, runner) = embassy_net::new(net_device, config,
+    // RESOURCES.init(StackResources::new()), seed); unwrap!(spawner.
+    // spawn(net_task(runner)));
+    //
+    // // Start the core tcp server
+    // unwrap!(spawner.spawn(tcp_server_task(stack)));
+    //
+    // // Update init state
+    // {
+    //     let mut configuration_state = CONFIGURATION_STATE.lock().await;
+    //     update_bit_result(&mut configuration_state.built_in_test.wifi,
+    // "Init", BITResult::Pass); }
 }

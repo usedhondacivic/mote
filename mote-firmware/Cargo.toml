@@ -70,7 +70,6 @@ serde = { version = "1.0.*", default-features = false, features = ["derive"] }
 serde_with = { version = "3.14.0", default-features = false, features = [
     "macros",
 ] }
-leasehund = "0.2.0"
 
 [profile.release]
 debug = 2

@@ -9,7 +9,10 @@ mote-messages = { path = "../mote-messages" }
 serde = { version = "1.0.*", default-features = false, features = ["derive"] }
 # postcard does not re-export heapless, so care must be taken to keep them in lockstep
 postcard = "1.1.*"
-heapless-postcard = { package = "heapless", version = "0.7.1" }
+heapless-postcard = { package = "heapless", version = "0.7.1", features = [
+    "defmt-impl",
+    "serde",
+] }
 
 [dev-dependencies]
 heapless = "0.8"

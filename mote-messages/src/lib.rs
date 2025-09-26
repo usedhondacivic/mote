@@ -58,8 +58,7 @@ pub mod configuration {
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct NetworkConnection {
             pub ssid: heapless::String<32>,
-            pub strength: u8,
-            pub connected: bool,
+            pub strength: u8, // rssi
         }
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub enum BITResult {
@@ -78,9 +77,9 @@ pub mod configuration {
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct BITCollection {
+            pub wifi: BITList,
             pub lidar: BITList,
             pub imu: BITList,
-            pub wifi: BITList,
             pub encoders: BITList,
         }
 
@@ -89,7 +88,7 @@ pub mod configuration {
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct State {
             pub uid: UID,
-            pub current_network_connection: Option<NetworkConnection>,
+            pub current_network_connection: Option<heapless::String<32>>,
             pub available_network_connections: heapless::Vec<NetworkConnection, 10>,
             pub built_in_test: BITCollection,
         }

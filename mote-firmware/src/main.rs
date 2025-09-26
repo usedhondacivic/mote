@@ -33,6 +33,9 @@ async fn main(spawner: Spawner) {
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         (*configuration_state).uid = heapless::String::try_from("mote-:3").expect("Failed to assign to uid.");
+
+        // TODO: read / write wifi configuration to flash, then use it to update
+        // config
     }
 
     usb_serial::init(spawner, r.usb_serial).await;

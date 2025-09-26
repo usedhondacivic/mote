@@ -70,7 +70,17 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                         Ok(()) => {
                             if resp[0..7] == [0xA5, 0x5A, 0x03, 0x00, 0x00, 0x00, 0x06] {
                                 match resp[7] {
-                                    0x00 => next_state = LidarState::ScanRequest,
+                                    0x00 => {
+                                        next_state = LidarState::ScanRequest;
+                                        {
+                                            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                                            update_bit_result(
+                                                &mut configuration_state.built_in_test.lidar,
+                                                "Check Health",
+                                                BITResult::Pass,
+                                            );
+                                        }
+                                    }
                                     status => {
                                         error!(
                                             "LiDAR GET_HEALTH returned status code {} and error code {}",
@@ -160,6 +170,14 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                     .send(mote_to_host::Message::Scan(scan_points.clone()))
                     .await;
                 scan_points.clear();
+                {
+                    let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                    update_bit_result(
+                        &mut configuration_state.built_in_test.lidar,
+                        "Receiving Data",
+                        BITResult::Pass,
+                    );
+                }
                 LidarState::ReceiveSample
             }
             LidarState::Stop => LidarState::Reset,

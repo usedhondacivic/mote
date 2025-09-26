@@ -992,18 +992,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "leasehund"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19d29b22cbec3090d936f75cd482130286eb1f3d566c89f4914c6d51147be974"
-dependencies = [
- "embassy-net",
- "embassy-time 0.4.0",
- "heapless 0.8.0",
- "smoltcp",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.175"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1065,7 +1053,6 @@ dependencies = [
  "embedded-io-async",
  "heapless 0.7.17",
  "heapless 0.8.0",
- "leasehund",
  "mote-messages",
  "mote-sansio-driver",
  "panic-probe",
