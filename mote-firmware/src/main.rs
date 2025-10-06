@@ -3,7 +3,10 @@
 #![allow(async_fn_in_trait)]
 #![feature(impl_trait_in_assoc_type)]
 
-use embassy_executor::Spawner;
+use defmt::{info, unwrap};
+use embassy_executor::{Executor, Spawner};
+use embassy_rp::multicore::{Stack, spawn_core1};
+use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::{
@@ -24,10 +27,38 @@ pub static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
     embassy_rp::binary_info::rp_program_build_attribute!(),
 ];
 
-#[embassy_executor::main]
-async fn main(spawner: Spawner) {
+static mut CORE1_STACK: Stack<10000> = Stack::new();
+static EXECUTOR0: StaticCell<Executor> = StaticCell::new();
+static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
+
+#[cortex_m_rt::entry]
+fn main() -> ! {
     let p = embassy_rp::init(Default::default());
     let r = split_resources!(p);
+
+    spawn_core1(
+        p.CORE1,
+        unsafe { &mut *core::ptr::addr_of_mut!(CORE1_STACK) },
+        move || {
+            let executor1 = EXECUTOR1.init(Executor::new());
+            executor1.run(|spawner| unwrap!(spawner.spawn(core1_task(spawner, r.usb_serial, r.lidar_uart))));
+        },
+    );
+
+    let executor0 = EXECUTOR0.init(Executor::new());
+    executor0.run(|spawner| unwrap!(spawner.spawn(core0_task(spawner, r.wifi))));
+}
+
+#[embassy_executor::task]
+async fn core0_task(spawner: Spawner, r: Cyw43Resources) {
+    info!("Core 0 spawned");
+
+    wifi::init(spawner, r).await;
+}
+
+#[embassy_executor::task]
+async fn core1_task(spawner: Spawner, r_usb: UsbSerialResources, r_lidar: RplidarC1Resources) {
+    info!("Core 1 spawned");
 
     /* Set initial configuration state */
     {
@@ -38,7 +69,6 @@ async fn main(spawner: Spawner) {
         // config
     }
 
-    usb_serial::init(spawner, r.usb_serial).await;
-    wifi::init(spawner, r.wifi).await;
-    lidar::init(spawner, r.lidar_uart).await
+    usb_serial::init(spawner, r_usb).await;
+    lidar::init(spawner, r_lidar).await
 }

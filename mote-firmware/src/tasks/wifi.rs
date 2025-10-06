@@ -1,16 +1,30 @@
 use core::cmp::min;
-use core::net::{IpAddr, Ipv4Addr, SocketAddr};
+use core::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 
 use cyw43::JoinOptions;
 use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
 use defmt::*;
+use edge_mdns::HostAnswersMdnsHandler;
+use edge_mdns::buf::VecBufAccess;
+use edge_mdns::domain::base::Ttl;
+use edge_mdns::host::{Host, Service, ServiceAnswers};
+use edge_mdns::io::{self, IPV4_DEFAULT_SOCKET};
+use edge_nal::UdpSplit;
+use edge_nal_embassy::{Udp, UdpBuffers};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
-use embassy_net::Stack;
+use embassy_net::tcp::TcpSocket;
 use embassy_net::udp::{PacketMetadata, UdpMetadata, UdpSocket};
+use embassy_net::{Config, IpAddress, IpEndpoint, Stack, StackResources};
+use embassy_rp::clocks::RoscRng;
 use embassy_rp::gpio::{Level, Output};
 use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
+use embassy_rp::usb::Endpoint;
+use embassy_sync::blocking_mutex::raw::NoopRawMutex;
+use embassy_sync::signal::Signal;
+use embassy_time::{Duration, Ticker};
+use embedded_io_async::Write;
 use mote_messages::configuration::mote_to_host::{BIT, BITResult, NetworkConnection};
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 use mote_sansio_driver::MoteRuntimeLink;
@@ -26,16 +40,15 @@ const SERVER_PORT: u16 = 1738;
 
 async fn run_network_scan() {}
 
-async fn parse_message(
+async fn parse_message<'a>(
     rx_message: &host_to_mote::Message,
-    endpoint: UdpMetadata,
-    socket: &mut UdpSocket<'static>,
-) -> Result<(), embassy_net::udp::SendError> {
+    endpoint_addr: Ipv4Addr,
+    link: &mut MoteRuntimeLink,
+) -> Result<(), embassy_net::tcp::Error> {
     match rx_message {
         host_to_mote::Message::Ping => {
-            let buf: heapless_postcard::Vec<u8, 100> = to_vec(&mote_to_host::Message::PingResponse).unwrap();
             info!("Parsed ping request, responding.");
-            socket.send_to(&buf, endpoint).await?;
+            link.send(endpoint_addr, mote_to_host::Message::PingResponse);
         }
         host_to_mote::Message::PingResponse => {
             info!("Received ping response from host.")
@@ -50,53 +63,135 @@ async fn parse_message(
 #[embassy_executor::task]
 async fn tcp_server_task(stack: Stack<'static>) -> ! {
     loop {
-        static TX_BUFFER: StaticCell<[u8; 4096]> = StaticCell::new();
-        static TX_META: StaticCell<[PacketMetadata; 16]> = StaticCell::new();
-        let tx_buffer = &mut TX_BUFFER.init([0; 4096])[..];
-        let tx_meta = &mut TX_META.init([PacketMetadata::EMPTY; 16])[..];
-
-        static RX_BUFFER: StaticCell<[u8; 4096]> = StaticCell::new();
-        static RX_META: StaticCell<[PacketMetadata; 16]> = StaticCell::new();
-        let rx_buffer = &mut RX_BUFFER.init([0; 4096])[..];
-        let rx_meta = &mut RX_META.init([PacketMetadata::EMPTY; 16])[..];
-
-        let mut socket = UdpSocket::new(stack, rx_meta, rx_buffer, tx_meta, tx_buffer);
-
-        if let Err(e) = socket.bind(SERVER_PORT) {
-            warn!("bind error: {:?}", e);
-            continue;
-        }
-
-        let mut message_buffer = [0; 4096];
-        let mut endpoint: Option<UdpMetadata> = None;
-
-        let mut link = MoteRuntimeLink::new();
+        let mut rx_buffer = [0; 4096];
+        let mut tx_buffer = [0; 4096];
 
         loop {
-            match select(socket.recv_from(&mut message_buffer), MOTE_TO_HOST.receive()).await {
-                Either::First(Ok((bytes_read, ep))) => {
-                    info!("Read {} bytes from {}.", bytes_read, ep);
-                    if let Ok(Some(message)) = link.handle_receive(&mut message_buffer[..bytes_read]) {
-                        parse_message(&message, ep, &mut socket).await.unwrap();
-                        endpoint = Some(ep);
-                    }
-                }
-                Either::First(Err(err)) => error!("TCP server received error {}", err),
-                Either::Second(tx_message) => {
-                    link.send(
-                        SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080),
-                        tx_message,
-                    )
-                    .unwrap();
-                }
+            let mut socket = TcpSocket::new(stack, &mut rx_buffer, &mut tx_buffer);
+
+            if let Err(e) = socket.accept(SERVER_PORT).await {
+                warn!("bind error: {:?}", e);
+                continue;
             }
 
-            if let Some(ep) = endpoint {
-                if let Some(transmit) = link.poll_transmit() {
-                    if let Err(error) = socket.send_to(&transmit.payload, ep).await {
-                        error!("TX message failed, got {:?}", error);
+            info!("Received connection from {:?}", socket.remote_endpoint());
+
+            let mut message_buffer = [0; 4096];
+
+            let mut link = MoteRuntimeLink::new();
+
+            loop {
+                match select(socket.read(&mut message_buffer), MOTE_TO_HOST.receive()).await {
+                    Either::First(Ok(0)) => {
+                        info!("Socket connection closed");
+                        break;
+                    }
+                    Either::First(Ok(bytes_read)) => {
+                        link.handle_receive(&mut message_buffer[..bytes_read]);
+                        if let Ok(Some(message)) = link.poll_receive() {
+                            if let Some(endpoint) = socket.remote_endpoint() {
+                                if let IpAddress::Ipv4(ip) = endpoint.addr {
+                                    parse_message(&message, ip, &mut link).await.unwrap();
+                                }
+                            }
+                        }
+                    }
+                    Either::First(Err(embassy_net::tcp::Error::ConnectionReset)) => {
+                        break;
+                    }
+                    Either::Second(tx_message) => {
+                        if let Some(endpoint) = socket.remote_endpoint() {
+                            if let IpAddress::Ipv4(ip) = endpoint.addr {
+                                link.send(ip, tx_message).unwrap();
+                            }
+                        }
                     }
                 }
+
+                if let Some(transmit) = link.poll_transmit() {
+                    if let Err(error) = socket.write_all(&transmit.payload).await {
+                        error!("TX message failed, got {:?}", error);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[embassy_executor::task]
+async fn mdns_task(stack: Stack<'static>) -> ! {
+    // Wait to get an IP
+    stack.wait_config_up().await;
+    let ip = stack.config_v4().unwrap().address.address();
+    info!("Got ip: {}", ip);
+
+    info!(
+        "Running mDNS responder. It will be addressable using {}.local, so try to `ping {}.local`.",
+        "mote", "mote"
+    );
+
+    let udp_buffers = UdpBuffers::<4, 1500, 1500, 2>::new();
+    let udp_stack = Udp::new(stack, &udp_buffers);
+
+    let mut socket = io::bind(&udp_stack, IPV4_DEFAULT_SOCKET, Some(Ipv4Addr::UNSPECIFIED), None)
+        .await
+        .unwrap();
+
+    let (recv_buf, send_buf) = (
+        VecBufAccess::<NoopRawMutex, 1500>::new(),
+        VecBufAccess::<NoopRawMutex, 1500>::new(),
+    );
+
+    let (recv, send) = socket.split();
+
+    let host = Host {
+        hostname: "mote",
+        ipv4: ip,
+        ipv6: Ipv6Addr::UNSPECIFIED,
+        ttl: Ttl::from_secs(60),
+    };
+
+    let service = Service {
+        name: "Mote Telemetry Stream",
+        priority: 1,
+        weight: 5,
+        service: "_mote",
+        protocol: "_tcp",
+        port: SERVER_PORT,
+        service_subtypes: &[],
+        txt_kvs: &[],
+    };
+
+    let signal = Signal::new();
+
+    let mdns = io::Mdns::<NoopRawMutex, _, _, _, _>::new(
+        Some(Ipv4Addr::UNSPECIFIED),
+        None,
+        recv,
+        send,
+        recv_buf,
+        send_buf,
+        |buf| RoscRng.fill_bytes(buf),
+        &signal,
+    );
+
+    // Periodic timer for refreshing
+    let mut ticker = Ticker::every(Duration::from_secs(15));
+
+    loop {
+        match select(
+            mdns.run(HostAnswersMdnsHandler::new(ServiceAnswers::new(&host, &service))),
+            ticker.next(),
+        )
+        .await
+        {
+            Either::First(Ok(())) => {}
+            Either::First(Err(e)) => {
+                warn!("mDNS exited with error: {:?}", e);
+            }
+            Either::Second(_) => {
+                signal.signal(());
             }
         }
     }
@@ -124,19 +219,19 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
             name: heapless::String::try_from("Connected to Network").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
-        let tcp = BIT {
-            name: heapless::String::try_from("TCP UP").expect("Failed to assign name to BIT"),
+        let ip_v4 = BIT {
+            name: heapless::String::try_from("IPV4 UP").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
         let multicast = BIT {
-            name: heapless::String::try_from("UDP Multicast UP").expect("Failed to assign name to BIT"),
+            name: heapless::String::try_from("mDNS UP").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
         let client = BIT {
             name: heapless::String::try_from("Client Connected").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
-        for test in [init, connection, tcp, multicast, client] {
+        for test in [init, connection, ip_v4, multicast, client] {
             configuration_state
                 .built_in_test
                 .wifi
@@ -182,14 +277,13 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
         .set_power_management(cyw43::PowerManagementMode::PowerSave)
         .await;
 
-    // Update current network
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
     }
 
     while let Err(err) = control
-        .join("<network ssid>", JoinOptions::new("<network password>".as_bytes()))
+        .join("pew pew zing balm pop pew splat", JoinOptions::new("_".as_bytes()))
         .await
     {
         info!("join failed with status={}", err.status);
@@ -210,7 +304,6 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     let mut scanner = control.scan(Default::default()).await;
     while let Some(bss) = scanner.next().await {
         if let Ok(ssid_str) = str::from_utf8(&bss.ssid) {
-            info!("scanned {} == {:x} -- {}", ssid_str, bss.bssid, bss.ssid);
             if bss.ssid.iter().all(|&n| n == 0) {
                 continue;
             }
@@ -254,23 +347,24 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
         }
     }
 
-    // let config = Config::dhcpv4(Default::default());
-    //
-    // // Generate random seed
-    // let seed = RoscRng.next_u64();
-    //
-    // // Init network stack
-    // static RESOURCES: StaticCell<StackResources<3>> = StaticCell::new();
-    // let (stack, runner) = embassy_net::new(net_device, config,
-    // RESOURCES.init(StackResources::new()), seed); unwrap!(spawner.
-    // spawn(net_task(runner)));
-    //
+    let config = Config::dhcpv4(Default::default());
+
+    // Generate random seed
+    let seed = RoscRng.next_u64();
+
+    // Init network stack
+    static RESOURCES: StaticCell<StackResources<5>> = StaticCell::new();
+    let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
+    unwrap!(spawner.spawn(net_task(runner)));
+
     // // Start the core tcp server
-    // unwrap!(spawner.spawn(tcp_server_task(stack)));
-    //
-    // // Update init state
-    // {
-    //     let mut configuration_state = CONFIGURATION_STATE.lock().await;
-    //     update_bit_result(&mut configuration_state.built_in_test.wifi,
-    // "Init", BITResult::Pass); }
+    unwrap!(spawner.spawn(tcp_server_task(stack)));
+
+    // Update init state
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
+    }
+
+    unwrap!(spawner.spawn(mdns_task(stack)));
 }

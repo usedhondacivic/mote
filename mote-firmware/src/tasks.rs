@@ -49,12 +49,11 @@ static HOST_TO_MOTE: Channel<CriticalSectionRawMutex, mote_messages::runtime::ho
     Channel::new();
 
 // and init global configuration state
-use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::mutex::Mutex;
 use heapless::Vec;
 use mote_messages::configuration::mote_to_host::{BITCollection, State, UID};
 
-pub static CONFIGURATION_STATE: Mutex<ThreadModeRawMutex, State> = Mutex::new(State {
+pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::new(State {
     uid: UID::new(),
     current_network_connection: None,
     available_network_connections: Vec::new(),

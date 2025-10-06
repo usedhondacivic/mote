@@ -2,8 +2,11 @@
 
 // Sans-io message handling library for interacting with Mote
 // IO handling should be implemented by the consumer. See ../examples.
-
-use core::{fmt::Debug, marker::PhantomData, net::SocketAddr};
+use core::{
+    fmt::Debug,
+    marker::PhantomData,
+    net::{Ipv4Addr, SocketAddr},
+};
 
 use heapless_postcard::{Deque, Vec};
 use mote_messages::{configuration, runtime};
@@ -72,7 +75,7 @@ where
     }
 
     // Receive a message from raw bytes
-    pub fn handle_receive(&mut self, packet: &mut [u8]) -> Result<Option<I>, postcard::Error> {
+    pub fn handle_receive(&mut self, packet: &mut [u8]) {
         // Push the recieved bytes into the serialization buffer
         if let Err(_) = self.serialization_buffer.extend_from_slice(packet) {
             // We can't add to the buffer because it is full
@@ -80,13 +83,12 @@ where
             self.serialization_buffer.clear();
             self.serialization_buffer.extend_from_slice(packet).unwrap();
         }
+    }
 
+    pub fn poll_receive(&mut self) -> Result<Option<I>, postcard::Error> {
         // Check if the buffer contains the COBS delimiter (zero)
         while let Some(end) = self.serialization_buffer.iter().position(|&x| x == 0) {
             // If it does, attempt to deserialize
-            // If deserialization fails, try again ignoring an additional byte from the start of
-            // the buffer
-            // This allows us to discard malformed packets
             let mut idx = 0;
             loop {
                 match take_from_bytes_cobs::<I>(&mut self.serialization_buffer[idx..end + 1]) {
@@ -95,8 +97,10 @@ where
                         return Ok(Some(msg));
                     }
                     Err(postcard::Error::DeserializeBadEncoding) => {
+                        // Deserialization failed, try again while walking through the buffer
                         idx += 1;
                     }
+                    Err(postcard::Error::DeserializeUnexpectedEnd) => return Ok(None),
                     Err(err) => {
                         self.serialization_buffer.clear();
                         return Err(err);
@@ -110,7 +114,7 @@ where
 
 // Used by the host to talk to mote during runtime
 pub type HostRuntimeLink = SansIo<
-    SocketAddr,
+    Ipv4Addr,
     1460, // TCP MSS
     2000,
     runtime::mote_to_host::Message,
@@ -119,9 +123,9 @@ pub type HostRuntimeLink = SansIo<
 
 // Used by mote to talk to the host during runtime
 pub type MoteRuntimeLink = SansIo<
-    SocketAddr,
-    250, // The ser/de buffer and MSS are smaller on Mote due to memory constraints
-    250,
+    Ipv4Addr,
+    1460, // The ser/de buffer is smaller on Mote due to memory constraints
+    2000,
     runtime::host_to_mote::Message,
     runtime::mote_to_host::Message,
 >;

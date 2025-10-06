@@ -57,7 +57,8 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
     loop {
         match select(class.read_packet(&mut serial_buffer), ticker.next()).await {
             Either::First(Ok(bytes_read)) => {
-                let result = link.handle_receive(&mut serial_buffer[..bytes_read]);
+                link.handle_receive(&mut serial_buffer[..bytes_read]);
+                let result = link.poll_receive();
                 if let Ok(Some(message)) = result {
                     handle_host_message(&message).await;
                 }

@@ -7,19 +7,19 @@ edition = "2024"
 mote-messages = { path = "../mote-messages" }
 mote-sansio-driver = { path = "../mote-sansio-driver" }
 
-embassy-embedded-hal = { version = "0.4.0", features = ["defmt"] }
-embassy-executor = { version = "0.8.0", features = [
+embassy-embedded-hal = { version = "0.5", features = ["defmt"] }
+embassy-executor = { version = "0.9", features = [
     "nightly",
     "arch-cortex-m",
     "executor-thread",
     "executor-interrupt",
     "defmt",
 ] }
-embassy-time = { version = "0.4.0", features = [
+embassy-time = { version = "0.5", features = [
     "defmt",
     "defmt-timestamp-uptime",
 ] }
-embassy-rp = { version = "0.7.0", features = [
+embassy-rp = { version = "0.8", features = [
     "defmt",
     "unstable-pac",
     "time-driver",
@@ -27,7 +27,7 @@ embassy-rp = { version = "0.7.0", features = [
     "rp235xa",
     "binary-info",
 ] }
-embassy-net = { version = "0.7.0", features = [
+embassy-net = { version = "0.7", features = [
     "defmt",
     "icmp",
     "tcp",
@@ -40,13 +40,13 @@ embassy-net = { version = "0.7.0", features = [
     "proto-ipv6",
     "multicast",
 ] }
-embassy-usb = { version = "0.5.0", features = ["defmt"] }
-embassy-futures = { version = "0.1.0" }
-embassy-sync = { version = "0.7.0", features = ["defmt"] }
+embassy-usb = { version = "0.5", features = ["defmt"] }
+embassy-futures = { version = "0.1" }
+embassy-sync = { version = "0.7", features = ["defmt"] }
 heapless = "0.8"
 
-cyw43 = { version = "0.4.0", features = ["defmt", "firmware-logs"] }
-cyw43-pio = { version = "0.6.0", features = ["defmt"] }
+cyw43 = { version = "0.5.0", features = ["defmt", "firmware-logs"] }
+cyw43-pio = { version = "0.8.0", features = ["defmt"] }
 
 assign-resources = { git = "https://github.com/adamgreig/assign-resources", rev = "bd22cb7a92031fb16f74a5da42469d466c33383e" }
 
@@ -70,6 +70,10 @@ serde = { version = "1.0.*", default-features = false, features = ["derive"] }
 serde_with = { version = "3.14.0", default-features = false, features = [
     "macros",
 ] }
+
+edge-mdns = { version = "0.6", features = ["defmt"] }
+edge-nal-embassy = { version = "0.6", features = ["defmt"] }
+edge-nal = "0.5"
 
 [profile.release]
 debug = 2

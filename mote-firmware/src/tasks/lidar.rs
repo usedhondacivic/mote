@@ -143,6 +143,8 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                             error!("Check bit data check failed for LiDAR data message. reseting...");
                         } else {
                             let angle = ((resp[2] as u16) << 7) | ((resp[1] as u16 & 0xFE) >> 1);
+                            // TODO: This impl drops a point whenever a packet gets completed.
+                            // Should use is_full after each push instead
                             if let Ok(()) = scan_points.push(mote_to_host::Point {
                                 quality: (resp[0] & !0b11) >> 2,
                                 angle: angle,
@@ -170,14 +172,15 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                     .send(mote_to_host::Message::Scan(scan_points.clone()))
                     .await;
                 scan_points.clear();
-                {
-                    let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                    update_bit_result(
-                        &mut configuration_state.built_in_test.lidar,
-                        "Receiving Data",
-                        BITResult::Pass,
-                    );
-                }
+                // How to make this not block further readings?
+                // {
+                //     let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                //     update_bit_result(
+                //         &mut configuration_state.built_in_test.lidar,
+                //         "Receiving Data",
+                //         BITResult::Pass,
+                //     );
+                // }
                 LidarState::ReceiveSample
             }
             LidarState::Stop => LidarState::Reset,

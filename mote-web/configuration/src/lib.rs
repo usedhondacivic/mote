@@ -1,4 +1,3 @@
-use postcard::from_bytes_cobs;
 use wasm_bindgen::prelude::*;
 
 use mote_messages::configuration::{host_to_mote, mote_to_host};
