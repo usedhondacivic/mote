@@ -49,8 +49,8 @@ impl ConfigurationLink {
     pub fn handle_receive(&mut self, bytes: JsValue) -> JsValue {
         let mut bytes: Vec<u8> = serde_wasm_bindgen::from_value(bytes).unwrap();
         console_log!("[RX] Configuration link received: {:?}", bytes);
-        let message: Result<Option<mote_to_host::Message>, _> =
-            self.link.handle_receive(&mut bytes);
+        self.link.handle_receive(&mut bytes);
+        let message: Result<Option<mote_to_host::Message>, _> = self.link.poll_receive();
         console_log!("[RX] Configuration link unpacked: {:?}", message);
         serde_wasm_bindgen::to_value(&message).unwrap()
     }
