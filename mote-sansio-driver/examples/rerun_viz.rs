@@ -4,16 +4,14 @@
 // For more complicated real integrations you'd most likely want to use a async runtime
 // (tokio, smol) to handle socket io concurrently
 
-use async_std::task::sleep;
 use color_space::{Hsv, Rgb};
-use rerun::{demo_util::bounce_lerp, external::glam};
+use rerun::external::glam;
 use std::{
     io::{Read, Write},
     net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream},
     time::Duration,
 };
 
-use anyhow::Context;
 use mote_sansio_driver::HostRuntimeLink;
 
 use mote_messages::runtime::{host_to_mote, mote_to_host};
@@ -49,13 +47,13 @@ async fn main() -> anyhow::Result<()> {
 
     // let socket_addr = SocketAddr::new(IpAddr::V4(mote_ip), port);
 
-    let mut socket = TcpStream::connect("192.168.0.78:1738").unwrap();
+    let mut socket = TcpStream::connect("192.168.7.64:1738").unwrap();
     // socket.set_read_timeout(Some(Duration::from_millis(2500)))?;
 
     let mut comms = HostRuntimeLink::new();
 
     // Send one ping command
-    comms.send("192.168.0.78".parse().unwrap(), host_to_mote::Message::Ping)?;
+    comms.send("192.168.7.64".parse().unwrap(), host_to_mote::Message::Ping)?;
 
     // Create the rerun instance
     let rec = rerun::RecordingStreamBuilder::new("mote_rerun_example").serve_grpc()?;
@@ -115,7 +113,7 @@ async fn main() -> anyhow::Result<()> {
                         .collect();
 
                     rec.log(
-                        "my_points",
+                        "lidar_scan",
                         &rerun::Points2D::new(points)
                             .with_colors(colors)
                             .with_radii([1.0]),

@@ -34,17 +34,18 @@ pub mod runtime {
         use serde::{Deserialize, Serialize};
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format)]
+        pub enum Subsystem {
+            Lidar,
+            Imu,
+            DriveBase,
+        }
+
+        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
         pub enum Message {
             Ping,
             PingResponse,
-            EnableLidar,
-            DisableLidar,
-            EnableImu,
-            DisableImu,
-            EnableEncoders,
-            DisableEncoders,
-            EnableMotors,
-            DisableMotors,
+            Enable(Subsystem),
+            Disable(Subsystem),
             SoftReset,
         }
     }

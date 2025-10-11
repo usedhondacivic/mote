@@ -1,5 +1,5 @@
 use core::cmp::min;
-use core::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
+use core::net::{Ipv4Addr, Ipv6Addr};
 
 use cyw43::JoinOptions;
 use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
@@ -14,13 +14,11 @@ use edge_nal_embassy::{Udp, UdpBuffers};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_net::tcp::TcpSocket;
-use embassy_net::udp::{PacketMetadata, UdpMetadata, UdpSocket};
-use embassy_net::{Config, IpAddress, IpEndpoint, Stack, StackResources};
+use embassy_net::{Config, IpAddress, Stack, StackResources};
 use embassy_rp::clocks::RoscRng;
 use embassy_rp::gpio::{Level, Output};
 use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
-use embassy_rp::usb::Endpoint;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
@@ -28,7 +26,6 @@ use embedded_io_async::Write;
 use mote_messages::configuration::mote_to_host::{BIT, BITResult, NetworkConnection};
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 use mote_sansio_driver::MoteRuntimeLink;
-use postcard::to_vec;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -38,7 +35,72 @@ use crate::tasks::{CONFIGURATION_STATE, MOTE_TO_HOST};
 
 const SERVER_PORT: u16 = 1738;
 
-async fn run_network_scan() {}
+async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>) {
+    // TODO: Read network ssid and password from flash
+
+    while let Err(err) = control.join("DSRC", JoinOptions::new("Grover744".as_bytes())).await {
+        info!("join failed with status={}", err.status);
+    }
+
+    // Update current network
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        configuration_state.current_network_connection = Some(heapless::String::try_from("DSRC").expect("Grover744"));
+        update_bit_result(
+            &mut configuration_state.built_in_test.wifi,
+            "Connected to Network",
+            BITResult::Pass,
+        );
+    }
+}
+
+async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
+    let mut scanner = control.scan(Default::default()).await;
+    while let Some(bss) = scanner.next().await {
+        if let Ok(ssid_str) = str::from_utf8(&bss.ssid) {
+            if bss.ssid.iter().all(|&n| n == 0) {
+                continue;
+            }
+
+            // Update available networks
+            {
+                let mut configuration_state = CONFIGURATION_STATE.lock().await;
+
+                let new_connection = NetworkConnection {
+                    ssid: heapless::String::try_from(ssid_str)
+                        .expect("Failed to create SSID from the value returned by the scan."),
+                    strength: -bss.rssi as u8,
+                };
+
+                // Check if this network is already listed
+                if let Some(item) = configuration_state
+                    .available_network_connections
+                    .iter_mut()
+                    .find(|i| i.ssid == new_connection.ssid)
+                {
+                    item.strength = min(item.strength, new_connection.strength);
+                    continue;
+                }
+
+                // If we've run out of entries, drop the weakest
+                if configuration_state.available_network_connections.is_full() {
+                    let (weakest_index, weakest) = configuration_state
+                        .available_network_connections
+                        .iter()
+                        .enumerate()
+                        .max_by_key(|&(_index, val)| val.strength)
+                        .unwrap();
+
+                    if weakest.strength > new_connection.strength {
+                        configuration_state.available_network_connections.remove(weakest_index);
+                    }
+                }
+
+                let _ = configuration_state.available_network_connections.push(new_connection);
+            }
+        }
+    }
+}
 
 async fn parse_message<'a>(
     rx_message: &host_to_mote::Message,
@@ -48,7 +110,7 @@ async fn parse_message<'a>(
     match rx_message {
         host_to_mote::Message::Ping => {
             info!("Parsed ping request, responding.");
-            link.send(endpoint_addr, mote_to_host::Message::PingResponse);
+            let _ = link.send(endpoint_addr, mote_to_host::Message::PingResponse);
         }
         host_to_mote::Message::PingResponse => {
             info!("Received ping response from host.")
@@ -76,6 +138,16 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
 
             info!("Received connection from {:?}", socket.remote_endpoint());
 
+            // Update client connection status
+            {
+                let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                update_bit_result(
+                    &mut configuration_state.built_in_test.wifi,
+                    "Client Connected",
+                    BITResult::Pass,
+                );
+            }
+
             let mut message_buffer = [0; 4096];
 
             let mut link = MoteRuntimeLink::new();
@@ -84,6 +156,15 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
                 match select(socket.read(&mut message_buffer), MOTE_TO_HOST.receive()).await {
                     Either::First(Ok(0)) => {
                         info!("Socket connection closed");
+                        // Update client connection status
+                        {
+                            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                            update_bit_result(
+                                &mut configuration_state.built_in_test.wifi,
+                                "Client Connected",
+                                BITResult::Waiting,
+                            );
+                        }
                         break;
                     }
                     Either::First(Ok(bytes_read)) => {
@@ -178,6 +259,12 @@ async fn mdns_task(stack: Stack<'static>) -> ! {
 
     // Periodic timer for refreshing
     let mut ticker = Ticker::every(Duration::from_secs(15));
+
+    // Update mdns status
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        update_bit_result(&mut configuration_state.built_in_test.wifi, "mDNS UP", BITResult::Pass);
+    }
 
     loop {
         match select(
@@ -277,75 +364,15 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
         .set_power_management(cyw43::PowerManagementMode::PowerSave)
         .await;
 
+    // Update init state
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
     }
 
-    while let Err(err) = control
-        .join("pew pew zing balm pop pew splat", JoinOptions::new("_".as_bytes()))
-        .await
-    {
-        info!("join failed with status={}", err.status);
-    }
+    run_network_scan(&mut control).await;
 
-    // Update current network
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        configuration_state.current_network_connection =
-            Some(heapless::String::try_from("pew pew zing balm pop pew splat").expect(""));
-        update_bit_result(
-            &mut configuration_state.built_in_test.wifi,
-            "Connected to Network",
-            BITResult::Pass,
-        );
-    }
-
-    let mut scanner = control.scan(Default::default()).await;
-    while let Some(bss) = scanner.next().await {
-        if let Ok(ssid_str) = str::from_utf8(&bss.ssid) {
-            if bss.ssid.iter().all(|&n| n == 0) {
-                continue;
-            }
-
-            // Update available networks
-            {
-                let mut configuration_state = CONFIGURATION_STATE.lock().await;
-
-                let new_connection = NetworkConnection {
-                    ssid: heapless::String::try_from(ssid_str)
-                        .expect("Failed to create SSID from the value returned by the scan."),
-                    strength: -bss.rssi as u8,
-                };
-
-                // Check if this network is already listed
-                if let Some(item) = configuration_state
-                    .available_network_connections
-                    .iter_mut()
-                    .find(|i| i.ssid == new_connection.ssid)
-                {
-                    item.strength = min(item.strength, new_connection.strength);
-                    continue;
-                }
-
-                // If we've run out of entries, drop the weakest
-                if configuration_state.available_network_connections.is_full() {
-                    let (weakest_index, weakest) = configuration_state
-                        .available_network_connections
-                        .iter()
-                        .enumerate()
-                        .max_by_key(|&(_index, val)| val.strength)
-                        .unwrap();
-
-                    if weakest.strength > new_connection.strength {
-                        configuration_state.available_network_connections.remove(weakest_index);
-                    }
-                }
-
-                let _ = configuration_state.available_network_connections.push(new_connection);
-            }
-        }
-    }
+    attempt_join_network(&mut control).await;
 
     let config = Config::dhcpv4(Default::default());
 
@@ -355,16 +382,20 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     // Init network stack
     static RESOURCES: StaticCell<StackResources<5>> = StaticCell::new();
     let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
+
+    // Start network task
     unwrap!(spawner.spawn(net_task(runner)));
 
-    // // Start the core tcp server
-    unwrap!(spawner.spawn(tcp_server_task(stack)));
-
-    // Update init state
+    // Wait for IPV4 to come up
+    stack.wait_config_up().await;
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
+        update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
     }
 
+    // Start the core tcp server
+    unwrap!(spawner.spawn(tcp_server_task(stack)));
+
+    // Start mdns responder
     unwrap!(spawner.spawn(mdns_task(stack)));
 }
