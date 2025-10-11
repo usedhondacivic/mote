@@ -142,7 +142,7 @@ table {
  **/
 :root {
     --font-family: "JetBrains Mono", monospace;
-    --line-height: 1.30rem;
+    --line-height: 1.5rem;
     --border-thickness: 2px;
     --text-color: #000;
     --text-color-alt: #666;
@@ -456,7 +456,6 @@ li::marker {
 }
 
 input,
-button,
 textarea {
     border: var(--border-thickness) solid var(--text-color);
     padding:
@@ -473,11 +472,34 @@ textarea {
     -webkit-font-smoothing: inherit;
     -moz-osx-font-smoothing: inherit;
     -webkit-appearance: none;
+    appearance: none;
 }
 
-input[type=text] {
+button {
+    margin: 0;
+    padding: 0;
     border: none;
-    border-bottom: var(--border-thickness) solid var(--text-color);
+    font: inherit;
+    font-weight: inherit;
+    border: none;
+    background: none;
+    width: auto;
+    color: var(--text-color);
+    line-height: normal;
+    overflow: hidden;
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+input[type=text],
+input[type=password] {
+    border: none;
+    border-bottom: var(--border-thickness) solid var(--text-color-alt);
+    margin-top: -5px;
+    margin-bottom: 5px;
 }
 
 input[type=checkbox],
@@ -508,11 +530,6 @@ input:focus {
     outline: none;
 }
 
-button:hover {
-    --border-thickness: 2px;
-    outline: none;
-}
-
 input {
     width: calc(round(down, 100%, 1ch));
 }
@@ -524,21 +541,6 @@ input {
 
 ::-ms-input-placeholder {
     color: var(--text-color-alt);
-}
-
-button::-moz-focus-inner {
-    padding: 0;
-    border: 0
-}
-
-button {
-    text-transform: uppercase;
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-}
-
-button:hover {
-    background: var(--background-color-alt);
 }
 
 button:active {

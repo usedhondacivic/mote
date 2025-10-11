@@ -80,21 +80,14 @@
         //     });
         // });
 
-        // Handle network selection
-        let selected_network;
-        let network_input_placeholder = document.querySelector('#network_password_input_block > .placeholder');
-        let network_input_content = document.querySelectorAll('#network_password_input_block > :not(.placeholder)');
-        function network_on_click(netork) {
-            selected_network = network;
-            network_input_placeholder.style.display = 'none';
-            network_input_content.forEach(item => {item.style.display = 'block'});
-        }
-
         /* Data view update */
 
         let identification_list = document.querySelector('#identification_list');
         let network_list = document.querySelector('#network_list');
+        let network_refresh = document.querySelector('#network_refresh');
         let bit_list = document.querySelector('#built_in_test_list');
+
+        let connect_target = "";
 
         let wifi_strength_indicators = ["[••••]", "[••• ]", "[••  ]", "[•   ]"];
 
@@ -105,6 +98,7 @@
             let identification_list_content = "";
             let network_list_content = "";
             let bit_list_content = "";
+
             let state = telem?.Ok?.State;
             if (state) {
                 if (JSON.stringify(state) === JSON.stringify(state_cache)) {
@@ -113,13 +107,14 @@
                 }
 
                 // Identification
-                identification_list_content = "";
-                identification_list_content += `
+                identification_list_content = `
                     <li>
-                        Unique ID: ${state?.uid}
+                        Unique ID: ${state?.uid} 
+                        <span style='float: right; margin: 0px;'> <button>[ update ]</button></span>
+                        <input type="text" id="uid" name="uid" placeholder="enter new UID" autocomplete="off">
                     </li>
                     <li>
-                        IP: ${state?.ip ? state?.ip : '<span style="color:#FDFD96" class="short_spinner">${short_spinner_states[(short_spinner_state) % short_spinner_states.length]}</span>'}
+                        IP: ${state?.ip ? state?.ip : `<span style="color:#FDFD96" class="short_spinner">${short_spinner_states[(short_spinner_state) % short_spinner_states.length]}</span>`}
                     </li>
                 `;
                 if (state?.uid !== state_cache?.uid || state?.ip !== state_cache?.ip) {
@@ -140,6 +135,7 @@
                             <p style="margin: 0px;">No networks available</p>
                         </li>
                         `;
+                        network_refresh.style.visibility = 'hidden';
                     } else {
                         state?.available_network_connections?.forEach(connection => {
                             let strength = wifi_strength_indicators[
@@ -154,14 +150,20 @@
                             network_list_content += `
                             <li>
                                 <span style="margin: 0px;"> ${connection?.ssid} </span> 
-                                ${connection?.ssid.replace(/\0/g, '').trim() == current_connection ?
+                                <span style='float: right; margin: 0px;'>${connection?.ssid.replace(/\0/g, '').trim() == current_connection ?
                                     "<- currently connected" :
-                                    `<pre style='float: right; margin-top: 0px;'>${strength} | <a >[ connect ]</a></pre>`
-                                } 
-                            </li>
-                        `;
+                                    `<pre>${strength}</pre> | <button id="${connection?.ssid}">[ connect ]</button>`
+                                }</span>
+                            </li>`;
                         });
+                        network_list_content += `
+                        <li>
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" placeholder="enter your password" autocomplete="off">
+                        </li>
+                        `;
                     }
+                    network_refresh.style.visibility = 'visible';
                     network_list.innerHTML = network_list_content;
                 }
 
@@ -220,7 +222,12 @@
                 </ul>
             </li>
             <li>
-                <p style="margin: 0px;"><strong>Detected Networks</strong></p>
+                <p style="margin: 0px;">
+                    <strong>Detected Networks</strong>
+                    <button style="float: right; margin: 0px; visibility: hidden;" id="network_refresh">
+                        [ refresh ]
+                    </button>
+                </p>
                 <ul id="network_list">
                     <li><span class="spinner">⢀⠀</span></li>
                 </ul>
@@ -235,7 +242,7 @@
     </div>
 
     <div>
-        <button id="serial_connect">Connect</button>
+        <button id="serial_connect">[ Connect ]</button>
     </div>
 </body>
 
