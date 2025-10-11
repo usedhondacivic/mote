@@ -96,6 +96,8 @@
         let network_list = document.querySelector('#network_list');
         let bit_list = document.querySelector('#built_in_test_list');
 
+        let wifi_strength_indicators = ["[••••]", "[••• ]", "[••  ]", "[•   ]"];
+
         // We have preact at home
         let state_cache;
 
@@ -111,13 +113,16 @@
                 }
 
                 // Identification
-                if (state?.uid !== state_cache?.uid) {
-                    identification_list_content = "";
-                    identification_list_content += `
+                identification_list_content = "";
+                identification_list_content += `
                     <li>
                         Unique ID: ${state?.uid}
                     </li>
+                    <li>
+                        IP: ${state?.ip ? state?.ip : '<span style="color:#FDFD96" class="short_spinner">${short_spinner_states[(short_spinner_state) % short_spinner_states.length]}</span>'}
+                    </li>
                 `;
+                if (state?.uid !== state_cache?.uid || state?.ip !== state_cache?.ip) {
                     identification_list.innerHTML = identification_list_content;
                 }
 
@@ -131,26 +136,29 @@
                 if (JSON.stringify(state?.available_network_connections) !== JSON.stringify(state_cache?.available_network_connections)) {
                     if (state?.available_network_connections.length == 0) {
                         network_list_content = `
-                    <li>
-                        <p style="margin: 0px;">No networks available</p>
-                    </li>
-                    `;
-                    } else {
-                        // network_input_block.style.display = 'block';
-                        state?.available_network_connections?.forEach(connection => {
-                            console.log(escape(connection?.ssid.replace(/\0/g, '').trim()) + " | " + escape(state?.current_network_connection.replace(/\0/g, '').trim()));
-                            console.log(connection?.ssid.trim() == state?.current_network_connection.trim());
-                            network_list_content += `
                         <li>
-                            <p style="margin: 0px;">
-                                <a onclick='network_on_click(${connection})'>
-                                    ${connection?.ssid}
-                                </a> ${connection?.ssid.replace(/\0/g, '').trim() == current_connection ? "<- currently connected" : ""}
-                            </p>
-                            <ul>
-                                <li>Strength: ${connection?.strength}</li>
-                            </ul>
+                            <p style="margin: 0px;">No networks available</p>
                         </li>
+                        `;
+                    } else {
+                        state?.available_network_connections?.forEach(connection => {
+                            let strength = wifi_strength_indicators[
+                                Math.max(
+                                    Math.min(
+                                        Math.floor(connection?.strength / 20) - 1,
+                                        wifi_strength_indicators.length - 1
+                                    ),
+                                    0
+                                )
+                            ];
+                            network_list_content += `
+                            <li>
+                                <span style="margin: 0px;"> ${connection?.ssid} </span> 
+                                ${connection?.ssid.replace(/\0/g, '').trim() == current_connection ?
+                                    "<- currently connected" :
+                                    `<pre style='float: right; margin-top: 0px;'>${strength} | <a >[ connect ]</a></pre>`
+                                } 
+                            </li>
                         `;
                         });
                     }
@@ -214,30 +222,6 @@
             <li>
                 <p style="margin: 0px;"><strong>Detected Networks</strong></p>
                 <ul id="network_list">
-                    <!-- <li> -->
-                    <!--     <p style="margin: 0px;"><span style="color: lightgreen">Placeholder SSID</span> -->
-                    <!--         &lt;- -->
-                    <!--         Currently -->
-                    <!--         connected!</p> -->
-                    <!--     <ul> -->
-                    <!--         <li>Strength: </li> -->
-                    <!--         <li>Security: </li> -->
-                    <!--     </ul> -->
-                    <!-- </li> -->
-                    <!-- <li> -->
-                    <!--     <p style="margin: 0px;"><a>Placeholder SSID</a></p> -->
-                    <!--     <ul> -->
-                    <!--         <li>Strength: </li> -->
-                    <!--         <li>Security: </li> -->
-                    <!--     </ul> -->
-                    <!-- </li> -->
-                    <!-- <li> -->
-                    <!--     <p style="margin: 0px;"><a>Placeholder SSID</a></p> -->
-                    <!--     <ul> -->
-                    <!--         <li>Strength: </li> -->
-                    <!--         <li>Security: </li> -->
-                    <!--     </ul> -->
-                    <!-- </li> -->
                     <li><span class="spinner">⢀⠀</span></li>
                 </ul>
             </li>

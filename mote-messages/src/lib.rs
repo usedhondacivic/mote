@@ -54,6 +54,7 @@ pub mod runtime {
 // Messages used for configuration / status / built in test
 pub mod configuration {
     pub mod mote_to_host {
+
         use serde::{Deserialize, Serialize};
 
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
@@ -89,6 +90,7 @@ pub mod configuration {
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
         pub struct State {
             pub uid: UID,
+            pub ip: Option<heapless::String<20>>,
             pub current_network_connection: Option<heapless::String<32>>,
             pub available_network_connections: heapless::Vec<NetworkConnection, 10>,
             pub built_in_test: BITCollection,

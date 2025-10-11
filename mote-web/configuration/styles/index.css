@@ -1,5 +1,5 @@
 a {
-    color: aquamarine;
+    color: white;
 }
 
 a:hover {
@@ -9,4 +9,9 @@ a:hover {
 span {
     transition: color 0.5s ease-in-out;
     color: unset;
+}
+
+pre {
+    display: inline;
+    margin: 0px;
 }

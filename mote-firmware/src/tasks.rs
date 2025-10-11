@@ -39,16 +39,8 @@ bind_interrupts!(pub struct Irqs {
     USBCTRL_IRQ => USBInterruptHandler<USB>;
 });
 
-// and create communication channels
-use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
-use embassy_sync::channel::Channel;
-
-static MOTE_TO_HOST: Channel<CriticalSectionRawMutex, mote_messages::runtime::mote_to_host::Message, 32> =
-    Channel::new();
-static HOST_TO_MOTE: Channel<CriticalSectionRawMutex, mote_messages::runtime::host_to_mote::Message, 32> =
-    Channel::new();
-
 // and init global configuration state
+use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::mutex::Mutex;
 use heapless::Vec;
 use mote_messages::configuration::mote_to_host::{BITCollection, State, UID};
@@ -63,4 +55,5 @@ pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::n
         wifi: Vec::new(),
         encoders: Vec::new(),
     },
+    ip: None,
 });

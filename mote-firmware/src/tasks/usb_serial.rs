@@ -14,6 +14,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 use super::{Irqs, UsbSerialResources};
 use crate::tasks::CONFIGURATION_STATE;
+use crate::tasks::wifi::WIFI_REQUEST_CONNECT;
 
 #[embassy_executor::task]
 async fn usb_task(mut usb: UsbDevice<'static, UsbDriver<'static, USB>>) -> ! {
@@ -31,9 +32,11 @@ impl From<EndpointError> for Disconnected {
     }
 }
 
-async fn handle_host_message(msg: &host_to_mote::Message) {
+async fn handle_host_message(msg: host_to_mote::Message) {
     match msg {
-        host_to_mote::Message::SetNetworkConnectionConfig(set_network_connection_config) => todo!(),
+        host_to_mote::Message::SetNetworkConnectionConfig(set_network_connection_config) => {
+            WIFI_REQUEST_CONNECT.send(set_network_connection_config).await;
+        }
         host_to_mote::Message::SetUID(set_uid) => {
             let mut configuration_state = CONFIGURATION_STATE.lock().await;
             configuration_state.uid = set_uid.uid.clone();
@@ -60,7 +63,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                 link.handle_receive(&mut serial_buffer[..bytes_read]);
                 let result = link.poll_receive();
                 if let Ok(Some(message)) = result {
-                    handle_host_message(&message).await;
+                    handle_host_message(message).await;
                 }
                 Ok(())
             }

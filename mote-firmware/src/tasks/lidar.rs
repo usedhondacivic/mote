@@ -7,7 +7,8 @@ use mote_messages::runtime::mote_to_host;
 
 use super::{Irqs, RplidarC1Resources};
 use crate::helpers::update_bit_result;
-use crate::tasks::{CONFIGURATION_STATE, MOTE_TO_HOST};
+use crate::tasks::CONFIGURATION_STATE;
+use crate::wifi::MOTE_TO_HOST;
 
 enum LidarState {
     Start,
@@ -168,19 +169,10 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                 LidarState::CheckHealth
             }
             LidarState::ProcessSample => {
-                MOTE_TO_HOST
-                    .send(mote_to_host::Message::Scan(scan_points.clone()))
-                    .await;
+                // We don't care if these packets get lost, so keep going if the channel is full
+                let _ = MOTE_TO_HOST.try_send(mote_to_host::Message::Scan(scan_points.clone()));
+
                 scan_points.clear();
-                // How to make this not block further readings?
-                // {
-                //     let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                //     update_bit_result(
-                //         &mut configuration_state.built_in_test.lidar,
-                //         "Receiving Data",
-                //         BITResult::Pass,
-                //     );
-                // }
                 LidarState::ReceiveSample
             }
             LidarState::Stop => LidarState::Reset,

@@ -19,10 +19,12 @@ use embassy_rp::clocks::RoscRng;
 use embassy_rp::gpio::{Level, Output};
 use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
-use embassy_sync::blocking_mutex::raw::NoopRawMutex;
+use embassy_sync::blocking_mutex::raw::{CriticalSectionRawMutex, NoopRawMutex};
+use embassy_sync::channel::Channel;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
 use embedded_io_async::Write;
+use mote_messages::configuration::host_to_mote::SetNetworkConnectionConfig;
 use mote_messages::configuration::mote_to_host::{BIT, BITResult, NetworkConnection};
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 use mote_sansio_driver::MoteRuntimeLink;
@@ -31,30 +33,57 @@ use {defmt_rtt as _, panic_probe as _};
 
 use super::{Cyw43Resources, Irqs};
 use crate::helpers::update_bit_result;
-use crate::tasks::{CONFIGURATION_STATE, MOTE_TO_HOST};
+use crate::tasks::CONFIGURATION_STATE;
 
 const SERVER_PORT: u16 = 1738;
+
+pub static MOTE_TO_HOST: Channel<CriticalSectionRawMutex, mote_messages::runtime::mote_to_host::Message, 32> =
+    Channel::new();
+pub static WIFI_REQUEST_CONNECT: Channel<
+    CriticalSectionRawMutex,
+    mote_messages::configuration::host_to_mote::SetNetworkConnectionConfig,
+    1,
+> = Channel::new();
+
+pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
 async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>) {
     // TODO: Read network ssid and password from flash
 
-    while let Err(err) = control.join("DSRC", JoinOptions::new("Grover744".as_bytes())).await {
-        info!("join failed with status={}", err.status);
+    for attempt in 1..6 {
+        if let Err(err) = control.join("DSRC", JoinOptions::new("Grover744".as_bytes())).await {
+            info!("join failed with status={}, attempt {} / 5", err.status, attempt);
+        } else {
+            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+            configuration_state.current_network_connection =
+                Some(heapless::String::try_from("TODO: placeholder").expect("Failed to create string from network ID"));
+            update_bit_result(
+                &mut configuration_state.built_in_test.wifi,
+                "Connected to Network",
+                BITResult::Pass,
+            );
+            return;
+        }
     }
-
-    // Update current network
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        configuration_state.current_network_connection = Some(heapless::String::try_from("DSRC").expect("Grover744"));
+        configuration_state.current_network_connection =
+            Some(heapless::String::try_from("").expect("Failed to create string from network ID"));
         update_bit_result(
             &mut configuration_state.built_in_test.wifi,
             "Connected to Network",
-            BITResult::Pass,
+            BITResult::Fail,
         );
     }
 }
 
 async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
+    // Clear previous scan
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        configuration_state.available_network_connections.clear();
+    }
+
     let mut scanner = control.scan(Default::default()).await;
     while let Some(bss) = scanner.next().await {
         if let Ok(ssid_str) = str::from_utf8(&bss.ssid) {
@@ -202,8 +231,13 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
 
 #[embassy_executor::task]
 async fn mdns_task(stack: Stack<'static>) -> ! {
-    // Wait to get an IP
+    // Wait for IPV4 to come up
     stack.wait_config_up().await;
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
+    }
+
     let ip = stack.config_v4().unwrap().address.address();
     info!("Got ip: {}", ip);
 
@@ -280,6 +314,25 @@ async fn mdns_task(stack: Stack<'static>) -> ! {
             Either::Second(_) => {
                 signal.signal(());
             }
+        }
+    }
+}
+
+#[embassy_executor::task]
+async fn connection_manager_task(mut control: cyw43::Control<'static>) -> ! {
+    // Populate network scan state
+    run_network_scan(&mut control).await;
+
+    // Attempt to join whatever network is saved in flash
+    attempt_join_network(&mut control).await;
+
+    loop {
+        match select(WIFI_REQUEST_CONNECT.receive(), WIFI_REQUEST_RESCAN.wait()).await {
+            Either::First(config) => {
+                // TODO: Save config to flash
+                attempt_join_network(&mut control).await;
+            }
+            Either::Second(_) => run_network_scan(&mut control).await,
         }
     }
 }
@@ -370,10 +423,6 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
         update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
     }
 
-    run_network_scan(&mut control).await;
-
-    attempt_join_network(&mut control).await;
-
     let config = Config::dhcpv4(Default::default());
 
     // Generate random seed
@@ -383,15 +432,11 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     static RESOURCES: StaticCell<StackResources<5>> = StaticCell::new();
     let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
 
+    // Start connection manager task
+    unwrap!(spawner.spawn(connection_manager_task(control)));
+
     // Start network task
     unwrap!(spawner.spawn(net_task(runner)));
-
-    // Wait for IPV4 to come up
-    stack.wait_config_up().await;
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
-    }
 
     // Start the core tcp server
     unwrap!(spawner.spawn(tcp_server_task(stack)));
