@@ -1,4 +1,4 @@
-import init, { ConfigurationLink } from '../pkg/configuration.js';
+import init, { ConfigurationLink } from '../../../pkg/configuration.js';
 
 // Init WASM, init comms link
 await init();
@@ -50,7 +50,16 @@ async function readLoop(telemetry_recv) {
             inputStream.releaseLock();
             break;
         }
-        telemetry_recv(link.handle_receive(new TextEncoder().encode(value)));
+
+        // Parse message
+        link.handle_receive(new TextEncoder().encode(value));
+
+        // Check if one or more messages completed by the packet
+        let data = link.poll_receive();
+        while (data) {
+            telemetry_recv(data);
+            data = link.poll_receive()?.Ok;
+        }
     }
 }
 
@@ -58,12 +67,14 @@ async function write() {
     if (!outputStream) {
         console.log("[serial] write called by serial connection is not up.");
     }
+
     let data = link.poll_transmit();
-    if (data) {
+    if (!data) {
+        console.log("[serial] poll_transmit called but no data was returned.");
+    }
+    while (data) {
         await outputStream.write(new TextDecoder().decode(new Uint8Array(data)));
         console.log("[serial] [TX] message sent");
-    } else {
-        console.log("[serial] poll_transmit called but no data was returned.");
     }
 }
 
@@ -95,10 +106,3 @@ export async function rescan() {
     await write();
 }
 
-export function poll_transmit() {
-
-}
-
-export function handle_receive() {
-
-}
