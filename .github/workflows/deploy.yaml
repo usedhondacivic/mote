@@ -44,6 +44,12 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'web/mote-configuration/app/package-lock.json'
 
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            web/mote-book
+            web/mote-configuration
+
       - name: Install mdbook
         run: cargo install mdbook --no-default-features --features search --vers "^0.4" --locked
 
@@ -67,7 +73,7 @@ jobs:
           wasm-pack build --target web
 
       - name: Build Svelte app
-        run:
+        run: |
           cd web/mote-configuration/app
           npm ci
           npm run build
