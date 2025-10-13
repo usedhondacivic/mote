@@ -50,8 +50,10 @@ jobs:
             web/mote-book
             web/mote-configuration
 
-      - name: Install mdbook
-        run: cargo install mdbook --no-default-features --features search --vers "^0.4" --locked
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v2
+        with:
+          mdbook-version: 'latest'
 
       - name: Build Book
         run: |
@@ -82,7 +84,7 @@ jobs:
         run: |
           mkdir -p output/configuration
           cp -r web/mote-book/book/* output
-          cp -r web/mote-configuration/app/dist output/configuration
+          cp -r web/mote-configuration/app/dist/* output/configuration
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
