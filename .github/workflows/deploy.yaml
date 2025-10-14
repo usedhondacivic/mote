@@ -47,7 +47,6 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
-            web/mote-book
             web/mote-configuration
 
       - name: Setup mdBook
