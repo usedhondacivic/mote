@@ -17,23 +17,29 @@
         ];
     }
 
-    let sorted_networks = $derived(
-        networks.toSorted((a: any, b: any) => {
-            if (
-                a?.ssid.replace(/\0/g, "").trim() ==
-                current_connection.replace(/\0/g, "").trim()
-            ) {
-                return -1;
-            }
-            if (
-                b?.ssid.replace(/\0/g, "").trim() ==
-                current_connection.replace(/\0/g, "").trim()
-            ) {
-                return 1;
-            }
-            return a?.strength - b?.strength;
-        }),
-    );
+    let sorted_networks = $derived.by(() => {
+        if (networks) {
+            return networks.toSorted((a: any, b: any) => {
+                if (current_connection) {
+                    if (
+                        a?.ssid.replace(/\0/g, "").trim() ==
+                        current_connection.replace(/\0/g, "").trim()
+                    ) {
+                        return -1;
+                    }
+                    if (
+                        b?.ssid.replace(/\0/g, "").trim() ==
+                        current_connection.replace(/\0/g, "").trim()
+                    ) {
+                        return 1;
+                    }
+                }
+                return a?.strength - b?.strength;
+            });
+        } else {
+            return [];
+        }
+    });
 </script>
 
 {#each sorted_networks as network}

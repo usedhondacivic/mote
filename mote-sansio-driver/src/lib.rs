@@ -2,11 +2,7 @@
 
 // Sans-io message handling library for interacting with Mote
 // IO handling should be implemented by the consumer. See ../examples.
-use core::{
-    fmt::Debug,
-    marker::PhantomData,
-    net::{Ipv4Addr, SocketAddr},
-};
+use core::{fmt::Debug, marker::PhantomData, net::Ipv4Addr};
 
 use heapless_postcard::{Deque, Vec};
 use mote_messages::{configuration, runtime};
@@ -91,6 +87,11 @@ where
             // If it does, attempt to deserialize
             let mut idx = 0;
             loop {
+                if idx == end {
+                    self.serialization_buffer =
+                        Vec::from_slice(&self.serialization_buffer[end + 1..]).unwrap();
+                    break;
+                }
                 match take_from_bytes_cobs::<I>(&mut self.serialization_buffer[idx..end + 1]) {
                     Ok((msg, remainder)) => {
                         self.serialization_buffer = Vec::from_slice(remainder).unwrap();

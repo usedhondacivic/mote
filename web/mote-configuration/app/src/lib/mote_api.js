@@ -75,6 +75,7 @@ async function write() {
     while (data) {
         await outputStream.write(new TextDecoder().decode(new Uint8Array(data)));
         console.log("[serial] [TX] message sent");
+        data = link.poll_transmit();
     }
 }
 

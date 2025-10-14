@@ -14,7 +14,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 use super::{Irqs, UsbSerialResources};
 use crate::tasks::CONFIGURATION_STATE;
-use crate::tasks::wifi::WIFI_REQUEST_CONNECT;
+use crate::tasks::wifi::{WIFI_REQUEST_CONNECT, WIFI_REQUEST_RESCAN};
 
 #[embassy_executor::task]
 async fn usb_task(mut usb: UsbDevice<'static, UsbDriver<'static, USB>>) -> ! {
@@ -40,8 +40,11 @@ async fn handle_host_message(msg: host_to_mote::Message) {
         host_to_mote::Message::SetUID(set_uid) => {
             let mut configuration_state = CONFIGURATION_STATE.lock().await;
             configuration_state.uid = set_uid.uid.clone();
+            info!("Setting UID: {}", configuration_state.uid);
         }
-        host_to_mote::Message::RequestNetworkScan => todo!(),
+        host_to_mote::Message::RequestNetworkScan => {
+            WIFI_REQUEST_RESCAN.signal(());
+        }
     }
 }
 
@@ -52,7 +55,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
     let mut serial_buffer = [0; 64];
 
     // Periodic timer for telemetering state
-    let mut ticker = Ticker::every(Duration::from_secs(1));
+    let mut ticker = Ticker::every(Duration::from_millis(500));
 
     // Link to the host
     let mut link = MoteConfigurationLink::new();
@@ -61,8 +64,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
         match select(class.read_packet(&mut serial_buffer), ticker.next()).await {
             Either::First(Ok(bytes_read)) => {
                 link.handle_receive(&mut serial_buffer[..bytes_read]);
-                let result = link.poll_receive();
-                if let Ok(Some(message)) = result {
+                while let Ok(Some(message)) = link.poll_receive() {
                     handle_host_message(message).await;
                 }
                 Ok(())

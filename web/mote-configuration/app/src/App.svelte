@@ -1,6 +1,6 @@
 <script lang="ts">
     import { handle_telem_recv, mote_telem } from "./lib/shared.svelte";
-    import { serial_connect } from "./lib/mote_api";
+    import { rescan, serial_connect } from "./lib/mote_api";
 
     import LongSpinner from "./lib/LongSpinner.svelte";
 
@@ -38,6 +38,27 @@
                         ? "connected"
                         : "disconnected"}</span
                 >
+                {#if !serial_connection.connected}
+                    <button
+                        style="float: right;"
+                        onclick={() => {
+                            serial_connect(
+                                (_: Event) => {
+                                    serial_connection.connected = true;
+                                },
+                                (_: Event) => {
+                                    serial_connection.connected = false;
+                                },
+                                (telem: Object) => {
+                                    serial_connection.last_telem_time =
+                                        new Date();
+                                    serial_connection.has_received = true;
+                                    handle_telem_recv(telem);
+                                },
+                            );
+                        }}>[ Connect ]</button
+                    >
+                {/if}
             </li>
             <li>
                 Telemetry last received: <span
@@ -52,16 +73,16 @@
             <li>
                 <p style="margin: 0px;"><strong>Identification</strong></p>
                 <ul>
-                    <li>
-                        {#if mote_telem.latest?.uid}
-                            <Identification
-                                uid={mote_telem.latest?.uid}
-                                ip={mote_telem.latest?.ip}
-                            />
-                        {:else}
+                    {#if mote_telem.latest?.uid}
+                        <Identification
+                            uid={mote_telem.latest?.uid}
+                            ip={mote_telem.latest?.ip}
+                        />
+                    {:else}
+                        <li>
                             <LongSpinner />
-                        {/if}
-                    </li>
+                        </li>
+                    {/if}
                 </ul>
             </li>
             <li>
@@ -69,7 +90,8 @@
                     <strong>Detected Networks</strong>
                     {#if mote_telem.latest?.uid}
                         <button
-                            style="float: right; margin: 0px; visibility: hidden;"
+                            style="float: right; margin: 0px"
+                            onclick={rescan}
                         >
                             [ refresh ]
                         </button>
@@ -104,26 +126,6 @@
             </li>
         </ul>
     </div>
-
-    {#if !serial_connection.connected}
-        <button
-            onclick={() => {
-                serial_connect(
-                    (_: Event) => {
-                        serial_connection.connected = true;
-                    },
-                    (_: Event) => {
-                        serial_connection.connected = false;
-                    },
-                    (telem: Object) => {
-                        serial_connection.last_telem_time = new Date();
-                        serial_connection.has_received = true;
-                        handle_telem_recv(telem);
-                    },
-                );
-            }}>[ Connect ]</button
-        >
-    {/if}
 </main>
 
 <style>
