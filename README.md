@@ -7,20 +7,23 @@ A low cost, high confidence mobile robot.
 
 ## Motivation
 
-Learning robotics is better with access to real hardware, but existing "[low cost](https://www.robotshop.com/products/clearpath-robotics-turtlebot-4-mobile-robot)" robots are prohibitively expensive for many aspiring engineers.
-Mote is an (actually) low cost mobile robotics platform built to teach the next generation of engineers.
-Leveraging robust design, high confidence tooling, and extensive documentation to provide a first class experience for students and hobbyists alike, Mote lowers the barrier of entry for research level robotics. 
+Robotics is more fun with real hardware.
+
+Today's ["low cost"](https://www.robotshop.com/products/clearpath-robotics-turtlebot-4-mobile-robot) robots are prohibitively expensive for many aspiring engineers.
+Mote is my answer to that problem.
+
 ## History
 
 Mote is the spiritual successor of my master's thesis, [the Little Red Rover project](https://github.com/little-red-rover).
-During my thesis, I lead a class of 15 students through a semester of excercises using the Little Red Rover platform.
+
+I used the Little Red Rover platform to teach a semester long course on the foundations of robotics.
 Mote is the product of the many lessons I learned during that effort.
 
 ## Project Structure
 
 ### Rust Packages
-* mote-firmware
-    * Rust firmware for the RP2350 based Mote circuit board. Built with [Embassy](https://github.com/embassy-rs/embassy).
+* mote-firmware :
+    * Firmware for the RP2350 based Mote circuit board. Built with [Embassy](https://github.com/embassy-rs/embassy).
 * mote-messages
     * Message definitions for communication to and from Mote.
 * mote-sansio-driver
@@ -29,7 +32,7 @@ Mote is the product of the many lessons I learned during that effort.
     * [Web app](https://michael-crum.com/mote/configuration/) for configuration and debugging.
 
 ### Hardware
-* mote-hardware
+* mote-hardware 
     * KiCAD board design files.
 
 ### Documentation
