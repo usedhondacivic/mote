@@ -15,6 +15,7 @@
             set_uid(input_value, () => {
                 console.log("set uid error");
             });
+            input_open = false;
         }
     }
 </script>
@@ -28,8 +29,10 @@
                     set_uid(input_value, () => {
                         console.log("set uid error");
                     });
+                    input_open = false;
+                } else {
+                    input_open = true;
                 }
-                input_open = true;
             }}>[ update ]</button
         ></span
     >

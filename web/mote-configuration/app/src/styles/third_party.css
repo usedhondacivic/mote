@@ -1,4 +1,9 @@
-@import url('https://fonts.cdnfonts.com/css/jetbrains-mono-2');
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../assets/fonts/JetBrainsMonoNerdFont/JetBrainsMonoNerdFontMono-Medium.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
 
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
