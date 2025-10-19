@@ -44,7 +44,8 @@
 
 {#each sorted_networks as network}
     <NetworkEntry
-        entry_data={network}
+        ssid={network?.ssid.replace(/\0/g, "").trim()}
+        strength={network?.strength}
         is_current_connection={network?.ssid.replace(/\0/g, "").trim() ==
             current_connection}
     />

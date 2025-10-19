@@ -1,7 +1,7 @@
 <script lang="ts">
     import { network_connect } from "./mote_api";
 
-    let { entry_data, is_current_connection } = $props();
+    let { ssid, strength, is_current_connection } = $props();
 
     const wifi_strength_indicators = ["[••••]", "[••• ]", "[••  ]", "[•   ]"];
 
@@ -24,45 +24,48 @@
         if (event.repeat) return;
 
         if (event.key === "Enter") {
-            network_connect(entry_data?.ssid, "test");
+            network_connect(ssid, input_value);
             input_open = false;
         }
     }
 </script>
 
-<li>
-    <span style="margin: 0px;"> {entry_data?.ssid} </span>
-    <span style="float: right; margin: 0px">
-        {#if is_current_connection}
-            &lt;- currently connected
-        {:else}
-            <pre>{get_indicator(entry_data?.strength)}</pre>
+<li class:success={is_current_connection}>
+    <span style="margin: 0px;">
+        {ssid}
+    </span>
+    {#if is_current_connection}
+        <span style="float: right; margin: 0px">&lt;~~ currently connected</span
+        >
+    {:else}
+        <span style="float: right; margin: 0px">
+            <pre>{get_indicator(strength)}</pre>
             |<button
-                id={entry_data?.ssid}
+                id={ssid}
                 onclick={() => {
                     if (input_open) {
-                        network_connect(entry_data?.ssid, "test");
+                        network_connect(ssid, "test");
                         input_open = false;
                     } else {
                         input_open = true;
                     }
                 }}>[ connect ]</button
             >
+        </span>
+        {#if input_open}
+            <ul>
+                <li>
+                    <input
+                        type="text"
+                        id="uid"
+                        name="uid"
+                        placeholder="enter new UID"
+                        autocomplete="off"
+                        bind:value={input_value}
+                        onkeydown={handle_key}
+                    />
+                </li>
+            </ul>
         {/if}
-    </span>
-    {#if input_open}
-        <ul>
-            <li>
-                <input
-                    type="text"
-                    id="uid"
-                    name="uid"
-                    placeholder="enter new UID"
-                    autocomplete="off"
-                    bind:value={input_value}
-                    onkeydown={handle_key}
-                />
-            </li>
-        </ul>
     {/if}
 </li>

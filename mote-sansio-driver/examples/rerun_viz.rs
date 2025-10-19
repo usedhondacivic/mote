@@ -47,7 +47,7 @@ async fn main() -> anyhow::Result<()> {
 
     // let socket_addr = SocketAddr::new(IpAddr::V4(mote_ip), port);
 
-    let mut socket = TcpStream::connect("192.168.7.64:1738").unwrap();
+    let mut socket = TcpStream::connect("192.168.0.78:1738").unwrap();
     // socket.set_read_timeout(Some(Duration::from_millis(2500)))?;
 
     let mut comms = HostRuntimeLink::new();

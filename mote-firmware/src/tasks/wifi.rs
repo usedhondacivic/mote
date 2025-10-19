@@ -39,50 +39,48 @@ const SERVER_PORT: u16 = 1738;
 
 pub static MOTE_TO_HOST: Channel<CriticalSectionRawMutex, mote_messages::runtime::mote_to_host::Message, 32> =
     Channel::new();
-pub static WIFI_REQUEST_CONNECT: Channel<
-    CriticalSectionRawMutex,
-    mote_messages::configuration::host_to_mote::SetNetworkConnectionConfig,
-    1,
-> = Channel::new();
+pub static WIFI_REQUEST_CONNECT: Channel<CriticalSectionRawMutex, SetNetworkConnectionConfig, 1> = Channel::new();
 
 pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
-async fn attempt_join_network<'a>(
-    control: &mut cyw43::Control<'a>,
-    config: mote_messages::configuration::host_to_mote::SetNetworkConnectionConfig,
-) {
-    // TODO: Read network ssid and password from flash
-
-    for attempt in 1..6 {
-        if let Err(err) = control.join("hi", JoinOptions::new("whats up hello".as_bytes())).await {
-            info!("join failed with status={}, attempt {} / 5", err.status, attempt);
-        } else {
-            let mut configuration_state = CONFIGURATION_STATE.lock().await;
-            configuration_state.current_network_connection = Some(
-                heapless::String::try_from(
-                    "TODO:
-    placeholder",
-                )
-                .expect("Failed to create string from network ID"),
-            );
-            update_bit_result(
-                &mut configuration_state.built_in_test.wifi,
-                "Connected to Network",
-                BITResult::Pass,
-            );
-            return;
-        }
-    }
-    {
+async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) {
+    async fn update_network_bit(current_network: Option<heapless::String<32>>, result: BITResult) {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        configuration_state.current_network_connection =
-            Some(heapless::String::try_from("").expect("Failed to create string from network ID"));
+        configuration_state.current_network_connection = current_network;
         update_bit_result(
             &mut configuration_state.built_in_test.wifi,
             "Connected to Network",
-            BITResult::Fail,
+            result,
         );
     }
+
+    update_network_bit(None, BITResult::Waiting).await;
+
+    for attempt in 1..=3 {
+        if config.password.len() >= 8 {
+            info!("Attempting network join using WPA2+WPA3 with AES");
+            if let Err(err) = control
+                .join(&config.ssid, JoinOptions::new(config.password.as_bytes()))
+                .await
+            {
+                info!("join failed with status={}, attempt {} / 3", err.status, attempt);
+                continue;
+            }
+
+            update_network_bit(Some(config.ssid), BITResult::Pass).await;
+            return;
+        } else {
+            info!("Attempting network join as open");
+            if let Err(err) = control.join(&config.ssid, JoinOptions::new_open()).await {
+                info!("join failed with status={}, attempt {} / 3", err.status, attempt);
+                continue;
+            }
+
+            update_network_bit(Some(config.ssid), BITResult::Pass).await;
+            return;
+        }
+    }
+    update_network_bit(Some(config.ssid), BITResult::Pass).await;
 }
 
 async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
@@ -166,6 +164,16 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
         let mut tx_buffer = [0; 4096];
 
         loop {
+            // Update client connection status
+            {
+                let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                update_bit_result(
+                    &mut configuration_state.built_in_test.wifi,
+                    "Client Connected",
+                    BITResult::Waiting,
+                );
+            }
+
             let mut socket = TcpSocket::new(stack, &mut rx_buffer, &mut tx_buffer);
 
             if let Err(e) = socket.accept(SERVER_PORT).await {
@@ -175,7 +183,6 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
 
             info!("Received connection from {:?}", socket.remote_endpoint());
 
-            // Update client connection status
             {
                 let mut configuration_state = CONFIGURATION_STATE.lock().await;
                 update_bit_result(
@@ -206,7 +213,7 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
                     }
                     Either::First(Ok(bytes_read)) => {
                         link.handle_receive(&mut message_buffer[..bytes_read]);
-                        if let Ok(Some(message)) = link.poll_receive() {
+                        while let Ok(Some(message)) = link.poll_receive() {
                             if let Some(endpoint) = socket.remote_endpoint() {
                                 if let IpAddress::Ipv4(ip) = endpoint.addr {
                                     parse_message(&message, ip, &mut link).await.unwrap();
@@ -422,9 +429,7 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     unwrap!(spawner.spawn(cyw43_task(runner)));
 
     control.init(clm).await;
-    control
-        .set_power_management(cyw43::PowerManagementMode::PowerSave)
-        .await;
+    control.set_power_management(cyw43::PowerManagementMode::None).await;
 
     // Update init state
     {
