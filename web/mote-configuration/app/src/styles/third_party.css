@@ -5,6 +5,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'monospace';
+    src: url('../assets/fonts/DejaVuSansMano/DejaVuSansMono.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
