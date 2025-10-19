@@ -76,4 +76,7 @@ edge-nal-embassy = { version = "0.6", features = ["defmt"] }
 edge-nal = "0.5"
 
 [profile.release]
-debug = 2
+lto = true
+opt-level = 3
+codegen-units = 1
+debug = true

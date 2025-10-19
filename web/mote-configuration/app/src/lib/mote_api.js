@@ -56,9 +56,9 @@ async function readLoop(telemetry_recv) {
 
         // Check if one or more messages completed by the packet
         let data = link.poll_receive();
-        while (data) {
+        while (data?.Ok) {
             telemetry_recv(data);
-            data = link.poll_receive()?.Ok;
+            data = link.poll_receive();
         }
     }
 }
@@ -94,12 +94,14 @@ export async function set_uid(uid, error_handler) {
     }
 }
 
-export function select_ssid() {
-    console.log("select_ssid");
-}
-
-export function network_connect() {
-    console.log("network_connect");
+export async function network_connect(ssid, password) {
+    link.send({
+        SetNetworkConnectionConfig: {
+            ssid: ssid,
+            password: password
+        }
+    });
+    await write();
 }
 
 export async function rescan() {

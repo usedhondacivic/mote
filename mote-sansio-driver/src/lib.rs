@@ -89,22 +89,17 @@ where
             loop {
                 if idx == end {
                     self.serialization_buffer =
-                        Vec::from_slice(&self.serialization_buffer[end + 1..]).unwrap();
+                        Vec::from_slice(&self.serialization_buffer[(end + 1)..]).unwrap();
                     break;
                 }
-                match take_from_bytes_cobs::<I>(&mut self.serialization_buffer[idx..end + 1]) {
+                match take_from_bytes_cobs::<I>(&mut self.serialization_buffer.clone()[idx..=end]) {
                     Ok((msg, remainder)) => {
                         self.serialization_buffer = Vec::from_slice(remainder).unwrap();
                         return Ok(Some(msg));
                     }
-                    Err(postcard::Error::DeserializeBadEncoding) => {
+                    Err(_) => {
                         // Deserialization failed, try again while walking through the buffer
                         idx += 1;
-                    }
-                    Err(postcard::Error::DeserializeUnexpectedEnd) => return Ok(None),
-                    Err(err) => {
-                        self.serialization_buffer.clear();
-                        return Err(err);
                     }
                 }
             }

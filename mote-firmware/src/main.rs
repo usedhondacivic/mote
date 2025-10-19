@@ -54,6 +54,7 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources) {
     info!("Core 0 spawned");
 
     wifi::init(spawner, r).await;
+    info!("Wifi INIT complete");
 }
 
 #[embassy_executor::task]
@@ -70,5 +71,8 @@ async fn core1_task(spawner: Spawner, r_usb: UsbSerialResources, r_lidar: Rplida
     }
 
     usb_serial::init(spawner, r_usb).await;
-    lidar::init(spawner, r_lidar).await
+    info!("USB Serial INIT complete");
+
+    lidar::init(spawner, r_lidar).await;
+    info!("LiDAR INIT complete");
 }

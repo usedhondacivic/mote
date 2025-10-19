@@ -47,16 +47,24 @@ pub static WIFI_REQUEST_CONNECT: Channel<
 
 pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
-async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>) {
+async fn attempt_join_network<'a>(
+    control: &mut cyw43::Control<'a>,
+    config: mote_messages::configuration::host_to_mote::SetNetworkConnectionConfig,
+) {
     // TODO: Read network ssid and password from flash
 
     for attempt in 1..6 {
-        if let Err(err) = control.join("DSRC", JoinOptions::new("Grover744".as_bytes())).await {
+        if let Err(err) = control.join("hi", JoinOptions::new("whats up hello".as_bytes())).await {
             info!("join failed with status={}, attempt {} / 5", err.status, attempt);
         } else {
             let mut configuration_state = CONFIGURATION_STATE.lock().await;
-            configuration_state.current_network_connection =
-                Some(heapless::String::try_from("TODO: placeholder").expect("Failed to create string from network ID"));
+            configuration_state.current_network_connection = Some(
+                heapless::String::try_from(
+                    "TODO:
+    placeholder",
+                )
+                .expect("Failed to create string from network ID"),
+            );
             update_bit_result(
                 &mut configuration_state.built_in_test.wifi,
                 "Connected to Network",
@@ -324,13 +332,14 @@ async fn connection_manager_task(mut control: cyw43::Control<'static>) -> ! {
     run_network_scan(&mut control).await;
 
     // Attempt to join whatever network is saved in flash
-    attempt_join_network(&mut control).await;
+    // TODO: Load config from flash, then attempt connect
+    // attempt_join_network(&mut control).await;
 
     loop {
         match select(WIFI_REQUEST_CONNECT.receive(), WIFI_REQUEST_RESCAN.wait()).await {
             Either::First(config) => {
-                // TODO: Save config to flash
-                attempt_join_network(&mut control).await;
+                info!("Got join request {}, {}", config.ssid, config.password);
+                attempt_join_network(&mut control, config).await;
             }
             Either::Second(_) => run_network_scan(&mut control).await,
         }

@@ -1,9 +1,9 @@
-use defmt::{info, unwrap};
+use defmt::{debug, info, unwrap};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_rp::peripherals::USB;
 use embassy_rp::usb::{Driver as UsbDriver, Instance as UsbInstance};
-use embassy_time::{Duration, Ticker, with_timeout};
+use embassy_time::{Duration, Ticker, Timer, with_timeout};
 use embassy_usb::UsbDevice;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
@@ -64,6 +64,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
         match select(class.read_packet(&mut serial_buffer), ticker.next()).await {
             Either::First(Ok(bytes_read)) => {
                 link.handle_receive(&mut serial_buffer[..bytes_read]);
+
                 while let Ok(Some(message)) = link.poll_receive() {
                     handle_host_message(message).await;
                 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { mote_telem } from "./shared.svelte";
+    import NetworkEntry from "./NetworkEntry.svelte";
 
     let { networks, current_connection } = $props();
 
@@ -43,17 +43,9 @@
 </script>
 
 {#each sorted_networks as network}
-    <li>
-        <span style="margin: 0px;"> {network?.ssid} </span>
-        <span style="float: right; margin: 0px">
-            {#if network?.ssid.replace(/\0/g, "").trim() == current_connection
-                    .replace(/\0/g, "")
-                    .trim()}
-                &lt;- currently connected
-            {:else}
-                <pre>{get_indicator(network?.strength)}</pre>
-                |<button id={network?.ssid}>[ connect ]</button>
-            {/if}
-        </span>
-    </li>
+    <NetworkEntry
+        entry_data={network}
+        is_current_connection={network?.ssid.replace(/\0/g, "").trim() ==
+            current_connection}
+    />
 {/each}
