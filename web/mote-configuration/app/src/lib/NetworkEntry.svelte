@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { tick } from "svelte";
     import { network_connect } from "./mote_api";
 
     let { ssid, strength, is_current_connection } = $props();
@@ -19,13 +20,18 @@
 
     let input_open = $state(false);
     let input_value = $state("");
+    let input_ref: HTMLElement;
+
+    function submit() {
+        network_connect(ssid, input_value);
+        input_open = false;
+    }
 
     function handle_key(event: KeyboardEvent) {
         if (event.repeat) return;
 
         if (event.key === "Enter") {
-            network_connect(ssid, input_value);
-            input_open = false;
+            submit();
         }
     }
 </script>
@@ -34,38 +40,35 @@
     <span style="margin: 0px;">
         {ssid}
     </span>
-    {#if is_current_connection}
-        <span style="float: right; margin: 0px">&lt;~~ currently connected</span
+    <span style="float: right; margin: 0px" hidden={!is_current_connection}
+        >&lt;~~ currently connected</span
+    >
+    <span style="float: right; margin: 0px" hidden={is_current_connection}>
+        <pre>{get_indicator(strength)}</pre>
+        |<button
+            id={ssid}
+            onclick={async () => {
+                if (input_open) {
+                    submit();
+                } else {
+                    input_open = true;
+                    await tick();
+                    input_ref.focus();
+                }
+            }}>[ connect ]</button
         >
-    {:else}
-        <span style="float: right; margin: 0px">
-            <pre>{get_indicator(strength)}</pre>
-            |<button
-                id={ssid}
-                onclick={() => {
-                    if (input_open) {
-                        network_connect(ssid, "test");
-                        input_open = false;
-                    } else {
-                        input_open = true;
-                    }
-                }}>[ connect ]</button
-            >
-        </span>
-        {#if input_open}
-            <ul>
-                <li>
-                    <input
-                        type="text"
-                        id="uid"
-                        name="uid"
-                        placeholder="enter new UID"
-                        autocomplete="off"
-                        bind:value={input_value}
-                        onkeydown={handle_key}
-                    />
-                </li>
-            </ul>
-        {/if}
-    {/if}
+    </span>
+    <ul hidden={!input_open}>
+        <li>
+            <input
+                type="text"
+                name="uid"
+                placeholder="enter new UID"
+                autocomplete="off"
+                bind:this={input_ref}
+                bind:value={input_value}
+                onkeydown={handle_key}
+            />
+        </li>
+    </ul>
 </li>
