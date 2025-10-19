@@ -46,7 +46,7 @@ pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::ne
 async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) {
     async fn update_network_bit(current_network: Option<heapless::String<32>>, result: BITResult) {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        configuration_state.current_network_connection = current_network;
+        configuration_state.current_network_connection = None;
         update_bit_result(
             &mut configuration_state.built_in_test.wifi,
             "Connected to Network",
@@ -80,7 +80,8 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
             return;
         }
     }
-    update_network_bit(Some(config.ssid), BITResult::Pass).await;
+
+    update_network_bit(Some(config.ssid), BITResult::Fail).await;
 }
 
 async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
