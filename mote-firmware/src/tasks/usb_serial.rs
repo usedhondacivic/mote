@@ -1,4 +1,4 @@
-use defmt::{debug, info, unwrap};
+use defmt::{debug, info};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_rp::peripherals::USB;
@@ -136,7 +136,7 @@ async fn usb_serial_task(spawner: Spawner, r: UsbSerialResources) {
     // Build the builder.
     let usb = builder.build();
 
-    unwrap!(spawner.spawn(usb_task(usb)));
+    spawner.spawn(usb_task(usb).unwrap());
 
     loop {
         class.wait_connection().await;
@@ -147,5 +147,5 @@ async fn usb_serial_task(spawner: Spawner, r: UsbSerialResources) {
 }
 
 pub async fn init(spawner: Spawner, r: UsbSerialResources) {
-    unwrap!(spawner.spawn(usb_serial_task(spawner, r)));
+    spawner.spawn(usb_serial_task(spawner, r).unwrap());
 }

@@ -35,6 +35,8 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 
     let mut scan_points = heapless::Vec::<mote_to_host::Point, { mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE }>::new();
 
+    let mut count = 0;
+
     loop {
         state = match state {
             LidarState::Start => LidarState::Reset,
@@ -144,21 +146,21 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                             error!("Check bit data check failed for LiDAR data message. reseting...");
                         } else {
                             let angle = ((resp[2] as u16) << 7) | ((resp[1] as u16 & 0xFE) >> 1);
-                            // TODO: This impl drops a point whenever a packet gets completed.
-                            // Should use is_full after each push instead
-                            if let Ok(()) = scan_points.push(mote_to_host::Point {
+                            let _ = scan_points.push(mote_to_host::Point {
                                 quality: (resp[0] & !0b11) >> 2,
                                 angle: angle,
                                 distance: u16::from_le_bytes(resp[3..5].try_into().unwrap_or([0x00, 0x00])),
-                            }) {
-                                next_state = LidarState::ReceiveSample
-                            } else {
+                            });
+
+                            if scan_points.is_full() {
                                 next_state = LidarState::ProcessSample
+                            } else {
+                                next_state = LidarState::ReceiveSample
                             }
                         }
                     }
                     Ok(Err(err)) => {
-                        error!("Failed to read START_SCAN response from LiDAR ({}), reseting...", err);
+                        error!("Failed to read point from LiDAR ({}), reseting...", err);
                     }
                     Err(TimeoutError) => next_state = LidarState::ReceiveTimeout,
                 }
@@ -206,7 +208,7 @@ pub async fn init(spawner: Spawner, r: RplidarC1Resources) {
     }
 
     // Start task
-    unwrap!(spawner.spawn(lidar_state_machine_task(r)));
+    spawner.spawn(lidar_state_machine_task(r).unwrap());
 
     // Update init state
     {

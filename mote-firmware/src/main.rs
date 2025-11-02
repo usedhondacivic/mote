@@ -3,8 +3,10 @@
 #![allow(async_fn_in_trait)]
 #![feature(impl_trait_in_assoc_type)]
 
-use defmt::{info, unwrap};
+use defmt::info;
 use embassy_executor::{Executor, Spawner};
+use embassy_rp::clocks::{ClockConfig, CoreVoltage, clk_sys_freq};
+use embassy_rp::config::Config;
 use embassy_rp::multicore::{Stack, spawn_core1};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
@@ -33,20 +35,27 @@ static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
-    let p = embassy_rp::init(Default::default());
+    // Set up for clock frequency of 200 MHz, setting all necessary defaults.
+    let mut config = Config::new(ClockConfig::system_freq(200_000_000).unwrap());
+    config.clocks.core_voltage = CoreVoltage::V1_15;
+
+    let p = embassy_rp::init(config);
     let r = split_resources!(p);
+
+    info!("System clock frequency: {} MHz", clk_sys_freq() / 1_000_000);
 
     spawn_core1(
         p.CORE1,
         unsafe { &mut *core::ptr::addr_of_mut!(CORE1_STACK) },
         move || {
             let executor1 = EXECUTOR1.init(Executor::new());
-            executor1.run(|spawner| unwrap!(spawner.spawn(core1_task(spawner, r.usb_serial, r.lidar_uart))));
+            executor1.run(|spawner| spawner.spawn(core1_task(spawner, r.usb_serial, r.lidar_uart).unwrap()));
         },
     );
 
     let executor0 = EXECUTOR0.init(Executor::new());
-    executor0.run(|spawner| unwrap!(spawner.spawn(core0_task(spawner, r.wifi))));
+
+    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi).unwrap()));
 }
 
 #[embassy_executor::task]

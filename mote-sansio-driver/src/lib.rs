@@ -118,13 +118,8 @@ pub type HostRuntimeLink = SansIo<
 >;
 
 // Used by mote to talk to the host during runtime
-pub type MoteRuntimeLink = SansIo<
-    Ipv4Addr,
-    1460, // The ser/de buffer is smaller on Mote due to memory constraints
-    2000,
-    runtime::host_to_mote::Message,
-    runtime::mote_to_host::Message,
->;
+pub type MoteRuntimeLink =
+    SansIo<Ipv4Addr, 1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::Message>;
 
 // Currently we do not disambiguate between messages sent to different serial ports
 #[derive(Debug, Clone, Copy)]

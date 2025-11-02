@@ -9,7 +9,7 @@ pub mod runtime {
     pub mod mote_to_host {
         use serde::{Deserialize, Serialize};
 
-        pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 200;
+        pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 250;
 
         // Lidar Data
         #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]

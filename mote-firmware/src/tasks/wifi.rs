@@ -2,7 +2,7 @@ use core::cmp::min;
 use core::net::{Ipv4Addr, Ipv6Addr};
 
 use cyw43::JoinOptions;
-use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
+use cyw43_pio::{DEFAULT_CLOCK_DIVIDER, PioSpi};
 use defmt::*;
 use edge_mdns::HostAnswersMdnsHandler;
 use edge_mdns::buf::VecBufAccess;
@@ -234,7 +234,7 @@ async fn tcp_server_task(stack: Stack<'static>) -> ! {
                     }
                 }
 
-                if let Some(transmit) = link.poll_transmit() {
+                while let Some(transmit) = link.poll_transmit() {
                     if let Err(error) = socket.write_all(&transmit.payload).await {
                         error!("TX message failed, got {:?}", error);
                         break;
@@ -397,8 +397,8 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
         }
     }
 
-    // let fw = include_bytes!("../cyw43-firmware/43439A0.bin");
-    // let clm = include_bytes!("../cyw43-firmware/43439A0_clm.bin");
+    // let fw = include_bytes!("../../cyw43-firmware/43439A0.bin");
+    // let clm = include_bytes!("../../cyw43-firmware/43439A0_clm.bin");
 
     // To make flashing faster for development, you may want to flash the firmwares
     // independently at hardcoded addresses, instead of baking them into the
@@ -416,7 +416,7 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     let spi = PioSpi::new(
         &mut pio.common,
         pio.sm0,
-        RM2_CLOCK_DIVIDER,
+        DEFAULT_CLOCK_DIVIDER,
         pio.irq0,
         cs,
         r.dio,
@@ -427,7 +427,7 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     static STATE: StaticCell<cyw43::State> = StaticCell::new();
     let state = STATE.init(cyw43::State::new());
     let (net_device, mut control, runner) = cyw43::new(state, pwr, spi, fw).await;
-    unwrap!(spawner.spawn(cyw43_task(runner)));
+    spawner.spawn(cyw43_task(runner).unwrap());
 
     control.init(clm).await;
     control.set_power_management(cyw43::PowerManagementMode::None).await;
@@ -448,14 +448,14 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
 
     // Start connection manager task
-    unwrap!(spawner.spawn(connection_manager_task(control)));
+    spawner.spawn(connection_manager_task(control).unwrap());
 
     // Start network task
-    unwrap!(spawner.spawn(net_task(runner)));
+    spawner.spawn(net_task(runner).unwrap());
 
     // Start the core tcp server
-    unwrap!(spawner.spawn(tcp_server_task(stack)));
+    spawner.spawn(tcp_server_task(stack).unwrap());
 
     // Start mdns responder
-    unwrap!(spawner.spawn(mdns_task(stack)));
+    spawner.spawn(mdns_task(stack).unwrap());
 }
