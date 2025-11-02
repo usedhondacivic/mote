@@ -27,10 +27,8 @@ pub mod runtime {
             #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
             pub struct Point {
                 pub quality: u8,
-                // Actual heading = angle / 64.0 degrees
-                pub angle: u16,
-                // Actual distance = distance / 4.0 mm
-                pub distance: u16,
+                pub angle_rads: f32,
+                pub distance_mm: u16,
             }
 
             #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]

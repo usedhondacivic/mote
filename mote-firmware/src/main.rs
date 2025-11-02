@@ -2,6 +2,8 @@
 #![no_main]
 #![allow(async_fn_in_trait)]
 #![feature(impl_trait_in_assoc_type)]
+// Used minimally in the LiDAR driver, still very unstable
+#![feature(generic_const_exprs)]
 
 use defmt::info;
 use embassy_executor::{Executor, Spawner};

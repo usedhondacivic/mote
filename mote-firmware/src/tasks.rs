@@ -19,8 +19,6 @@ assign_resources! {
         uart: UART1,
         tx: PIN_4,
         rx: PIN_5,
-        tx_dma: DMA_CH1,
-        rx_dma: DMA_CH2
     },
     usb_serial: UsbSerialResources{
         usb: USB
@@ -30,7 +28,7 @@ assign_resources! {
 // also bind interrupts
 use embassy_rp::peripherals::{PIO0, UART1, USB};
 use embassy_rp::pio::InterruptHandler as PIOInterruptHandler;
-use embassy_rp::uart::InterruptHandler as UARTInterruptHandler;
+use embassy_rp::uart::BufferedInterruptHandler as UARTInterruptHandler;
 use embassy_rp::usb::InterruptHandler as USBInterruptHandler;
 
 bind_interrupts!(pub struct Irqs {

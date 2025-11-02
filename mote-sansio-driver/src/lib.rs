@@ -2,7 +2,7 @@
 
 // Sans-io message handling library for interacting with Mote
 // IO handling should be implemented by the consumer. See ../examples.
-use core::{fmt::Debug, marker::PhantomData, net::Ipv4Addr};
+use core::{fmt::Debug, marker::PhantomData};
 
 use heapless_postcard::{Deque, Vec};
 use mote_messages::{configuration, runtime};
@@ -17,9 +17,11 @@ pub struct Transmit<const MTU: usize> {
 }
 
 // You probably do not want to directly construct this. Instead, use the type aliases:
-// HostRuntimeLink
+// HostRuntimeCommandLink
+// HostRuntimeDataOffloadLink
 // HostConfigurationLink
-// MoteRuntimeLink
+// MoteRuntimeCommandLink
+// MoteRuntimeDataOffloadLink
 // MoteConfigurationLink
 pub struct SansIo<const MTU: usize, const B: usize, I, O>
 where
