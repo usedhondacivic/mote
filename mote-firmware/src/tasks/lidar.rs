@@ -8,7 +8,7 @@ use mote_messages::runtime::mote_to_host;
 use super::{Irqs, RplidarC1Resources};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
-use crate::wifi::MOTE_TO_HOST;
+use crate::wifi::MOTE_TO_HOST_DATA_OFFLOAD;
 
 enum LidarState {
     Start,
@@ -33,7 +33,10 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 
     let mut state = LidarState::Reset;
 
-    let mut scan_points = heapless::Vec::<mote_to_host::Point, { mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE }>::new();
+    let mut scan_points = heapless::Vec::<
+        mote_to_host::data_offload::Point,
+        { mote_to_host::data_offload::MAX_POINTS_PER_SCAN_MESSAGE },
+    >::new();
 
     let mut count = 0;
 
@@ -146,7 +149,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                             error!("Check bit data check failed for LiDAR data message. reseting...");
                         } else {
                             let angle = ((resp[2] as u16) << 7) | ((resp[1] as u16 & 0xFE) >> 1);
-                            let _ = scan_points.push(mote_to_host::Point {
+                            let _ = scan_points.push(mote_to_host::data_offload::Point {
                                 quality: (resp[0] & !0b11) >> 2,
                                 angle: angle,
                                 distance: u16::from_le_bytes(resp[3..5].try_into().unwrap_or([0x00, 0x00])),
@@ -172,7 +175,8 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
             }
             LidarState::ProcessSample => {
                 // We don't care if these packets get lost, so keep going if the channel is full
-                let _ = MOTE_TO_HOST.try_send(mote_to_host::Message::Scan(scan_points.clone()));
+                let _ =
+                    MOTE_TO_HOST_DATA_OFFLOAD.try_send(mote_to_host::data_offload::Message::Scan(scan_points.clone()));
 
                 scan_points.clear();
                 LidarState::ReceiveSample

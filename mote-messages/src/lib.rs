@@ -4,28 +4,39 @@
 
 // Messages used during nominal operation
 pub mod runtime {
-
     // Sensor and state data telemetered to the host
     pub mod mote_to_host {
-        use serde::{Deserialize, Serialize};
+        // Command responses
+        pub mod command {
+            use serde::{Deserialize, Serialize};
 
-        pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 250;
-
-        // Lidar Data
-        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-        pub struct Point {
-            pub quality: u8,
-            // Actual heading = angle / 64.0 degrees
-            pub angle: u16,
-            // Actual distance = distance / 4.0 mm
-            pub distance: u16,
+            #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
+            pub enum Message {
+                Ping,
+                PingResponse,
+            }
         }
 
-        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-        pub enum Message {
-            Ping,
-            PingResponse,
-            Scan(heapless::Vec<Point, MAX_POINTS_PER_SCAN_MESSAGE>),
+        // Sensor data offload messages
+        pub mod data_offload {
+            use serde::{Deserialize, Serialize};
+
+            pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 250;
+
+            // Lidar Data
+            #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
+            pub struct Point {
+                pub quality: u8,
+                // Actual heading = angle / 64.0 degrees
+                pub angle: u16,
+                // Actual distance = distance / 4.0 mm
+                pub distance: u16,
+            }
+
+            #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
+            pub enum Message {
+                Scan(heapless::Vec<Point, MAX_POINTS_PER_SCAN_MESSAGE>),
+            }
         }
     }
 

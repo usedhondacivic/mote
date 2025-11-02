@@ -14,7 +14,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 use super::{Irqs, UsbSerialResources};
 use crate::tasks::CONFIGURATION_STATE;
-use crate::tasks::wifi::{WIFI_REQUEST_CONNECT, WIFI_REQUEST_RESCAN};
+use crate::tasks::wifi::connection_manager::{WIFI_REQUEST_CONNECT, WIFI_REQUEST_RESCAN};
 
 #[embassy_executor::task]
 async fn usb_task(mut usb: UsbDevice<'static, UsbDriver<'static, USB>>) -> ! {

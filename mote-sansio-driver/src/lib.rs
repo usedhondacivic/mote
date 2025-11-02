@@ -108,18 +108,44 @@ where
     }
 }
 
-// Used by the host to talk to mote during runtime
-pub type HostRuntimeLink = SansIo<
+// Used by the host to send commands to mote during runtime
+pub type HostRuntimeCommandLink = SansIo<
     Ipv4Addr,
     1460, // TCP MSS
     2000,
-    runtime::mote_to_host::Message,
+    runtime::mote_to_host::command::Message,
     runtime::host_to_mote::Message,
 >;
 
-// Used by mote to talk to the host during runtime
-pub type MoteRuntimeLink =
-    SansIo<Ipv4Addr, 1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::Message>;
+pub type HostRuntimeDataOffloadLink = SansIo<
+    Ipv4Addr,
+    1460,
+    2000,
+    runtime::mote_to_host::data_offload::Message,
+    (), // The host should not use the data offload link for transmission
+>;
+
+// Used by mote to respond to control commands during runtime
+pub type MoteRuntimeCommandLink = SansIo<
+    Ipv4Addr,
+    1460,
+    2000,
+    runtime::host_to_mote::Message,
+    runtime::mote_to_host::command::Message,
+>;
+
+// Used by mote to offload sensor data
+pub type MoteRuntimeDataOffloadLink =
+    SansIo<Ipv4Addr, 1460, 2000, (), runtime::mote_to_host::data_offload::Message>;
+
+// Used by mote to respond to control commands during runtime
+pub type MoteRuntimeLink = SansIo<
+    Ipv4Addr,
+    1460,
+    2000,
+    runtime::host_to_mote::Message,
+    runtime::mote_to_host::command::Message,
+>;
 
 // Currently we do not disambiguate between messages sent to different serial ports
 #[derive(Debug, Clone, Copy)]
