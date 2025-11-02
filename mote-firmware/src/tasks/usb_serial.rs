@@ -8,7 +8,7 @@ use embassy_usb::UsbDevice;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
 use mote_messages::configuration::{host_to_mote, mote_to_host};
-use mote_sansio_driver::{MoteConfigurationLink, SerialEndpoint};
+use mote_sansio_driver::MoteConfigurationLink;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -79,7 +79,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                     with_timeout(Duration::from_millis(500), CONFIGURATION_STATE.lock()).await
                 {
                     let message = mote_to_host::Message::State(configuration_state.clone());
-                    link.send(SerialEndpoint, message).unwrap();
+                    link.send(message).unwrap();
                 }
                 Ok(())
             }

@@ -6,7 +6,7 @@
 pub mod runtime {
     // Sensor and state data telemetered to the host
     pub mod mote_to_host {
-        // Command responses
+        // Command messages
         pub mod command {
             use serde::{Deserialize, Serialize};
 
@@ -21,7 +21,7 @@ pub mod runtime {
         pub mod data_offload {
             use serde::{Deserialize, Serialize};
 
-            pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 250;
+            pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 100;
 
             // Lidar Data
             #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
@@ -58,6 +58,14 @@ pub mod runtime {
             Enable(Subsystem),
             Disable(Subsystem),
             SoftReset,
+        }
+
+        pub mod data_offload {
+            use serde::{Deserialize, Serialize};
+
+            // Used to subscribe to sensor data on the data offload connection
+            #[derive(Serialize, Deserialize, Debug, defmt::Format)]
+            pub struct DataOffloadSubscribeRequest;
         }
     }
 }

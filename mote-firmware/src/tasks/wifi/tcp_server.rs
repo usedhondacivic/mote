@@ -1,6 +1,4 @@
-use core::net::Ipv4Addr;
-
-use defmt::*;
+use defmt::{error, info, warn};
 use embassy_futures::select::{Either, select};
 use embassy_net::tcp::TcpSocket;
 use embassy_net::{IpAddress, Stack};
@@ -20,13 +18,12 @@ pub static MOTE_TO_HOST_COMMAND: Channel<CriticalSectionRawMutex, mote_to_host::
 
 async fn parse_command_message<'a>(
     rx_message: &host_to_mote::Message,
-    endpoint_addr: Ipv4Addr,
     link: &mut MoteRuntimeCommandLink,
 ) -> Result<(), embassy_net::tcp::Error> {
     match rx_message {
         host_to_mote::Message::Ping => {
             info!("Parsed ping request, responding.");
-            let _ = link.send(endpoint_addr, mote_to_host::command::Message::PingResponse);
+            let _ = link.send(mote_to_host::command::Message::PingResponse);
         }
         host_to_mote::Message::PingResponse => {
             info!("Received ping response from host.")
@@ -96,8 +93,8 @@ pub async fn tcp_server_task(stack: Stack<'static>) -> ! {
                         link.handle_receive(&mut message_buffer[..bytes_read]);
                         while let Ok(Some(message)) = link.poll_receive() {
                             if let Some(endpoint) = socket.remote_endpoint() {
-                                if let IpAddress::Ipv4(ip) = endpoint.addr {
-                                    parse_command_message(&message, ip, &mut link).await.unwrap();
+                                if let IpAddress::Ipv4(_) = endpoint.addr {
+                                    parse_command_message(&message, &mut link).await.unwrap();
                                 }
                             }
                         }
@@ -106,11 +103,7 @@ pub async fn tcp_server_task(stack: Stack<'static>) -> ! {
                         break;
                     }
                     Either::Second(tx_message) => {
-                        if let Some(endpoint) = socket.remote_endpoint() {
-                            if let IpAddress::Ipv4(ip) = endpoint.addr {
-                                link.send(ip, tx_message).unwrap();
-                            }
-                        }
+                        link.send(tx_message).unwrap();
                     }
                 }
 

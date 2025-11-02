@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use mote_messages::configuration::{host_to_mote, mote_to_host};
-use mote_sansio_driver::{HostConfigurationLink, SerialEndpoint};
+use mote_sansio_driver::HostConfigurationLink;
 
 #[wasm_bindgen]
 extern "C" {
@@ -33,7 +33,7 @@ impl ConfigurationLink {
         console_log!("[TX] Configuration link send: {:?}", msg);
         let message: host_to_mote::Message = serde_wasm_bindgen::from_value(msg).unwrap();
         console_log!("[TX] Configuration link unpacked: {:?}", message);
-        self.link.send(SerialEndpoint, message).unwrap();
+        self.link.send(message).unwrap();
         console_log!("[TX] Message queued for send");
     }
 

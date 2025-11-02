@@ -12,8 +12,7 @@ use serde::{Deserialize, Serialize};
 // Data structure representing a transmission
 // Returned by sansio driver for the application to transmit
 #[derive(Debug)]
-pub struct Transmit<T: Debug + Copy, const MTU: usize> {
-    pub dst: T,
+pub struct Transmit<const MTU: usize> {
     pub payload: Vec<u8, MTU>,
 }
 
@@ -22,21 +21,19 @@ pub struct Transmit<T: Debug + Copy, const MTU: usize> {
 // HostConfigurationLink
 // MoteRuntimeLink
 // MoteConfigurationLink
-pub struct SansIo<T, const MTU: usize, const B: usize, I, O>
+pub struct SansIo<const MTU: usize, const B: usize, I, O>
 where
-    T: Debug + Copy,              // Transmission type
     I: for<'de> Deserialize<'de>, // Input type
     O: Serialize,                 // Output type
 {
-    buffered_transmits: Deque<Transmit<T, MTU>, 10>,
+    buffered_transmits: Deque<Transmit<MTU>, 10>,
     serialization_buffer: Vec<u8, B>,
     in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 }
 
-impl<T, const MTU: usize, const B: usize, I, O> SansIo<T, MTU, B, I, O>
+impl<const MTU: usize, const B: usize, I, O> SansIo<MTU, B, I, O>
 where
-    T: Debug + Copy,              // Transmission type
     I: for<'de> Deserialize<'de>, // Input type
     O: Serialize,                 // Output type
 {
@@ -51,13 +48,12 @@ where
     }
 
     // Queue a message to be sent
-    pub fn send(&mut self, dst: T, message: O) -> Result<(), postcard::Error> {
+    pub fn send(&mut self, message: O) -> Result<(), postcard::Error> {
         let encoded_bytes: Vec<u8, B> = to_vec_cobs(&message)?;
 
         // Break message into packets given the MTU
         for chunk in encoded_bytes.chunks(MTU) {
             let _ = self.buffered_transmits.push_back(Transmit {
-                dst: dst.clone(),
                 payload: Vec::from_slice(chunk).unwrap(),
             });
         }
@@ -66,7 +62,7 @@ where
     }
 
     // Get the next message to be sent
-    pub fn poll_transmit(&mut self) -> Option<Transmit<T, MTU>> {
+    pub fn poll_transmit(&mut self) -> Option<Transmit<MTU>> {
         self.buffered_transmits.pop_front()
     }
 
@@ -110,7 +106,6 @@ where
 
 // Used by the host to send commands to mote during runtime
 pub type HostRuntimeCommandLink = SansIo<
-    Ipv4Addr,
     1460, // TCP MSS
     2000,
     runtime::mote_to_host::command::Message,
@@ -118,42 +113,30 @@ pub type HostRuntimeCommandLink = SansIo<
 >;
 
 pub type HostRuntimeDataOffloadLink = SansIo<
-    Ipv4Addr,
     1460,
     2000,
     runtime::mote_to_host::data_offload::Message,
-    (), // The host should not use the data offload link for transmission
+    runtime::host_to_mote::data_offload::DataOffloadSubscribeRequest,
 >;
 
 // Used by mote to respond to control commands during runtime
-pub type MoteRuntimeCommandLink = SansIo<
-    Ipv4Addr,
-    1460,
-    2000,
-    runtime::host_to_mote::Message,
-    runtime::mote_to_host::command::Message,
->;
+pub type MoteRuntimeCommandLink =
+    SansIo<1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::command::Message>;
 
 // Used by mote to offload sensor data
-pub type MoteRuntimeDataOffloadLink =
-    SansIo<Ipv4Addr, 1460, 2000, (), runtime::mote_to_host::data_offload::Message>;
-
-// Used by mote to respond to control commands during runtime
-pub type MoteRuntimeLink = SansIo<
-    Ipv4Addr,
+pub type MoteRuntimeDataOffloadLink = SansIo<
     1460,
     2000,
-    runtime::host_to_mote::Message,
-    runtime::mote_to_host::command::Message,
+    runtime::host_to_mote::data_offload::DataOffloadSubscribeRequest,
+    runtime::mote_to_host::data_offload::Message,
 >;
 
-// Currently we do not disambiguate between messages sent to different serial ports
-#[derive(Debug, Clone, Copy)]
-pub struct SerialEndpoint;
+// Used by mote to respond to control commands during runtime
+pub type MoteRuntimeLink =
+    SansIo<1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::command::Message>;
 
 // Used by the host to talk to mote during configuration
 pub type HostConfigurationLink = SansIo<
-    SerialEndpoint,
     64, // Serial MTU
     2000,
     configuration::mote_to_host::Message,
@@ -161,10 +144,5 @@ pub type HostConfigurationLink = SansIo<
 >;
 
 // Used by mote to talk to the host during configuration
-pub type MoteConfigurationLink = SansIo<
-    SerialEndpoint,
-    64,
-    1000,
-    configuration::host_to_mote::Message,
-    configuration::mote_to_host::Message,
->;
+pub type MoteConfigurationLink =
+    SansIo<64, 1000, configuration::host_to_mote::Message, configuration::mote_to_host::Message>;

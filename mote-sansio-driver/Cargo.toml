@@ -20,4 +20,3 @@ mdns = "3.0"
 heapless = "0.8"
 rerun = { version = "0.25.*", features = ["web_viewer"] }
 anyhow = "1.0"
-async-std = "1.13"

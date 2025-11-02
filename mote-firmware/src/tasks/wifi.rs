@@ -124,9 +124,12 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     // Start network task
     spawner.spawn(net_task(runner).unwrap());
 
-    // Start the core tcp server
-    spawner.spawn(tcp_server::tcp_server_task(stack).unwrap());
-
     // Start mdns responder
     spawner.spawn(mdns::mdns_task(stack).unwrap());
+
+    // Start the tcp command server
+    spawner.spawn(tcp_server::tcp_server_task(stack).unwrap());
+
+    // Start the udp data offload server
+    spawner.spawn(udp_server::udp_server_task(stack).unwrap());
 }

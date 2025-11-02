@@ -1,125 +1,160 @@
 // Example usage of mote-sansio-driver
-
-// This example publishes sensor data to rerun for visualization using a single thread
-// For more complicated real integrations you'd most likely want to use a async runtime
-// (tokio, smol) to handle socket io concurrently
+// This example publishes sensor data to rerun for visualization
 
 use color_space::{Hsv, Rgb};
 use rerun::external::glam;
+use std::thread;
 use std::{
     io::{Read, Write},
-    net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream},
-    time::Duration,
+    net::{TcpStream, UdpSocket},
 };
 
-use mote_sansio_driver::HostRuntimeLink;
+use mote_sansio_driver::{HostRuntimeCommandLink, HostRuntimeDataOffloadLink};
 
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 
-#[async_std::main]
-async fn main() -> anyhow::Result<()> {
-    // By default this example will use mDNS to discover your robot.
-    // If mDNS is not available (most public networks), use the configuration page to find your robot's
-    // IP and insert it here
-    // let mote_ip = Ipv4Addr::UNSPECIFIED;
-    // let port = 1738;
-    //
-    // if mote_ip == Ipv4Addr::UNSPECIFIED {
-    //     println!(
-    //         "{:?}",
-    //         mdns::resolve::one(
-    //             "_mote._tcp.local.",
-    //             "mote._mote._tcp.local.",
-    //             Duration::from_secs(15)
-    //         )
-    //         .await
-    //     );
-    //     // if let Ok(Some(response)) = mdns::resolve::one(
-    //     //     "_mote._tcp.local",
-    //     //     "mote._mote._tcp.local",
-    //     //     Duration::from_secs(15),
-    //     // )
-    //     // .await
-    //     // {
-    //     //     println!("{:?}", response);
-    //     // }
-    // }
+// This thread starts a TCP socket for sending commands to Mote
+// Right now all we do is ping the robot
+fn command_thread() {
+    'socket_error: loop {
+        if let Ok(mut socket) = TcpStream::connect("192.168.0.78:7465") {
+            let mut command_link = HostRuntimeCommandLink::new();
 
-    // let socket_addr = SocketAddr::new(IpAddr::V4(mote_ip), port);
+            // Ping the robot
+            command_link.send(host_to_mote::Message::Ping).unwrap();
 
-    let mut socket = TcpStream::connect("192.168.0.78:1738").unwrap();
-    // socket.set_read_timeout(Some(Duration::from_millis(2500)))?;
+            loop {
+                // Retrieve and transmit all messages queued to be sent
+                while let Some(transmit) = command_link.poll_transmit() {
+                    if let Err(_) = socket.write_all(&transmit.payload) {
+                        continue 'socket_error;
+                    }
+                    continue;
+                }
 
-    let mut comms = HostRuntimeLink::new();
+                // Read a message from the socket
+                let mut buf = vec![0u8; 2000];
+                let num_read = socket.read(&mut buf).unwrap();
+                command_link.handle_receive(&mut buf[..num_read]);
 
-    // Send one ping command
-    comms.send("192.168.7.64".parse().unwrap(), host_to_mote::Message::Ping)?;
+                while let Ok(Some(message)) = command_link.poll_receive() {
+                    // Check what kind of message we got
+                    match message {
+                        mote_to_host::command::Message::PingResponse => {
+                            println!("Got ping response from Mote.");
+                        }
+                        mote_to_host::command::Message::Ping => {
+                            println!("Mote pinged PC.");
+                            command_link
+                                .send(host_to_mote::Message::PingResponse)
+                                .unwrap();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
+// This thread creates a UDP socket and subscribes to sensor data from Mote
+// When data is received, it is processed and published to rerun for visualization
+fn data_offload_thread() {
     // Create the rerun instance
-    let rec = rerun::RecordingStreamBuilder::new("mote_rerun_example").serve_grpc()?;
+    let rec = rerun::RecordingStreamBuilder::new("mote_rerun_example")
+        .serve_grpc()
+        .unwrap();
 
     // Setup rerun to launch the web view
     rerun::serve_web_viewer(rerun::web_viewer::WebViewerConfig {
         connect_to: Vec::from(["localhost/proxy".to_owned()]),
         ..Default::default()
-    })?
+    })
+    .unwrap()
     .detach();
 
-    loop {
-        // Retrieve and transmit all messages queued to be sent
-        while let Some(transmit) = comms.poll_transmit() {
-            socket.write_all(&transmit.payload)?;
-            continue;
-        }
+    'socket_error: loop {
+        if let Ok(socket) = UdpSocket::bind("0.0.0.0:0") {
+            if let Err(_) = socket.connect("192.168.0.78:7475") {
+                continue;
+            }
 
-        // Read a message from the socket
-        let mut buf = vec![0u8; 2000];
-        let num_read = socket.read(&mut buf)?;
-        comms.handle_receive(&mut buf[..num_read]);
+            let mut data_link = HostRuntimeDataOffloadLink::new();
 
-        while let Ok(Some(message)) = comms.poll_receive() {
-            // Check what kind of message we got
-            match message {
-                mote_to_host::Message::PingResponse => {
-                    println!("Got ping response from Mote.");
+            // Subscribe to sensor data
+            data_link
+                .send(host_to_mote::data_offload::DataOffloadSubscribeRequest)
+                .unwrap();
+
+            loop {
+                // Retrieve and transmit all messages queued to be sent
+                while let Some(transmit) = data_link.poll_transmit() {
+                    if let Err(_) = socket.send(&transmit.payload) {
+                        continue 'socket_error;
+                    }
+                    continue;
                 }
-                mote_to_host::Message::Ping => {
-                    println!("Mote pinged PC.");
-                    comms.send(
-                        "192.168.0.78".parse().unwrap(),
-                        host_to_mote::Message::PingResponse,
-                    )?;
-                }
-                mote_to_host::Message::Scan(scan_data) => {
-                    // We got a LiDAR scan message, lets push the points to rerun for visualization
-                    let points: heapless::Vec<
-                        glam::Vec2,
-                        { mote_messages::runtime::mote_to_host::MAX_POINTS_PER_SCAN_MESSAGE },
-                    > = scan_data
-                        .iter()
-                        .map(|point| {
-                            glam::Vec2::from_angle((point.angle as f32 / 64.0).to_radians())
-                                * (point.distance as f32 * 4.0)
-                                / 100.0
-                        })
-                        .collect();
 
-                    let colors: Vec<rerun::Color> = scan_data
-                        .iter()
-                        .map(|point| {
-                            let rgb = Rgb::from(Hsv::new((point.distance as f64) / 40.0, 1.0, 1.0));
-                            return rerun::Color::from_rgb(rgb.r as u8, rgb.g as u8, rgb.b as u8);
-                        })
-                        .collect();
+                // Read a message from the socket
+                let mut buf = vec![0u8; 2000];
+                let num_read = socket.recv(&mut buf).unwrap();
+                data_link.handle_receive(&mut buf[..num_read]);
 
-                    rec.log(
-                        "lidar_scan",
-                        &rerun::Points2D::new(points)
-                            .with_colors(colors)
-                            .with_radii([1.0]),
-                    )?;
+                while let Ok(Some(message)) = data_link.poll_receive() {
+                    // Check what kind of message we got
+                    match message {
+                        mote_to_host::data_offload::Message::Scan(scan_data) => {
+                            // We got a LiDAR scan message, lets push the points to rerun for visualization
+                            let points: heapless::Vec<
+                                glam::Vec2,
+                                { mote_to_host::data_offload::MAX_POINTS_PER_SCAN_MESSAGE },
+                            > = scan_data
+                                .iter()
+                                .map(|point| {
+                                    glam::Vec2::from_angle((point.angle as f32 / 64.0).to_radians())
+                                        * (point.distance as f32 * 4.0)
+                                        / 100.0
+                                })
+                                .collect();
+
+                            let colors: Vec<rerun::Color> = scan_data
+                                .iter()
+                                .map(|point| {
+                                    let rgb = Rgb::from(Hsv::new(
+                                        (point.distance as f64) / 40.0,
+                                        1.0,
+                                        1.0,
+                                    ));
+                                    return rerun::Color::from_rgb(
+                                        rgb.r as u8,
+                                        rgb.g as u8,
+                                        rgb.b as u8,
+                                    );
+                                })
+                                .collect();
+
+                            rec.log(
+                                "lidar_scan",
+                                &rerun::Points2D::new(points)
+                                    .with_colors(colors)
+                                    .with_radii([1.0]),
+                            )
+                            .unwrap();
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+fn main() {
+    // Start the command thread
+    let command_thread_handle = thread::spawn(|| {
+        command_thread();
+    });
+
+    // Start the data offload thread
+    data_offload_thread();
+
+    command_thread_handle.join().unwrap();
 }
