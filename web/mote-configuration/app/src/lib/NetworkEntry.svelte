@@ -20,7 +20,7 @@
 
     let input_open = $state(false);
     let input_value = $state("");
-    let input_ref: HTMLElement;
+    let input_ref;
 
     function submit() {
         network_connect(ssid, input_value);

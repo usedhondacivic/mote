@@ -28,7 +28,7 @@
 </script>
 
 <main>
-    <div style="margin-top: 10ch;" class="tree">
+    <div style="margin-top: 10ch; margin-bottom: 10ch;" class="tree">
         <ul>
             <p style="margin: 0px;"><strong>Mote</strong></p>
             <li class="preconnection">
