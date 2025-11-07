@@ -1,7 +1,5 @@
 mod rp_c1_driver;
 
-use ::defmt::error;
-use defmt::info;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{BufferedUart, Config, DataBits, Parity, StopBits};
 use mote_messages::configuration::mote_to_host::{BIT, BITResult};
@@ -11,8 +9,19 @@ use static_cell::StaticCell;
 use super::{Irqs, RplidarC1Resources};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
-use crate::tasks::lidar::rp_c1_driver::{LidarState, RPLidarC1};
+use crate::tasks::lidar::rp_c1_driver::{LidarState, Point, RPLidarC1};
 use crate::wifi::MOTE_TO_HOST_DATA_OFFLOAD;
+
+impl From<Point> for mote_to_host::data_offload::Point {
+    fn from(value: Point) -> Self {
+        mote_to_host::data_offload::Point {
+            quality: value.quality,
+            // Feels expensive, but the RP2350 has a FPU
+            angle_rads: (value.angle as f32 / 64.0).to_radians(),
+            distance_mm: value.distance as f32 / 4.0,
+        }
+    }
+}
 
 #[embassy_executor::task]
 async fn lidar_state_machine_task(r: RplidarC1Resources) {
@@ -27,9 +36,6 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
     static RX_BUF: StaticCell<[u8; 16]> = StaticCell::new();
     let rx_buf = &mut RX_BUF.init([0; 16])[..];
     let uart = BufferedUart::new(r.uart, r.tx, r.rx, Irqs, tx_buf, rx_buf, config);
-
-    // let mut uart = Uart::new(r.uart, r.tx, r.rx, Irqs, r.tx_dma, r.rx_dma,
-    // config);
 
     let mut state = LidarState::Reset;
 
@@ -61,6 +67,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                 next_state
             }
             LidarState::ScanRequest => driver.scan_request().await,
+            // This could be updated to use zerocopy for a nice performance boost
             LidarState::ReceiveSample => {
                 match driver.receive_samples(&mut point_buf).await {
                     Ok(count) => {
@@ -73,19 +80,21 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                         }
                     }
                     Err(_) => {
-                        //
+                        // Something is wrong, check health and try again
                         LidarState::CheckHealth
                     }
                 }
             }
             LidarState::ProcessSample => {
-                // We don't care if these packets get lost, so keep going if the channel is full
-                // let _ =
-                // MOTE_TO_HOST_DATA_OFFLOAD.
-                // try_send(mote_to_host::data_offload::Message::Scan(scan_points.clone()));
+                // We don't care if these packets get lost, so don't block if the channel is
+                // full
+                let _ = MOTE_TO_HOST_DATA_OFFLOAD.try_send(mote_to_host::data_offload::Message::Scan(
+                    point_buf[..valid_points]
+                        .into_iter()
+                        .map(|&point| point.into())
+                        .collect(),
+                ));
 
-                // scan_points.clear();
-                info!("Processing {} points", valid_points);
                 LidarState::ReceiveSample
             }
             LidarState::Stop => LidarState::Reset,
@@ -105,11 +114,7 @@ pub async fn init(spawner: Spawner, r: RplidarC1Resources) {
             name: heapless::String::try_from("Check Health").expect("Failed to assign name to BIT"),
             result: BITResult::Waiting,
         };
-        let measurements = BIT {
-            name: heapless::String::try_from("Receiving Data").expect("Failed to assign name to BIT"),
-            result: BITResult::Waiting,
-        };
-        for test in [init, check_health, measurements] {
+        for test in [init, check_health] {
             configuration_state
                 .built_in_test
                 .lidar

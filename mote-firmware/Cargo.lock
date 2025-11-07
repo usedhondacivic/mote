@@ -122,30 +122,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bt-hci"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb938a3b4c5cc6c2409275bad789c0346a0495fa071a0acc5d72b9bd3175a2f7"
-dependencies = [
- "btuuid",
- "defmt 1.0.1",
- "embassy-sync",
- "embedded-io",
- "embedded-io-async",
- "futures-intrusive",
- "heapless 0.8.0",
-]
-
-[[package]]
-name = "btuuid"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0acfef8a77a02866e04f7e2ad3f4c7b32d575696c49c4bbad742b4aecb8e4a3"
-dependencies = [
- "defmt 0.3.100",
-]
-
-[[package]]
 name = "bytemuck"
 version = "1.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -279,16 +255,13 @@ name = "cyw43"
 version = "0.5.0"
 source = "git+https://github.com/embassy-rs/embassy?rev=cf231d461ff4b16cf7d16e4dbc5db909212c2c89#cf231d461ff4b16cf7d16e4dbc5db909212c2c89"
 dependencies = [
- "bt-hci",
  "cortex-m",
  "cortex-m-rt",
- "defmt 1.0.1",
  "embassy-futures",
  "embassy-net-driver-channel",
  "embassy-sync",
  "embassy-time 0.5.0",
  "embedded-hal 1.0.0",
- "embedded-io-async",
  "futures",
  "heapless 0.8.0",
  "num_enum 0.5.11",
@@ -910,16 +883,6 @@ name = "futures-core"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
-
-[[package]]
-name = "futures-intrusive"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d930c203dd0b6ff06e0201a4a2fe9149b43c684fd4420555b26d21b1a02956f"
-dependencies = [
- "futures-core",
- "lock_api",
-]
 
 [[package]]
 name = "futures-io"

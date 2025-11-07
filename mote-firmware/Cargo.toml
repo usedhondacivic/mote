@@ -44,7 +44,9 @@ embassy-usb = { version = "0.5", features = ["defmt"] }
 embassy-futures = { version = "0.1" }
 embassy-sync = { version = "0.7", features = ["defmt"] }
 
-cyw43 = { version = "0.5.0", features = ["defmt", "firmware-logs"] }
+# defmt output is painfully verbose for this driver
+# cyw43 = { version = "0.5.0", features = ["defmt"] }
+cyw43 = { version = "0.5.0" }
 cyw43-pio = { version = "0.8.0", features = ["defmt"] }
 
 assign-resources = { git = "https://github.com/adamgreig/assign-resources", rev = "bd22cb7a92031fb16f74a5da42469d466c33383e" }

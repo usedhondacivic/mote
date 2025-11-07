@@ -21,14 +21,14 @@ pub mod runtime {
         pub mod data_offload {
             use serde::{Deserialize, Serialize};
 
-            pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 100;
+            pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 50;
 
             // Lidar Data
             #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
             pub struct Point {
                 pub quality: u8,
                 pub angle_rads: f32,
-                pub distance_mm: u16,
+                pub distance_mm: f32,
             }
 
             #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]

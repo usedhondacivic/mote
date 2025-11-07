@@ -21,6 +21,7 @@ fn command_thread() {
             let mut command_link = HostRuntimeCommandLink::new();
 
             // Ping the robot
+            println!("Pinging Mote");
             command_link.send(host_to_mote::Message::Ping).unwrap();
 
             loop {
@@ -44,7 +45,7 @@ fn command_thread() {
                             println!("Got ping response from Mote.");
                         }
                         mote_to_host::command::Message::Ping => {
-                            println!("Mote pinged PC.");
+                            println!("Mote pinged host.");
                             command_link
                                 .send(host_to_mote::Message::PingResponse)
                                 .unwrap();
@@ -104,15 +105,10 @@ fn data_offload_thread() {
                     match message {
                         mote_to_host::data_offload::Message::Scan(scan_data) => {
                             // We got a LiDAR scan message, lets push the points to rerun for visualization
-                            let points: heapless::Vec<
-                                glam::Vec2,
-                                { mote_to_host::data_offload::MAX_POINTS_PER_SCAN_MESSAGE },
-                            > = scan_data
+                            let points: Vec<glam::Vec2> = scan_data
                                 .iter()
                                 .map(|point| {
-                                    glam::Vec2::from_angle((point.angle as f32 / 64.0).to_radians())
-                                        * (point.distance as f32 * 4.0)
-                                        / 100.0
+                                    glam::Vec2::from_angle(point.angle_rads) * point.distance_mm
                                 })
                                 .collect();
 
@@ -120,7 +116,7 @@ fn data_offload_thread() {
                                 .iter()
                                 .map(|point| {
                                     let rgb = Rgb::from(Hsv::new(
-                                        (point.distance as f64) / 40.0,
+                                        point.distance_mm as f64 / 20.0,
                                         1.0,
                                         1.0,
                                     ));
@@ -136,7 +132,7 @@ fn data_offload_thread() {
                                 "lidar_scan",
                                 &rerun::Points2D::new(points)
                                     .with_colors(colors)
-                                    .with_radii([1.0]),
+                                    .with_radii([10.0]),
                             )
                             .unwrap();
                         }
