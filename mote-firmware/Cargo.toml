@@ -77,6 +77,7 @@ edge-mdns = { version = "0.6", features = ["defmt"] }
 edge-nal-embassy = { version = "0.6", features = ["defmt"] }
 edge-nal = "0.5"
 fixed = "1.29.0"
+pid = "4.0.0"
 
 # Remove once cyw43-pio 0.8.1 is released
 [patch.crates-io]

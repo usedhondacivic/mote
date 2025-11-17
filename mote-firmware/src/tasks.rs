@@ -1,3 +1,4 @@
+pub mod drive_base;
 pub mod lidar;
 pub mod usb_serial;
 pub mod wifi;
@@ -22,11 +23,26 @@ assign_resources! {
     },
     usb_serial: UsbSerialResources{
         usb: USB
+    },
+    left_encoder: LeftEncoderResources{
+        pio: PIO1,
+        phase_a: PIN_6,
+        phase_b: PIN_7,
+    },
+    right_encoder: RightEncoderResources{
+        pio: PIO2,
+        phase_a: PIN_8,
+        phase_b: PIN_9,
+    },
+    drive_base: DriveBaseResources{
+        pwm: PWM_SLICE5,
+        left_motor: PIN_10,
+        right_motor: PIN_11,
     }
 }
 
 // also bind interrupts
-use embassy_rp::peripherals::{PIO0, UART1, USB};
+use embassy_rp::peripherals::{PIO0, PIO1, PIO2, UART1, USB};
 use embassy_rp::pio::InterruptHandler as PIOInterruptHandler;
 use embassy_rp::uart::BufferedInterruptHandler as UARTInterruptHandler;
 use embassy_rp::usb::InterruptHandler as USBInterruptHandler;
@@ -34,6 +50,8 @@ use embassy_rp::usb::InterruptHandler as USBInterruptHandler;
 bind_interrupts!(pub struct Irqs {
     UART1_IRQ  => UARTInterruptHandler<UART1>;
     PIO0_IRQ_0 => PIOInterruptHandler<PIO0>;
+    PIO1_IRQ_0 => PIOInterruptHandler<PIO1>;
+    PIO2_IRQ_0 => PIOInterruptHandler<PIO2>;
     USBCTRL_IRQ => USBInterruptHandler<USB>;
 });
 

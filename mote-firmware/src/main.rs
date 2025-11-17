@@ -14,8 +14,8 @@ use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::{
-    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, RplidarC1Resources, UsbSerialResources, lidar, usb_serial,
-    wifi,
+    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, DriveBaseResources, LeftEncoderResources,
+    RightEncoderResources, RplidarC1Resources, UsbSerialResources, drive_base, lidar, usb_serial, wifi,
 };
 
 mod helpers;
@@ -51,7 +51,19 @@ fn main() -> ! {
         unsafe { &mut *core::ptr::addr_of_mut!(CORE1_STACK) },
         move || {
             let executor1 = EXECUTOR1.init(Executor::new());
-            executor1.run(|spawner| spawner.spawn(core1_task(spawner, r.usb_serial, r.lidar_uart).unwrap()));
+            executor1.run(|spawner| {
+                spawner.spawn(
+                    core1_task(
+                        spawner,
+                        r.usb_serial,
+                        r.lidar_uart,
+                        r.drive_base,
+                        r.left_encoder,
+                        r.right_encoder,
+                    )
+                    .unwrap(),
+                )
+            });
         },
     );
 
@@ -69,7 +81,14 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources) {
 }
 
 #[embassy_executor::task]
-async fn core1_task(spawner: Spawner, r_usb: UsbSerialResources, r_lidar: RplidarC1Resources) {
+async fn core1_task(
+    spawner: Spawner,
+    r_usb: UsbSerialResources,
+    r_lidar: RplidarC1Resources,
+    drive_base_r: DriveBaseResources,
+    left_encoder_r: LeftEncoderResources,
+    right_encoder_r: RightEncoderResources,
+) {
     info!("Core 1 spawned");
 
     /* Set initial configuration state */
@@ -86,4 +105,7 @@ async fn core1_task(spawner: Spawner, r_usb: UsbSerialResources, r_lidar: Rplida
 
     lidar::init(spawner, r_lidar).await;
     info!("LiDAR INIT complete");
+
+    drive_base::init(spawner, drive_base_r, left_encoder_r, right_encoder_r).await;
+    info!("Drive base INIT complete");
 }
