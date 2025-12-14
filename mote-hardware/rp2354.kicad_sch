@@ -2959,6 +2959,17 @@
 		)
 		(uuid "0fc70642-5b6e-486c-848c-1cd1ae9f290b")
 	)
+	(text "USB C Power Detection"
+		(exclude_from_sim no)
+		(at 222.758 221.488 0)
+		(effects
+			(font
+				(size 1.905 1.905)
+			)
+			(justify bottom)
+		)
+		(uuid "3b254282-94b9-483d-864d-783eec081304")
+	)
 	(text "USB"
 		(exclude_from_sim no)
 		(at 39.116 224.028 0)
@@ -2972,7 +2983,7 @@
 	)
 	(text "IMU"
 		(exclude_from_sim no)
-		(at 225.552 222.25 0)
+		(at 108.712 220.98 0)
 		(effects
 			(font
 				(size 1.905 1.905)
@@ -3047,9 +3058,20 @@
 		)
 		(uuid "cab336f2-f267-47f6-b321-a2283a8fa734")
 	)
+	(text "Status LEDs"
+		(exclude_from_sim no)
+		(at 108.966 243.078 0)
+		(effects
+			(font
+				(size 1.905 1.905)
+			)
+			(justify bottom)
+		)
+		(uuid "eea032c1-1e31-4b98-afc3-cf912434359e")
+	)
 	(text "LiDAR"
 		(exclude_from_sim no)
-		(at 96.266 223.012 0)
+		(at 37.846 243.332 0)
 		(effects
 			(font
 				(size 1.905 1.905)
@@ -3528,7 +3550,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 231.14) (xy 101.6 231.14)
+			(xy 33.02 251.46) (xy 43.18 251.46)
 		)
 		(stroke
 			(width 0)
@@ -3718,7 +3740,7 @@
 	)
 	(wire
 		(pts
-			(xy 215.9 231.14) (xy 227.33 231.14)
+			(xy 99.06 229.87) (xy 110.49 229.87)
 		)
 		(stroke
 			(width 0)
@@ -3798,7 +3820,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 228.6) (xy 101.6 228.6)
+			(xy 33.02 248.92) (xy 43.18 248.92)
 		)
 		(stroke
 			(width 0)
@@ -3938,7 +3960,7 @@
 	)
 	(wire
 		(pts
-			(xy 215.9 228.6) (xy 227.33 228.6)
+			(xy 99.06 227.33) (xy 110.49 227.33)
 		)
 		(stroke
 			(width 0)
@@ -5128,7 +5150,7 @@
 	)
 	(wire
 		(pts
-			(xy 368.3 135.89) (xy 374.65 135.89)
+			(xy 368.3 135.89) (xy 369.57 135.89)
 		)
 		(stroke
 			(width 0)
@@ -5687,7 +5709,7 @@
 		(uuid "06785c30-fc1d-4d3c-90df-258809acb01c")
 	)
 	(label "GPIO15"
-		(at 215.9 231.14 0)
+		(at 99.06 229.87 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5697,14 +5719,14 @@
 		(uuid "099dd8fa-7b4a-4a68-9046-c8206fd60bc5")
 	)
 	(label "GPIO14"
-		(at 215.9 228.6 0)
+		(at 99.06 227.33 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "099dd8fa-7b4a-4a68-9046-c8206fd60bc5")
+		(uuid "099dd8fa-7b4a-4a68-9046-c8206fd60bc6")
 	)
 	(label "GPIO17"
 		(at 148.59 248.92 0)
@@ -5724,7 +5746,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "0d1675e0-d217-42db-a8da-64169ef16fa9")
+		(uuid "0d1675e0-d217-42db-a8da-64169ef16faa")
 	)
 	(label "GPIO29"
 		(at 293.37 111.76 0)
@@ -5754,7 +5776,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "1416d826-3652-4915-bc8d-a5cc9ca57bda")
+		(uuid "1416d826-3652-4915-bc8d-a5cc9ca57bdb")
 	)
 	(label "GPIO27_ADC1"
 		(at 176.53 157.48 180)
@@ -5854,7 +5876,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "36c25014-03e4-48d9-b150-e3a5c37f72ea")
+		(uuid "36c25014-03e4-48d9-b150-e3a5c37f72eb")
 	)
 	(label "GPIO5"
 		(at 176.53 99.06 180)
@@ -6076,16 +6098,6 @@
 		)
 		(uuid "8712530a-6d82-4b33-9889-b0db3825a612")
 	)
-	(label "+3v3"
-		(at 374.65 135.89 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "88c09c7d-7b83-4364-912a-340668e7bcfa")
-	)
 	(label "RUN"
 		(at 83.82 139.7 0)
 		(effects
@@ -6267,7 +6279,7 @@
 		(uuid "d32466ab-58c0-4257-8296-616074188baa")
 	)
 	(label "GPIO4"
-		(at 91.44 228.6 0)
+		(at 33.02 248.92 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6277,14 +6289,14 @@
 		(uuid "d549de77-f6a8-43c8-983c-e7650cf92e8f")
 	)
 	(label "GPIO5"
-		(at 91.44 231.14 0)
+		(at 33.02 251.46 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "d549de77-f6a8-43c8-983c-e7650cf92e8f")
+		(uuid "d549de77-f6a8-43c8-983c-e7650cf92e90")
 	)
 	(label "GPIO21"
 		(at 176.53 139.7 180)
@@ -6428,7 +6440,7 @@
 		(uuid "01c418c2-3982-43dc-adab-3487f8cc4b35")
 	)
 	(hierarchical_label "GND"
-		(shape input)
+		(shape passive)
 		(at 226.06 50.8 0)
 		(effects
 			(font
@@ -6450,7 +6462,7 @@
 		(uuid "21492e5a-711c-4961-a3d8-9b7c3d5173a1")
 	)
 	(hierarchical_label "GND"
-		(shape input)
+		(shape passive)
 		(at 303.53 53.34 180)
 		(effects
 			(font
@@ -6462,7 +6474,7 @@
 	)
 	(hierarchical_label "lidar_rx"
 		(shape input)
-		(at 101.6 231.14 0)
+		(at 43.18 251.46 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6470,6 +6482,17 @@
 			(justify left)
 		)
 		(uuid "2db5ebe2-0695-42da-8be0-deec42a54b41")
+	)
+	(hierarchical_label "CC1"
+		(shape input)
+		(at 228.6 227.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4b991755-6578-4db1-a5b9-16aa08a437ae")
 	)
 	(hierarchical_label "motor_left_input_a"
 		(shape output)
@@ -6491,7 +6514,7 @@
 			)
 			(justify left)
 		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b443")
+		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b444")
 	)
 	(hierarchical_label "motor_left_pwm"
 		(shape output)
@@ -6502,7 +6525,7 @@
 			)
 			(justify left)
 		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b443")
+		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b445")
 	)
 	(hierarchical_label "motor_standby"
 		(shape output)
@@ -6513,7 +6536,7 @@
 			)
 			(justify left)
 		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b443")
+		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b446")
 	)
 	(hierarchical_label "motor_right_input_a"
 		(shape output)
@@ -6524,7 +6547,7 @@
 			)
 			(justify left)
 		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b443")
+		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b447")
 	)
 	(hierarchical_label "motor_right_pwm"
 		(shape output)
@@ -6535,7 +6558,7 @@
 			)
 			(justify left)
 		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b443")
+		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b448")
 	)
 	(hierarchical_label "motor_right_input_b"
 		(shape output)
@@ -6546,10 +6569,10 @@
 			)
 			(justify left)
 		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b443")
+		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b449")
 	)
 	(hierarchical_label "GND"
-		(shape bidirectional)
+		(shape passive)
 		(at 299.72 147.32 180)
 		(effects
 			(font
@@ -6560,7 +6583,7 @@
 		(uuid "6fc4ed47-6d46-45b6-88e6-baa6c80ebee4")
 	)
 	(hierarchical_label "GND"
-		(shape bidirectional)
+		(shape passive)
 		(at 369.57 121.92 0)
 		(effects
 			(font
@@ -6570,7 +6593,7 @@
 		)
 		(uuid "735d87d6-cf45-4c84-8744-24156290f7e1")
 	)
-	(hierarchical_label "usb_D-"
+	(hierarchical_label "USB_D-"
 		(shape bidirectional)
 		(at 45.72 231.14 0)
 		(effects
@@ -6581,7 +6604,7 @@
 		)
 		(uuid "80633417-dff1-4127-8b09-3da90b983022")
 	)
-	(hierarchical_label "usb_D+"
+	(hierarchical_label "USB_D+"
 		(shape bidirectional)
 		(at 45.72 228.6 0)
 		(effects
@@ -6590,10 +6613,10 @@
 			)
 			(justify left)
 		)
-		(uuid "80633417-dff1-4127-8b09-3da90b983022")
+		(uuid "80633417-dff1-4127-8b09-3da90b983023")
 	)
 	(hierarchical_label "+3v3"
-		(shape input)
+		(shape passive)
 		(at 148.59 31.75 0)
 		(effects
 			(font
@@ -6605,7 +6628,7 @@
 	)
 	(hierarchical_label "imu_scl"
 		(shape output)
-		(at 227.33 231.14 0)
+		(at 110.49 229.87 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6616,7 +6639,7 @@
 	)
 	(hierarchical_label "lidar_tx"
 		(shape output)
-		(at 101.6 228.6 0)
+		(at 43.18 248.92 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6626,7 +6649,7 @@
 		(uuid "a4aada92-edc2-44c6-87bb-7b82a2095c64")
 	)
 	(hierarchical_label "GND"
-		(shape input)
+		(shape passive)
 		(at 125.73 175.26 180)
 		(effects
 			(font
@@ -6637,7 +6660,18 @@
 		(uuid "ab3e76c7-6ab0-41ab-bcb1-54d1ec48879e")
 	)
 	(hierarchical_label "GND"
-		(shape input)
+		(shape passive)
+		(at 39.37 92.71 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ae8b9169-b63b-43a2-942d-3a99a09751a7")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
 		(at 60.96 114.3 0)
 		(effects
 			(font
@@ -6647,8 +6681,19 @@
 		)
 		(uuid "b9ef2b50-f491-4966-b50a-87a035f24425")
 	)
+	(hierarchical_label "status_led_tx"
+		(shape output)
+		(at 110.49 246.38 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c4c42765-301f-4af9-86bd-19477e801c81")
+	)
 	(hierarchical_label "+3v3"
-		(shape input)
+		(shape passive)
 		(at 41.91 60.96 0)
 		(effects
 			(font
@@ -6678,7 +6723,7 @@
 			)
 			(justify left)
 		)
-		(uuid "d3723b37-1c60-4d29-8421-35d18f61f727")
+		(uuid "d3723b37-1c60-4d29-8421-35d18f61f728")
 	)
 	(hierarchical_label "motor_right_encoder_ a"
 		(shape output)
@@ -6689,7 +6734,7 @@
 			)
 			(justify left)
 		)
-		(uuid "d3723b37-1c60-4d29-8421-35d18f61f727")
+		(uuid "d3723b37-1c60-4d29-8421-35d18f61f729")
 	)
 	(hierarchical_label "motor_right_encoder_ b"
 		(shape output)
@@ -6700,11 +6745,22 @@
 			)
 			(justify left)
 		)
-		(uuid "d3723b37-1c60-4d29-8421-35d18f61f727")
+		(uuid "d3723b37-1c60-4d29-8421-35d18f61f72a")
+	)
+	(hierarchical_label "CC2"
+		(shape input)
+		(at 228.6 229.87 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e2c214e7-653b-48b2-a537-00d3a6495845")
 	)
 	(hierarchical_label "imu_sda"
 		(shape bidirectional)
-		(at 227.33 228.6 0)
+		(at 110.49 227.33 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6714,7 +6770,7 @@
 		(uuid "eacbb662-3a10-4a7c-a113-8d0b40e03261")
 	)
 	(hierarchical_label "GND"
-		(shape input)
+		(shape passive)
 		(at 44.45 139.7 180)
 		(effects
 			(font
@@ -6723,6 +6779,17 @@
 			(justify right)
 		)
 		(uuid "f6ee6de0-7f9b-4b3a-8c3e-703c3cf33d50")
+	)
+	(hierarchical_label "+3v3"
+		(shape passive)
+		(at 369.57 135.89 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fe9c07c9-cd6d-44cf-ab9d-f8fb0dfdee1a")
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -9192,71 +9259,6 @@
 			(project ""
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
 					(reference "R1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 39.37 92.71 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "f7aabd07-68f2-4540-b540-450e8f5a22be")
-		(property "Reference" "#PWR014"
-			(at 39.37 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 43.18 93.98 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 39.37 92.71 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 39.37 92.71 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 39.37 92.71 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "96624111-9675-4140-9667-1fe7b3db6936")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
-					(reference "#PWR014")
 					(unit 1)
 				)
 			)
