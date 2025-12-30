@@ -25,19 +25,31 @@ assign_resources! {
         usb: USB
     },
     left_encoder: LeftEncoderResources{
-        pio: PIO1,
         phase_a: PIN_6,
         phase_b: PIN_7,
     },
     right_encoder: RightEncoderResources{
-        pio: PIO2,
         phase_a: PIN_8,
         phase_b: PIN_9,
     },
     drive_base: DriveBaseResources{
-        pwm: PWM_SLICE5,
-        left_motor: PIN_10,
-        right_motor: PIN_11,
+        left_motor_pwm: PWM_SLICE5,
+        left_motor_a: PIN_10,
+        left_motor_b: PIN_11,
+        right_motor_pwm: PWM_SLICE6,
+        right_motor_a: PIN_12,
+        right_motor_b: PIN_13,
+        driver_standby: PIN_18,
+        pio: PIO1,
+    },
+    imu: ImuResources{
+        i2c: I2C1,
+        sda: PIN_14,
+        scl: PIN_15,
+    },
+    status_leds: StatusLedResources{
+        pio : PIO2,
+        tx: PIN_19,
     }
 }
 

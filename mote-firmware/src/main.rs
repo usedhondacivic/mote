@@ -14,8 +14,9 @@ use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::{
-    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, DriveBaseResources, LeftEncoderResources,
-    RightEncoderResources, RplidarC1Resources, UsbSerialResources, drive_base, lidar, usb_serial, wifi,
+    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, DriveBaseResources, ImuResources, LeftEncoderResources,
+    RightEncoderResources, RplidarC1Resources, StatusLedResources, UsbSerialResources, drive_base, lidar, usb_serial,
+    wifi,
 };
 
 mod helpers;

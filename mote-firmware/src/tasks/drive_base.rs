@@ -1,13 +1,10 @@
 use defmt::info;
 use embassy_executor::Spawner;
-use embassy_rp::pac::pio::regs::Irq;
 use embassy_rp::pio::Pio;
 use embassy_time::Timer;
-use pid::Pid;
 
 use crate::tasks::drive_base::encoder::PioEncoder;
 use crate::tasks::{DriveBaseResources, Irqs, LeftEncoderResources, RightEncoderResources};
-use crate::wifi::HOST_TO_MOTE_COMMAND;
 
 mod encoder;
 mod motor;
@@ -18,28 +15,26 @@ async fn drive_base_task(
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
 ) {
-    // Left wheel
+    // Setup PIO
     let Pio {
-        common: mut left_encoder_common,
-        sm0: left_encoder_sm0,
+        common: mut encoder_common,
+        sm0: encoder_sm0,
+        sm1: encoder_sm1,
         ..
-    } = Pio::new(left_encoder_r.pio, Irqs);
+    } = Pio::new(drive_base_r.pio, Irqs);
+
+    // Left wheel
     let mut left_encoder = PioEncoder::new(
-        &mut left_encoder_common,
-        left_encoder_sm0,
+        &mut encoder_common,
+        encoder_sm0,
         left_encoder_r.phase_a,
         left_encoder_r.phase_b,
     );
 
     // Right wheel
-    let Pio {
-        common: mut right_encoder_common,
-        sm0: right_encoder_sm0,
-        ..
-    } = Pio::new(right_encoder_r.pio, Irqs);
     let mut right_encoder = PioEncoder::new(
-        &mut right_encoder_common,
-        right_encoder_sm0,
+        &mut encoder_common,
+        encoder_sm1,
         right_encoder_r.phase_a,
         right_encoder_r.phase_b,
     );
