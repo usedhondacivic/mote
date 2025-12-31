@@ -4,7 +4,217 @@
 	(generator_version "9.0")
 	(uuid "d35c8e50-431e-4cbe-ad0c-cbbcc2fed3dc")
 	(paper "A3")
+	(title_block
+		(title "Mote")
+		(date "2025-12-30")
+		(rev "V0.0.0")
+		(company "github.com/usedhondacivic/mote")
+	)
 	(lib_symbols
+		(symbol "Connector:Conn_01x03_Pin"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x03_Pin"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x03, script generated"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x03_Pin_1_1"
+				(rectangle
+					(start 0.8636 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 2.54) (xy 0.8636 2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 0.8636 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0.8636 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at 5.08 2.54 180)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector_Generic_MountingPin:Conn_01x03_MountingPin"
 			(pin_names
 				(offset 1.016)
@@ -1045,7 +1255,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "MCU_RaspberryPi_RP2350:RP2350_60QFN"
+		(symbol "MCU_RaspberryPi_RP2350:RP2354_60QFN"
 			(pin_names
 				(offset 1.016)
 			)
@@ -1060,7 +1270,7 @@
 					)
 				)
 			)
-			(property "Value" "RP2350_60QFN"
+			(property "Value" "RP2354_60QFN"
 				(at 24.13 -49.53 0)
 				(effects
 					(font
@@ -1068,7 +1278,7 @@
 					)
 				)
 			)
-			(property "Footprint" "RP2350_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
+			(property "Footprint" "RP2354_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
 				(at -19.05 0 0)
 				(effects
 					(font
@@ -1095,7 +1305,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "RP2350_60QFN_0_0"
+			(symbol "RP2354_60QFN_0_0"
 				(text "Raspberry Pi"
 					(at 0 5.08 0)
 					(effects
@@ -1105,7 +1315,7 @@
 					)
 				)
 			)
-			(symbol "RP2350_60QFN_0_1"
+			(symbol "RP2354_60QFN_0_1"
 				(rectangle
 					(start 29.21 48.26)
 					(end -29.21 -48.26)
@@ -1118,8 +1328,8 @@
 					)
 				)
 			)
-			(symbol "RP2350_60QFN_1_0"
-				(text "RP2350A QFN-60"
+			(symbol "RP2354_60QFN_1_1"
+				(text "RP2354A QFN-60"
 					(at 0 0 0)
 					(effects
 						(font
@@ -1127,8 +1337,6 @@
 						)
 					)
 				)
-			)
-			(symbol "RP2350_60QFN_1_1"
 				(pin power_in line
 					(at -31.75 39.37 0)
 					(length 2.54)
@@ -3047,7 +3255,7 @@
 		)
 		(uuid "c09dcc7a-bc59-44bf-abd0-b31cc6f67e1b")
 	)
-	(text "JST Debug Connector"
+	(text "Debug Connectors"
 		(exclude_from_sim no)
 		(at 260.858 185.928 0)
 		(effects
@@ -3135,7 +3343,7 @@
 		(uuid "30cb7139-2e08-4ea0-ac74-064f3576ed47")
 	)
 	(junction
-		(at 323.85 218.44)
+		(at 287.02 222.25)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "34b60baf-785e-4ead-a656-bc73630e1ad8")
@@ -3500,6 +3708,16 @@
 	)
 	(wire
 		(pts
+			(xy 335.28 217.17) (xy 350.52 217.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0ed85035-fba1-4d33-9d7a-2e6666e1634c")
+	)
+	(wire
+		(pts
 			(xy 161.29 127) (xy 176.53 127)
 		)
 		(stroke
@@ -3700,7 +3918,7 @@
 	)
 	(wire
 		(pts
-			(xy 313.69 207.01) (xy 326.39 207.01)
+			(xy 276.86 210.82) (xy 289.56 210.82)
 		)
 		(stroke
 			(width 0)
@@ -3890,7 +4108,7 @@
 	)
 	(wire
 		(pts
-			(xy 326.39 209.55) (xy 323.85 209.55)
+			(xy 289.56 213.36) (xy 287.02 213.36)
 		)
 		(stroke
 			(width 0)
@@ -3970,6 +4188,16 @@
 	)
 	(wire
 		(pts
+			(xy 99.06 246.38) (xy 110.49 246.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "43cd224f-41dd-4cca-9ed2-1b94e592e897")
+	)
+	(wire
+		(pts
 			(xy 161.29 137.16) (xy 176.53 137.16)
 		)
 		(stroke
@@ -3977,6 +4205,16 @@
 			(type default)
 		)
 		(uuid "4629506e-c80f-4efc-a010-77b818100be2")
+	)
+	(wire
+		(pts
+			(xy 207.01 227.33) (xy 228.6 227.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "479529cf-dacf-4a56-bb7e-dbdd402bddd6")
 	)
 	(wire
 		(pts
@@ -4040,7 +4278,7 @@
 	)
 	(wire
 		(pts
-			(xy 331.47 217.17) (xy 331.47 218.44)
+			(xy 294.64 220.98) (xy 294.64 222.25)
 		)
 		(stroke
 			(width 0)
@@ -4320,7 +4558,7 @@
 	)
 	(wire
 		(pts
-			(xy 323.85 209.55) (xy 323.85 218.44)
+			(xy 287.02 213.36) (xy 287.02 222.25)
 		)
 		(stroke
 			(width 0)
@@ -4330,7 +4568,7 @@
 	)
 	(wire
 		(pts
-			(xy 323.85 218.44) (xy 331.47 218.44)
+			(xy 287.02 222.25) (xy 294.64 222.25)
 		)
 		(stroke
 			(width 0)
@@ -4840,6 +5078,16 @@
 	)
 	(wire
 		(pts
+			(xy 345.44 214.63) (xy 350.52 214.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9d4ec3b7-6f22-4b37-a86f-5a03392f5cde")
+	)
+	(wire
+		(pts
 			(xy 344.17 135.89) (xy 359.41 135.89)
 		)
 		(stroke
@@ -4847,6 +5095,16 @@
 			(type default)
 		)
 		(uuid "9d7657fa-9176-4be9-8b52-3875e46b5f1a")
+	)
+	(wire
+		(pts
+			(xy 335.28 212.09) (xy 350.52 212.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9da16c8c-53e5-4f2f-b90a-2d5c41fa5c81")
 	)
 	(wire
 		(pts
@@ -5020,7 +5278,7 @@
 	)
 	(wire
 		(pts
-			(xy 313.69 212.09) (xy 326.39 212.09)
+			(xy 276.86 215.9) (xy 289.56 215.9)
 		)
 		(stroke
 			(width 0)
@@ -5047,16 +5305,6 @@
 			(type default)
 		)
 		(uuid "b3198aa5-7666-4540-8237-34a85aa4b88c")
-	)
-	(wire
-		(pts
-			(xy 148.59 227.33) (xy 158.75 227.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b5e80dac-8b25-4891-bdc2-1bcfcc6717bd")
 	)
 	(wire
 		(pts
@@ -5200,7 +5448,7 @@
 	)
 	(wire
 		(pts
-			(xy 318.77 223.52) (xy 323.85 223.52)
+			(xy 281.94 227.33) (xy 287.02 227.33)
 		)
 		(stroke
 			(width 0)
@@ -5310,7 +5558,7 @@
 	)
 	(wire
 		(pts
-			(xy 323.85 218.44) (xy 323.85 223.52)
+			(xy 287.02 222.25) (xy 287.02 227.33)
 		)
 		(stroke
 			(width 0)
@@ -5550,16 +5798,6 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 243.84) (xy 158.75 243.84)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f047e43e-3edb-481e-a77f-7a15ca8692e5")
-	)
-	(wire
-		(pts
 			(xy 161.29 132.08) (xy 176.53 132.08)
 		)
 		(stroke
@@ -5627,6 +5865,16 @@
 			(type default)
 		)
 		(uuid "f5f8709e-7c5e-4aa5-97c2-1bcfb6d631bb")
+	)
+	(wire
+		(pts
+			(xy 207.01 229.87) (xy 228.6 229.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f72cccf8-6185-4eb4-ba9b-202246628c55")
 	)
 	(wire
 		(pts
@@ -5699,6 +5947,16 @@
 		(uuid "0031e8cd-b152-4686-9f51-ca9ba76b5a94")
 	)
 	(label "GPIO26_ADC0"
+		(at 207.01 227.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "03b3de4d-977a-4477-ac69-937c48c45c9a")
+	)
+	(label "GPIO26_ADC0"
 		(at 176.53 154.94 180)
 		(effects
 			(font
@@ -5728,7 +5986,17 @@
 		)
 		(uuid "099dd8fa-7b4a-4a68-9046-c8206fd60bc6")
 	)
-	(label "GPIO17"
+	(label "GPIO19"
+		(at 99.06 246.38 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0a60488a-1c14-4a2e-9895-8c209f25f8d1")
+	)
+	(label "GPIO13"
 		(at 148.59 248.92 0)
 		(effects
 			(font
@@ -5738,7 +6006,7 @@
 		)
 		(uuid "0d1675e0-d217-42db-a8da-64169ef16fa9")
 	)
-	(label "GPIO16"
+	(label "GPIO12"
 		(at 148.59 246.38 0)
 		(effects
 			(font
@@ -5758,7 +6026,7 @@
 		)
 		(uuid "0ede4eb0-04d3-4481-b1e5-f455d967a319")
 	)
-	(label "GPIO12"
+	(label "GPIO10"
 		(at 148.59 229.87 0)
 		(effects
 			(font
@@ -5768,7 +6036,7 @@
 		)
 		(uuid "1416d826-3652-4915-bc8d-a5cc9ca57bda")
 	)
-	(label "GPIO13"
+	(label "GPIO11"
 		(at 148.59 232.41 0)
 		(effects
 			(font
@@ -5828,6 +6096,16 @@
 		)
 		(uuid "2feaf117-bef6-4fd1-b7ee-45651f5e711e")
 	)
+	(label "SWD"
+		(at 335.28 217.17 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "3153c0f1-6c4f-441e-bb2f-80c3e252a8f6")
+	)
 	(label "+1v1"
 		(at 57.15 73.66 180)
 		(effects
@@ -5857,26 +6135,6 @@
 			(justify left bottom)
 		)
 		(uuid "36ae9db2-f093-4ace-8dbd-5a9a969dfc9b")
-	)
-	(label "GPIO10"
-		(at 148.59 227.33 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "36c25014-03e4-48d9-b150-e3a5c37f72ea")
-	)
-	(label "GPIO11"
-		(at 148.59 243.84 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "36c25014-03e4-48d9-b150-e3a5c37f72eb")
 	)
 	(label "GPIO5"
 		(at 176.53 99.06 180)
@@ -6018,6 +6276,16 @@
 		)
 		(uuid "68799144-b0f5-491c-98bc-706854aee53b")
 	)
+	(label "GPIO27_ADC1"
+		(at 207.01 229.87 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6912a07f-8715-4899-992d-a832a8ed2312")
+	)
 	(label "SWD"
 		(at 83.82 153.67 0)
 		(effects
@@ -6139,7 +6407,7 @@
 		(uuid "a304d2ca-43ad-4504-a2cb-ee10eb781556")
 	)
 	(label "SWCLK"
-		(at 313.69 207.01 0)
+		(at 276.86 210.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6408,6 +6676,16 @@
 		)
 		(uuid "fa5b4764-9007-48d2-893a-32354092d973")
 	)
+	(label "SWCLK"
+		(at 335.28 212.09 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "fa6fa380-e248-4834-8b72-526abf282e78")
+	)
 	(label "GPIO10"
 		(at 176.53 111.76 180)
 		(effects
@@ -6419,7 +6697,7 @@
 		(uuid "fcc24b2d-60f1-478e-8af7-0c83403f4fa9")
 	)
 	(label "SWD"
-		(at 313.69 212.09 0)
+		(at 276.86 215.9 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6429,8 +6707,8 @@
 		(uuid "fd2c4b97-14f8-4fd5-91a0-f854f7b4f4ad")
 	)
 	(hierarchical_label "GND"
-		(shape input)
-		(at 318.77 223.52 180)
+		(shape passive)
+		(at 281.94 227.33 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6451,7 +6729,7 @@
 		(uuid "1277ffeb-96f7-455f-9aa8-a4cb3bf2e802")
 	)
 	(hierarchical_label "GND"
-		(shape input)
+		(shape passive)
 		(at 72.39 50.8 180)
 		(effects
 			(font
@@ -6516,17 +6794,6 @@
 		)
 		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b444")
 	)
-	(hierarchical_label "motor_left_pwm"
-		(shape output)
-		(at 158.75 227.33 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b445")
-	)
 	(hierarchical_label "motor_standby"
 		(shape output)
 		(at 158.75 260.35 0)
@@ -6548,17 +6815,6 @@
 			(justify left)
 		)
 		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b447")
-	)
-	(hierarchical_label "motor_right_pwm"
-		(shape output)
-		(at 158.75 243.84 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "5a809f86-465b-4962-9a6f-37d6eae6b448")
 	)
 	(hierarchical_label "motor_right_input_b"
 		(shape output)
@@ -6703,7 +6959,18 @@
 		)
 		(uuid "c57ea9b7-4dc9-4f74-b85f-7ea5493620ca")
 	)
-	(hierarchical_label "motor_left_encoder_ b"
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 345.44 214.63 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d3132af7-e972-407e-861d-6968ce0e7ce7")
+	)
+	(hierarchical_label "motor_left_encoder_b"
 		(shape output)
 		(at 158.75 237.49 0)
 		(effects
@@ -6714,7 +6981,7 @@
 		)
 		(uuid "d3723b37-1c60-4d29-8421-35d18f61f727")
 	)
-	(hierarchical_label "motor_left_encoder_ a"
+	(hierarchical_label "motor_left_encoder_a"
 		(shape output)
 		(at 158.75 234.95 0)
 		(effects
@@ -6725,7 +6992,7 @@
 		)
 		(uuid "d3723b37-1c60-4d29-8421-35d18f61f728")
 	)
-	(hierarchical_label "motor_right_encoder_ a"
+	(hierarchical_label "motor_right_encoder_a"
 		(shape output)
 		(at 158.75 251.46 0)
 		(effects
@@ -6736,7 +7003,7 @@
 		)
 		(uuid "d3723b37-1c60-4d29-8421-35d18f61f729")
 	)
-	(hierarchical_label "motor_right_encoder_ b"
+	(hierarchical_label "motor_right_encoder_b"
 		(shape output)
 		(at 158.75 254 0)
 		(effects
@@ -7597,7 +7864,7 @@
 		)
 	)
 	(symbol
-		(lib_id "MCU_RaspberryPi_RP2350:RP2350_60QFN")
+		(lib_id "MCU_RaspberryPi_RP2350:RP2354_60QFN")
 		(at 129.54 119.38 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -7607,7 +7874,7 @@
 		(fields_autoplaced yes)
 		(uuid "2334dac1-24a8-407c-9ab4-5e67708d6020")
 		(property "Reference" "U1"
-			(at 131.7341 170.18 0)
+			(at 131.6833 170.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7616,7 +7883,7 @@
 			)
 		)
 		(property "Value" "RP2350_60QFN"
-			(at 131.7341 172.72 0)
+			(at 131.6833 172.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7624,7 +7891,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "RP2350_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
+		(property "Footprint" "RP2354_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
 			(at 110.49 119.38 0)
 			(effects
 				(font
@@ -7648,6 +7915,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -8452,7 +8720,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic_MountingPin:Conn_01x03_MountingPin")
-		(at 331.47 209.55 0)
+		(at 294.64 213.36 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8461,7 +8729,7 @@
 		(fields_autoplaced yes)
 		(uuid "884ae3bc-99eb-4fdb-b3f2-64a63d4d0125")
 		(property "Reference" "J4"
-			(at 334.01 208.28 0)
+			(at 297.18 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8470,7 +8738,7 @@
 			)
 		)
 		(property "Value" "SM03B-SRSS-TB"
-			(at 334.01 210.82 0)
+			(at 297.18 214.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8479,7 +8747,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal"
-			(at 331.47 209.55 0)
+			(at 294.64 213.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8488,7 +8756,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 331.47 209.55 0)
+			(at 294.64 213.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8497,7 +8765,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 331.47 209.55 0)
+			(at 294.64 213.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8654,6 +8922,79 @@
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
 					(reference "C8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x03_Pin")
+		(at 355.6 214.63 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a93ec77c-06fc-4441-accc-53234a58db7e")
+		(property "Reference" "J6"
+			(at 356.87 213.3599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "Conn_01x03_Pin"
+			(at 356.87 215.8999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 355.6 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 355.6 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x03, script generated"
+			(at 355.6 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "4e389ceb-c494-4fb1-a9f0-a152f03faf67")
+		)
+		(pin "3"
+			(uuid "c9954d92-8b15-4635-aa38-d763d3e31a80")
+		)
+		(pin "1"
+			(uuid "d361a745-f379-4c86-824c-48ec5f38e9f4")
+		)
+		(instances
+			(project ""
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
+					(reference "J6")
 					(unit 1)
 				)
 			)
