@@ -11,7 +11,7 @@
 		(company "github.com/usedhondacivic/mote")
 	)
 	(lib_symbols
-		(symbol "Connector:USB_C_Receptacle_USB2.0_14P"
+		(symbol "Connector:USB_C_Receptacle_USB2.0_16P"
 			(pin_names
 				(offset 1.016)
 			)
@@ -26,7 +26,7 @@
 					)
 				)
 			)
-			(property "Value" "USB_C_Receptacle_USB2.0_14P"
+			(property "Value" "USB_C_Receptacle_USB2.0_16P"
 				(at 0 19.685 0)
 				(effects
 					(font
@@ -52,7 +52,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "USB 2.0-only 14P Type-C Receptacle connector"
+			(property "Description" "USB 2.0-only 16P Type-C Receptacle connector"
 				(at 0 0 0)
 				(effects
 					(font
@@ -79,7 +79,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "USB_C_Receptacle_USB2.0_14P_0_0"
+			(symbol "USB_C_Receptacle_USB2.0_16P_0_0"
 				(rectangle
 					(start -0.254 -17.78)
 					(end 0.254 -16.764)
@@ -168,8 +168,30 @@
 						(type none)
 					)
 				)
+				(rectangle
+					(start 10.16 -12.446)
+					(end 9.144 -12.954)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 10.16 -14.986)
+					(end 9.144 -15.494)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
 			)
-			(symbol "USB_C_Receptacle_USB2.0_14P_0_1"
+			(symbol "USB_C_Receptacle_USB2.0_16P_0_1"
 				(rectangle
 					(start -10.16 17.78)
 					(end 10.16 -17.78)
@@ -370,7 +392,7 @@
 					)
 				)
 			)
-			(symbol "USB_C_Receptacle_USB2.0_14P_1_1"
+			(symbol "USB_C_Receptacle_USB2.0_16P_1_1"
 				(pin passive line
 					(at -7.62 -22.86 90)
 					(length 5.08)
@@ -640,6 +662,42 @@
 						)
 					)
 					(number "B6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 15.24 -12.7 180)
+					(length 5.08)
+					(name "SBU1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "A8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 15.24 -15.24 180)
+					(length 5.08)
+					(name "SBU2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "B8"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1077,6 +1135,12 @@
 		(uuid "8c7c2b94-1978-4e96-8e8b-416b1bf3225e")
 	)
 	(junction
+		(at 83.82 114.3)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "19a296b0-2614-4b0e-aaf6-d5cc0ae8da58")
+	)
+	(junction
 		(at 83.82 97.79)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1133,6 +1197,16 @@
 			(type default)
 		)
 		(uuid "046a2cda-5899-4754-a56d-412324ba3741")
+	)
+	(wire
+		(pts
+			(xy 83.82 124.46) (xy 66.04 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "09b000d6-bd05-406d-abf6-797fc35693a8")
 	)
 	(wire
 		(pts
@@ -1296,6 +1370,16 @@
 	)
 	(wire
 		(pts
+			(xy 83.82 111.76) (xy 83.82 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9acb9281-8fd9-4c42-b86c-467b0db8d4b8")
+	)
+	(wire
+		(pts
 			(xy 105.41 106.68) (xy 109.22 106.68)
 		)
 		(stroke
@@ -1313,6 +1397,16 @@
 			(type default)
 		)
 		(uuid "aa3e4e69-6800-4d78-82ca-44ae95bb54af")
+	)
+	(wire
+		(pts
+			(xy 81.28 111.76) (xy 83.82 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ac980d57-6ebd-406b-b575-10075343e223")
 	)
 	(wire
 		(pts
@@ -1363,6 +1457,16 @@
 			(type default)
 		)
 		(uuid "c2e18e74-6ff3-48f5-b1ce-25f0fdc3d72b")
+	)
+	(wire
+		(pts
+			(xy 81.28 114.3) (xy 83.82 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c58f7605-4b6b-45f2-a13a-e301b2b0f8c5")
 	)
 	(wire
 		(pts
@@ -1433,6 +1537,16 @@
 			(type default)
 		)
 		(uuid "e3bf2064-76a2-4dcf-bdf8-ffc337001b96")
+	)
+	(wire
+		(pts
+			(xy 83.82 114.3) (xy 83.82 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0c58782-42b6-4c0d-9e43-c37933fb9939")
 	)
 	(wire
 		(pts
@@ -1803,7 +1917,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:USB_C_Receptacle_USB2.0_14P")
+		(lib_id "Connector:USB_C_Receptacle_USB2.0_16P")
 		(at 66.04 99.06 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1828,7 +1942,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_USB:USB_C_Receptacle_G-Switch_GT-USB-7010ASV"
 			(at 69.85 99.06 0)
 			(effects
 				(font
@@ -1846,7 +1960,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "USB 2.0-only 14P Type-C Receptacle connector"
+		(property "Description" "USB 2.0-only 16P Type-C Receptacle connector"
 			(at 66.04 99.06 0)
 			(effects
 				(font
@@ -1900,6 +2014,12 @@
 		(pin "A12"
 			(uuid "db1cba69-7095-412e-911e-5a9a99953992")
 		)
+		(pin "A8"
+			(uuid "c0870942-b905-43a3-80b4-fbcea0e7adfe")
+		)
+		(pin "B8"
+			(uuid "a9f7c337-8fd9-4a8f-a574-8a267d004128")
+		)
 		(instances
 			(project ""
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/b87252c5-15f5-4304-a4f0-d9bd6e688e51"
@@ -1936,7 +2056,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 107.442 99.06 90)
 			(effects
 				(font
@@ -2005,7 +2125,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 103.632 96.52 90)
 			(effects
 				(font

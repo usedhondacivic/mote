@@ -1278,7 +1278,7 @@
 					)
 				)
 			)
-			(property "Footprint" "RP2354_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
+			(property "Footprint" "RP2350_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
 				(at -19.05 0 0)
 				(effects
 					(font
@@ -7691,7 +7691,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_0805_2012Metric"
 			(at 364.49 137.668 90)
 			(effects
 				(font
@@ -7891,7 +7891,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "RP2354_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
+		(property "Footprint" "RP2350_60QFN_minimal:RP2350-QFN-60-1EP_7x7_P0.4mm_EP3.4x3.4mm_ThermalVias"
 			(at 110.49 119.38 0)
 			(effects
 				(font
@@ -8955,7 +8955,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 			(at 355.6 214.63 0)
 			(effects
 				(font
@@ -9164,7 +9164,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 327.66 146.558 90)
 			(effects
 				(font
@@ -9296,7 +9296,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "mote-hardware:rpi_rmc20452t"
 			(at 335.28 128.27 0)
 			(effects
 				(font
@@ -9563,7 +9563,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 308.61 121.158 90)
 			(effects
 				(font
