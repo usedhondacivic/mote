@@ -1,4 +1,10 @@
-use defmt::{Format, error, info, warn};
+// This really should be an independent crate.
+// https://github.com/cnwzhjs/rplidar.rs/tree/master exists but requires std and isn't embedded_hal
+// compatable. But it does support the S3 / S2 LiDARs.
+// This implementation only covers the C1, but could extended with a little
+// work.
+
+use defmt::{Format, error, warn};
 use embassy_time::{Duration, TimeoutError, Timer, with_timeout};
 use embedded_io_async::{ErrorType, ReadExactError};
 
@@ -94,6 +100,10 @@ where
 
     pub async fn check_health(&mut self) -> LidarState {
         let mut resp = [0; 10];
+
+        // Clear the UART buffer
+        self.clear_read().await;
+
         match self.connection.write_all(&Requests::GET_HEALTH).await {
             Ok(()) => match self.connection.read_exact(&mut resp).await {
                 Ok(()) => {

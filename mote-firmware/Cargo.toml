@@ -78,6 +78,7 @@ edge-nal-embassy = { version = "0.6", features = ["defmt"] }
 edge-nal = "0.5"
 fixed = "1.29.0"
 pid = "4.0.0"
+embedded-hal = "1.0.0"
 
 [profile.release]
 lto = true

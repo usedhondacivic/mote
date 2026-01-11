@@ -31,10 +31,10 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
     config.data_bits = DataBits::DataBits8;
     config.parity = Parity::ParityNone;
 
-    static TX_BUF: StaticCell<[u8; 16]> = StaticCell::new();
-    let tx_buf = &mut TX_BUF.init([0; 16])[..];
-    static RX_BUF: StaticCell<[u8; 16]> = StaticCell::new();
-    let rx_buf = &mut RX_BUF.init([0; 16])[..];
+    static TX_BUF: StaticCell<[u8; 64]> = StaticCell::new();
+    let tx_buf = &mut TX_BUF.init([0; 64])[..];
+    static RX_BUF: StaticCell<[u8; 64]> = StaticCell::new();
+    let rx_buf = &mut RX_BUF.init([0; 64])[..];
     let uart = BufferedUart::new(r.uart, r.tx, r.rx, Irqs, tx_buf, rx_buf, config);
 
     let mut state = LidarState::Reset;
