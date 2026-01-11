@@ -40,11 +40,11 @@ async fn drive_base_task(
     );
 
     loop {
-        info!(
-            "Left: {} | Right: {}",
-            left_encoder.read().await,
-            right_encoder.read().await
-        );
+        // info!(
+        //     "Left: {} | Right: {}",
+        //     left_encoder.read().await,
+        //     right_encoder.read().await
+        // );
         Timer::after_millis(100).await;
     }
 }

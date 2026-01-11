@@ -57,7 +57,7 @@ impl<'d, T: Instance, const SM: usize> PioEncoder<'d, T, SM> {
         cfg.set_in_pins(&[&pin_a, &pin_b]);
         cfg.fifo_join = FifoJoin::RxAsStatus;
         cfg.shift_in.direction = ShiftDirection::Left;
-        cfg.clock_divider = 10_000.to_fixed();
+        cfg.clock_divider = 0x0200.to_fixed();
         cfg.use_program(&pio.load_program(&prg.program), &[]);
         sm.set_config(&cfg);
 
