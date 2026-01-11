@@ -32,15 +32,17 @@ assign_resources! {
         phase_a: PIN_8,
         phase_b: PIN_9,
     },
-    drive_base: DriveBaseResources{
-        left_motor_pwm: PWM_SLICE5,
-        left_motor_a: PIN_10,
-        left_motor_b: PIN_11,
-        right_motor_pwm: PWM_SLICE6,
-        right_motor_a: PIN_12,
-        right_motor_b: PIN_13,
-        driver_standby: PIN_18,
+    encoder_driver: EncoderDriverResources{
         pio: PIO1,
+    },
+    drv8833_resources: DRV8833Resources{
+        left_pwm: PWM_SLICE5,
+        left_a: PIN_10,
+        left_b: PIN_11,
+        right_pwm: PWM_SLICE6,
+        right_a: PIN_12,
+        right_b: PIN_13,
+        sleep: PIN_18,
     },
     imu: ImuResources{
         i2c: I2C1,

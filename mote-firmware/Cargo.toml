@@ -19,7 +19,7 @@ embassy-time = { version = "0.5", features = [
     "defmt",
     "defmt-timestamp-uptime",
 ] }
-embassy-rp = { version = "0.8", features = [
+embassy-rp = { version = "0.9", features = [
     "defmt",
     "unstable-pac",
     "time-driver",
@@ -46,8 +46,8 @@ embassy-sync = { version = "0.7", features = ["defmt"] }
 
 # defmt output is painfully verbose for this driver
 # cyw43 = { version = "0.5.0", features = ["defmt"] }
-cyw43 = { version = "0.5.0" }
-cyw43-pio = { version = "0.8.0", features = ["defmt"] }
+cyw43 = { version = "0.6.0" }
+cyw43-pio = { version = "0.9.0", features = ["defmt"] }
 
 assign-resources = { git = "https://github.com/adamgreig/assign-resources", rev = "bd22cb7a92031fb16f74a5da42469d466c33383e" }
 
@@ -78,20 +78,6 @@ edge-nal-embassy = { version = "0.6", features = ["defmt"] }
 edge-nal = "0.5"
 fixed = "1.29.0"
 pid = "4.0.0"
-
-# Remove once cyw43-pio 0.8.1 is released
-[patch.crates-io]
-embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-executor = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-time = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-time-driver = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-rp = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-net = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-usb = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-futures = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-embassy-sync = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-cyw43-pio = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
-cyw43 = { git = "https://github.com/embassy-rs/embassy", rev = "cf231d461ff4b16cf7d16e4dbc5db909212c2c89" }
 
 [profile.release]
 lto = true

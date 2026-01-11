@@ -99,7 +99,7 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     static STATE: StaticCell<cyw43::State> = StaticCell::new();
     let state = STATE.init(cyw43::State::new());
     let (net_device, mut control, runner) = cyw43::new(state, pwr, spi, fw).await;
-    spawner.spawn(cyw43_task(runner).unwrap());
+    spawner.spawn(cyw43_task(runner)).unwrap();
 
     control.init(clm).await;
     control.set_power_management(cyw43::PowerManagementMode::None).await;
@@ -120,17 +120,19 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
 
     // Start connection manager task
-    spawner.spawn(connection_manager::connection_manager_task(control).unwrap());
+    spawner
+        .spawn(connection_manager::connection_manager_task(control))
+        .unwrap();
 
     // Start network task
-    spawner.spawn(net_task(runner).unwrap());
+    spawner.spawn(net_task(runner)).unwrap();
 
     // Start mdns responder
-    spawner.spawn(mdns::mdns_task(stack).unwrap());
+    spawner.spawn(mdns::mdns_task(stack)).unwrap();
 
     // Start the tcp command server
-    spawner.spawn(tcp_server::tcp_server_task(stack).unwrap());
+    spawner.spawn(tcp_server::tcp_server_task(stack)).unwrap();
 
     // Start the udp data offload server
-    spawner.spawn(udp_server::udp_server_task(stack).unwrap());
+    spawner.spawn(udp_server::udp_server_task(stack)).unwrap();
 }

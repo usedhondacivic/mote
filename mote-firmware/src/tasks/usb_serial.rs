@@ -136,7 +136,7 @@ async fn usb_serial_task(spawner: Spawner, r: UsbSerialResources) {
     // Build the builder.
     let usb = builder.build();
 
-    spawner.spawn(usb_task(usb).unwrap());
+    spawner.spawn(usb_task(usb)).unwrap();
 
     loop {
         class.wait_connection().await;
@@ -147,5 +147,5 @@ async fn usb_serial_task(spawner: Spawner, r: UsbSerialResources) {
 }
 
 pub async fn init(spawner: Spawner, r: UsbSerialResources) {
-    spawner.spawn(usb_serial_task(spawner, r).unwrap());
+    spawner.spawn(usb_serial_task(spawner, r)).unwrap();
 }

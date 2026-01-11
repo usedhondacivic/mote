@@ -124,7 +124,7 @@ pub async fn init(spawner: Spawner, r: RplidarC1Resources) {
     }
 
     // Start task
-    spawner.spawn(lidar_state_machine_task(r).unwrap());
+    spawner.spawn(lidar_state_machine_task(r)).unwrap();
 
     // Update init state
     {

@@ -4,14 +4,15 @@ use embassy_rp::pio::Pio;
 use embassy_time::Timer;
 
 use crate::tasks::drive_base::encoder::PioEncoder;
-use crate::tasks::{DriveBaseResources, Irqs, LeftEncoderResources, RightEncoderResources};
+use crate::tasks::{DRV8833Resources, EncoderDriverResources, Irqs, LeftEncoderResources, RightEncoderResources};
 
 mod encoder;
 mod motor;
 
 #[embassy_executor::task]
 async fn drive_base_task(
-    drive_base_r: DriveBaseResources,
+    motor_driver_r: DRV8833Resources,
+    encoder_driver_r: EncoderDriverResources,
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
 ) {
@@ -21,7 +22,7 @@ async fn drive_base_task(
         sm0: encoder_sm0,
         sm1: encoder_sm1,
         ..
-    } = Pio::new(drive_base_r.pio, Irqs);
+    } = Pio::new(encoder_driver_r.pio, Irqs);
 
     // Left wheel
     let mut left_encoder = PioEncoder::new(
@@ -51,9 +52,17 @@ async fn drive_base_task(
 
 pub async fn init(
     spawner: Spawner,
-    drive_base_r: DriveBaseResources,
+    motor_driver_r: DRV8833Resources,
+    encoder_driver_r: EncoderDriverResources,
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
 ) {
-    spawner.spawn(drive_base_task(drive_base_r, left_encoder_r, right_encoder_r).unwrap());
+    spawner
+        .spawn(drive_base_task(
+            motor_driver_r,
+            encoder_driver_r,
+            left_encoder_r,
+            right_encoder_r,
+        ))
+        .unwrap();
 }

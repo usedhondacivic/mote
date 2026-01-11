@@ -14,9 +14,9 @@ use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::{
-    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, DriveBaseResources, ImuResources, LeftEncoderResources,
-    RightEncoderResources, RplidarC1Resources, StatusLedResources, UsbSerialResources, drive_base, lidar, usb_serial,
-    wifi,
+    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, DRV8833Resources, EncoderDriverResources, ImuResources,
+    LeftEncoderResources, RightEncoderResources, RplidarC1Resources, StatusLedResources, UsbSerialResources,
+    drive_base, lidar, usb_serial, wifi,
 };
 
 mod helpers;
@@ -53,24 +53,24 @@ fn main() -> ! {
         move || {
             let executor1 = EXECUTOR1.init(Executor::new());
             executor1.run(|spawner| {
-                spawner.spawn(
-                    core1_task(
+                spawner
+                    .spawn(core1_task(
                         spawner,
                         r.usb_serial,
                         r.lidar_uart,
-                        r.drive_base,
+                        r.encoder_driver,
                         r.left_encoder,
                         r.right_encoder,
-                    )
-                    .unwrap(),
-                )
+                        r.drv8833_resources,
+                    ))
+                    .unwrap()
             });
         },
     );
 
     let executor0 = EXECUTOR0.init(Executor::new());
 
-    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi).unwrap()));
+    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi)).unwrap());
 }
 
 #[embassy_executor::task]
@@ -86,9 +86,10 @@ async fn core1_task(
     spawner: Spawner,
     r_usb: UsbSerialResources,
     r_lidar: RplidarC1Resources,
-    drive_base_r: DriveBaseResources,
+    encoder_driver_r: EncoderDriverResources,
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
+    motor_driver_r: DRV8833Resources,
 ) {
     info!("Core 1 spawned");
 
@@ -107,6 +108,13 @@ async fn core1_task(
     lidar::init(spawner, r_lidar).await;
     info!("LiDAR INIT complete");
 
-    drive_base::init(spawner, drive_base_r, left_encoder_r, right_encoder_r).await;
+    drive_base::init(
+        spawner,
+        motor_driver_r,
+        encoder_driver_r,
+        left_encoder_r,
+        right_encoder_r,
+    )
+    .await;
     info!("Drive base INIT complete");
 }
