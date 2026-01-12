@@ -4,7 +4,6 @@
 #![feature(impl_trait_in_assoc_type)]
 // Used minimally in the LiDAR driver, still very unstable
 #![feature(generic_const_exprs)]
-#![feature(core_intrinsics)]
 
 use defmt::info;
 use embassy_executor::{Executor, Spawner};
@@ -117,5 +116,5 @@ async fn core1_task(
         right_encoder_r,
     )
     .await;
-    // info!("Drive base INIT complete");
+    info!("Drive base INIT complete");
 }
