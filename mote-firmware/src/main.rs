@@ -13,11 +13,7 @@ use embassy_rp::multicore::{Stack, spawn_core1};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
-use crate::tasks::{
-    AssignedResources, CONFIGURATION_STATE, Cyw43Resources, DRV8833Resources, EncoderDriverResources, ImuResources,
-    LeftEncoderResources, RightEncoderResources, RplidarC1Resources, StatusLedResources, UsbSerialResources,
-    drive_base, lidar, usb_serial, wifi,
-};
+use crate::tasks::*;
 
 mod helpers;
 mod tasks;
@@ -62,6 +58,7 @@ fn main() -> ! {
                         r.left_encoder,
                         r.right_encoder,
                         r.drv8833_resources,
+                        r.usb_power_detection,
                     ))
                     .unwrap()
             });
@@ -77,6 +74,9 @@ fn main() -> ! {
 async fn core0_task(spawner: Spawner, r: Cyw43Resources) {
     info!("Core 0 spawned");
 
+    info!("Gating on 1.5A capable before starting WIFI");
+    power_gate::gate_1_5_amp().await;
+
     wifi::init(spawner, r).await;
     info!("Wifi INIT complete");
 }
@@ -84,12 +84,13 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources) {
 #[embassy_executor::task]
 async fn core1_task(
     spawner: Spawner,
-    r_usb: UsbSerialResources,
-    r_lidar: RplidarC1Resources,
+    usb_r: UsbSerialResources,
+    lidar_r: RplidarC1Resources,
     encoder_driver_r: EncoderDriverResources,
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
     motor_driver_r: DRV8833Resources,
+    usb_power_r: UsbPowerDetectionResources,
 ) {
     info!("Core 1 spawned");
 
@@ -102,11 +103,22 @@ async fn core1_task(
         // config
     }
 
-    usb_serial::init(spawner, r_usb).await;
+    usb_serial::init(spawner, usb_r).await;
     info!("USB Serial INIT complete");
 
-    lidar::init(spawner, r_lidar).await;
+    power_gate::init(spawner, usb_power_r).await;
+    info!("Power Gate INIT complete");
+
+    info!("Gating on 1.5A capable before starting LiDAR");
+    power_gate::gate_1_5_amp().await;
+    info!("Power supply is 1.5A capable");
+
+    lidar::init(spawner, lidar_r).await;
     info!("LiDAR INIT complete");
+
+    info!("Gating on 3A capable before starting drive base");
+    power_gate::gate_3_amp().await;
+    info!("Power supply is 3A capable");
 
     drive_base::init(
         spawner,

@@ -57,17 +57,17 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
 
         let control_output = self.pid.next_control_output(measurement / dt).output;
         let deadband_adjusted_output = if control_output > 0. {
-            (control_output + MOTOR_DEADBAND as f32)
+            control_output + MOTOR_DEADBAND as f32
         } else {
-            (control_output - MOTOR_DEADBAND as f32)
+            control_output - MOTOR_DEADBAND as f32
         };
 
-        info!(
-            "Measurement {} | Rad/s {} | Control Output {}",
-            measurement,
-            measurement / dt,
-            control_output
-        );
+        // info!(
+        //     "Measurement {} | Rad/s {} | Control Output {}",
+        //     measurement,
+        //     measurement / dt,
+        //     control_output
+        // );
 
         if control_output > 2.0 {
             self.bridge.forward(deadband_adjusted_output as u8).unwrap();
@@ -76,6 +76,10 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
         } else {
             self.bridge.stop().unwrap();
         }
+    }
+
+    fn pio_encoder(&self) -> &PioEncoder<'d, P, SM> {
+        &self.pio_encoder
     }
 }
 

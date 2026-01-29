@@ -1,5 +1,6 @@
 pub mod drive_base;
 pub mod lidar;
+pub mod power_gate;
 pub mod usb_serial;
 pub mod wifi;
 
@@ -52,16 +53,23 @@ assign_resources! {
     status_leds: StatusLedResources{
         pio : PIO2,
         tx: PIN_19,
+    },
+    usb_power_detection: UsbPowerDetectionResources{
+        cc1: PIN_26,
+        cc2: PIN_28,
+        adc: ADC
     }
 }
 
 // also bind interrupts
+use embassy_rp::adc::InterruptHandler as ADCInterruptHandler;
 use embassy_rp::peripherals::{PIO0, PIO1, PIO2, UART1, USB};
 use embassy_rp::pio::InterruptHandler as PIOInterruptHandler;
 use embassy_rp::uart::BufferedInterruptHandler as UARTInterruptHandler;
 use embassy_rp::usb::InterruptHandler as USBInterruptHandler;
 
 bind_interrupts!(pub struct Irqs {
+    ADC_IRQ_FIFO => ADCInterruptHandler;
     UART1_IRQ  => UARTInterruptHandler<UART1>;
     PIO0_IRQ_0 => PIOInterruptHandler<PIO0>;
     PIO1_IRQ_0 => PIOInterruptHandler<PIO1>;
