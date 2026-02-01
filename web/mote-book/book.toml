@@ -2,7 +2,7 @@
 authors = ["usedhondacivic"]
 language = "en"
 src = "src"
-title = "Mote"
+title = "The Mote Book"
 
 [output.html]
 default-theme = "ayu"

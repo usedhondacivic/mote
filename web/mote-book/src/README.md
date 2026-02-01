@@ -1,5 +1,8 @@
-# Hello!
+# The Mote Book
 
-Welcome to the Mote book! Here you will (eventually) find assembly instructions, examples, tutorials, and documentation.
+Mote is a low cost, high confidence mobile robot for hands on robotics education.
 
-Come back soon!
+## Highlights
+
+## Quick(est) Start
+
