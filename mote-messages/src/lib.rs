@@ -1,145 +1,69 @@
 #![no_std]
 
-// Messages used by Mote for firmware <--> host communication
+//! Messages used by Mote for firmware <--> host communication
 
-// Messages used during nominal operation
-pub mod runtime {
-    // Sensor and state data telemetered to the host
-    pub mod mote_to_host {
-        // Command messages
-        pub mod command {
-            use serde::{Deserialize, Serialize};
+// I'd prefer to move away from alloc, but it's here for now.
+extern crate alloc;
+use alloc::vec::Vec;
 
-            #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-            pub enum Message {
-                Ping,
-                PingResponse,
-            }
-        }
+use serde::{Serialize, de::DeserializeOwned};
+use thiserror::Error;
 
-        // Sensor data offload messages
-        pub mod data_offload {
-            use serde::{Deserialize, Serialize};
+pub mod comms;
+pub mod messages;
 
-            pub const MAX_POINTS_PER_SCAN_MESSAGE: usize = 50;
+/// Error type
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("Bitcode ser/de failed")]
+    BitCodeError(#[from] bitcode::Error),
+    #[error("Cobs pack/unpack failed")]
+    CobsError(corncobs::CobsError),
+}
 
-            // Lidar Data
-            #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-            pub struct Point {
-                pub quality: u8,
-                pub angle_rads: f32,
-                pub distance_mm: f32,
-            }
-
-            #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-            pub enum Message {
-                Scan(heapless::Vec<Point, MAX_POINTS_PER_SCAN_MESSAGE>),
-            }
-        }
-    }
-
-    // Commands sent to mote
-    pub mod host_to_mote {
-        use serde::{Deserialize, Serialize};
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub enum Subsystem {
-            Lidar,
-            Imu,
-            DriveBase,
-        }
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub enum Message {
-            Ping,
-            PingResponse,
-            Enable(Subsystem),
-            Disable(Subsystem),
-            SoftReset,
-        }
-
-        pub mod data_offload {
-            use serde::{Deserialize, Serialize};
-
-            // Used to subscribe to sensor data on the data offload connection
-            #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-            pub struct DataOffloadSubscribeRequest;
-        }
+impl From<corncobs::CobsError> for Error {
+    fn from(value: corncobs::CobsError) -> Self {
+        Self::CobsError(value)
     }
 }
 
-// Messages used for configuration / status / built in test
-pub mod configuration {
-    pub mod mote_to_host {
+/// Implements encoding of message types.
+///
+/// This implementation is the coanonnical encoding scheme used onboard Mote.
+///
+/// You probably don't want to use the method directly. Try the MoteComms crate instead.
+pub fn to_slice<M>(message: &M) -> Result<Vec<u8>, Error>
+where
+    M: Serialize + ?Sized,
+{
+    let ser_buff = bitcode::serialize(message)?;
+    let mut cobs_buff: Vec<u8> = Vec::new();
+    corncobs::encode_buf(&ser_buff, &mut cobs_buff);
 
-        use serde::{Deserialize, Serialize};
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-        pub struct NetworkConnection {
-            pub ssid: heapless::String<32>,
-            pub strength: u8, // rssi
-        }
-        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-        pub enum BITResult {
-            Waiting,
-            Pass,
-            Fail,
-        }
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-        pub struct BIT {
-            pub name: heapless::String<20>,
-            pub result: BITResult,
-        }
-
-        pub type BITList = heapless::Vec<BIT, 5>;
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-        pub struct BITCollection {
-            pub wifi: BITList,
-            pub lidar: BITList,
-            pub imu: BITList,
-            pub encoders: BITList,
-        }
-
-        pub type UID = heapless::String<25>;
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format, Clone)]
-        pub struct State {
-            pub uid: UID,
-            pub ip: Option<heapless::String<20>>,
-            pub current_network_connection: Option<heapless::String<32>>,
-            pub available_network_connections: heapless::Vec<NetworkConnection, 10>,
-            pub built_in_test: BITCollection,
-        }
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub enum Message {
-            State(State),
-        }
-    }
-
-    pub mod host_to_mote {
-        use serde::{Deserialize, Serialize};
-
-        use crate::configuration::mote_to_host::UID;
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub struct SetNetworkConnectionConfig {
-            pub ssid: heapless::String<32>,
-            pub password: heapless::String<64>,
-        }
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub struct SetUID {
-            pub uid: UID,
-        }
-
-        #[derive(Serialize, Deserialize, Debug, defmt::Format)]
-        pub enum Message {
-            SetNetworkConnectionConfig(SetNetworkConnectionConfig),
-            SetUID(SetUID),
-            RequestNetworkScan,
-        }
-    }
+    return Ok(cobs_buff);
 }
+
+/// Implements decoding of message types.
+/// This implementation is the coanonnical decoding scheme used onboard Mote.
+///
+/// Returns the decoded message (or an error).
+///
+/// You probably don't want to use the method directly. Try the MoteComms crate instead.
+pub fn from_bytes<M>(bytes: &Vec<u8>) -> Result<M, Error>
+where
+    M: DeserializeOwned + ?Sized,
+{
+    let mut cobs_buff: Vec<u8> = Vec::new();
+    corncobs::decode_buf(bytes, &mut cobs_buff)?;
+    Ok(bitcode::deserialize::<M>(&cobs_buff)?)
+}
+
+/// Conditionally enable bindings for python and web assembly
+#[cfg(any(feature = "python_bindings", feature = "wasm_bindings"))]
+extern crate std;
+
+#[cfg(feature = "python_bindings")]
+pub mod python_interface;
+
+#[cfg(feature = "wasm_bindings")]
+pub mod wasm_interface;

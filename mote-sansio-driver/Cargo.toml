@@ -1,22 +1,23 @@
 [package]
-name = "mote-sansio-driver"
+name = "mote-comms"
 version = "0.0.0"
 edition = "2024"
+
+[features]
+default = []
+std = ["ciborium/std", "corncobs/std", "serde/std", "thiserror_no_std/std"]
 
 [dependencies]
 mote-messages = { path = "../mote-messages" }
 
-serde = { version = "1.0.*", default-features = false, features = ["derive"] }
-# postcard does not re-export heapless, so care must be taken to keep them in lockstep
-postcard = "1.1.*"
-heapless-postcard = { package = "heapless", version = "0.7.1", features = [
-    "defmt-impl",
-    "serde",
-] }
+serde = { version = "1.0", default-features = false, features = ["derive"] }
+ciborium = { version = "0.2", default-features = false }
+corncobs = "0.1"
+heapless = "0.8"
+thiserror-no-std = "2.0"
 
 [dev-dependencies]
-color_space = "0.5.4"
+color_space = "0.5"
 mdns = "3.0"
-heapless = "0.8"
-rerun = { version = "0.25.*", features = ["web_viewer"] }
+rerun = { version = "0.25", features = ["web_viewer"] }
 anyhow = "1.0"

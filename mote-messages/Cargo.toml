@@ -3,7 +3,31 @@ name = "mote-messages"
 version = "0.0.0"
 edition = "2024"
 
+[features]
+default = ["python_bindings", "wasm_bindings"]
+python_bindings = ["serde/std", "serde_json", "pyo3"]
+wasm_bindings = ["serde/std", "serde_json"]
+
+[lib]
+name = "mote_api"
+crate-type = ["dylib", "rlib"]
+
 [dependencies]
-defmt = "1.0.1"
-heapless = { version = "0.8", features = ["serde", "defmt-03"] }
-serde = { version = "1.0.*", default-features = false, features = ["derive"] }
+bitcode = { version = "0.6", default-features = false, features = [
+    "derive",
+    "serde",
+] }
+# defmt = { version = "1.0", features = ["alloc"] }
+serde = { version = "1.0", default-features = false, features = [
+    "derive",
+    "alloc",
+] }
+corncobs = "0.1"
+thiserror = "2.0"
+
+# Used for python/wasm bindings
+serde_json = { version = "1.0", optional = true }
+pyo3 = { version = "0.28.0", optional = true, features = ["abi3-py38"] }
+
+[build-dependencies]
+schemars = "1.2"

@@ -1,5 +1,5 @@
-// Example usage of mote-sansio-driver
-// This example publishes sensor data to rerun for visualization
+//! Example usage of mote-sansio-driver
+//! This example publishes sensor data to rerun for visualization
 
 use color_space::{Hsv, Rgb};
 use rerun::external::glam;
@@ -9,7 +9,7 @@ use std::{
     net::{TcpStream, UdpSocket},
 };
 
-use mote_sansio_driver::{HostRuntimeCommandLink, HostRuntimeDataOffloadLink};
+use mote_comms::{HostRuntimeCommandLink, HostRuntimeDataOffloadLink};
 
 use mote_messages::runtime::{host_to_mote, mote_to_host};
 

@@ -1,0 +1,11 @@
+[project]
+name = "mote-sansio-driver"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["maturin>=1,<2"]
+build-backend = "maturin"

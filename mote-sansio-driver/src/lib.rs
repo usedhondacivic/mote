@@ -1,98 +1,123 @@
 #![no_std]
 
-// Sans-io message handling library for interacting with Mote
-// IO handling should be implemented by the consumer. See ../examples.
+//! Sans-io message handling library for interacting with Mote
+//! IO handling should be implemented by the consumer. See ../examples.
+
+#[cfg(feature = "std")]
+extern crate std;
+
+use heapless;
+
 use core::{fmt::Debug, marker::PhantomData};
 
-use heapless_postcard::{Deque, Vec};
 use mote_messages::{configuration, runtime};
-use postcard::{take_from_bytes_cobs, to_vec_cobs};
 use serde::{Deserialize, Serialize};
 
-// Data structure representing a transmission
-// Returned by sansio driver for the application to transmit
-#[derive(Debug)]
-pub struct Transmit<const MTU: usize> {
-    pub payload: Vec<u8, MTU>,
+/// Error type for the public API
+pub enum Error {
+    // #[error()]
 }
 
-// You probably do not want to directly construct this. Instead, use the type aliases:
-// HostRuntimeCommandLink
-// HostRuntimeDataOffloadLink
-// HostConfigurationLink
-// MoteRuntimeCommandLink
-// MoteRuntimeDataOffloadLink
-// MoteConfigurationLink
-pub struct SansIo<const MTU: usize, const B: usize, I, O>
+/// Data structure representing a transmission
+/// Returned by sansio driver for the application to transmit
+#[derive(Debug)]
+pub struct Transmit<const MTU: usize> {
+    #[cfg(not(feature = "std"))]
+    pub payload: Vec<u8, MTU>,
+
+    #[cfg(feature = "std")]
+    pub payload: Vec<u8>,
+}
+
+/// Bidirectional SansIO communication link betweek mote and a host.
+///
+/// You probably do not want to directly construct this. Instead, use the type aliases:
+/// HostRuntimeCommandLink
+/// HostRuntimeDataOffloadLink
+/// HostConfigurationLink
+/// MoteRuntimeCommandLink
+/// MoteRuntimeDataOffloadLink
+/// MoteConfigurationLink
+pub struct MoteComms<const MTU: usize, const B: usize, I, O>
 where
     I: for<'de> Deserialize<'de>, // Input type
     O: Serialize,                 // Output type
 {
-    buffered_transmits: Deque<Transmit<MTU>, 10>,
-    serialization_buffer: Vec<u8, B>,
+    buffered_transmits: heapless::Deque<Transmit<MTU>, 10>,
+    deserialization_buffer: heapless::Vec<u8, B>,
+
     in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 }
 
-impl<const MTU: usize, const B: usize, I, O> SansIo<MTU, B, I, O>
+impl<const MTU: usize, const B: usize, I, O> MoteComms<MTU, B, I, O>
 where
     I: for<'de> Deserialize<'de>, // Input type
     O: Serialize,                 // Output type
 {
-    // Generate a new link
+    /// Generate a new link
     pub fn new() -> Self {
         Self {
-            buffered_transmits: Deque::new(),
-            serialization_buffer: Vec::new(),
+            buffered_transmits: heapless::Deque::new(),
+            deserialization_buffer: heapless::Vec::new(),
             in_type: PhantomData,
             out_type: PhantomData,
         }
     }
 
-    // Queue a message to be sent
-    pub fn send(&mut self, message: O) -> Result<(), postcard::Error> {
+    /// Queue a message to be sent
+    pub fn send(&mut self, message: O) -> Result<(), Error> {
         let encoded_bytes: Vec<u8, B> = to_vec_cobs(&message)?;
 
         // Break message into packets given the MTU
         for chunk in encoded_bytes.chunks(MTU) {
             let _ = self.buffered_transmits.push_back(Transmit {
-                payload: Vec::from_slice(chunk).unwrap(),
+                #[cfg(not(feature = "std"))]
+                payload: heapless::Vec::from_slice(chunk).unwrap(),
+
+                #[cfg(feature = "std")]
+                payload: Vec::from(chunk),
             });
         }
 
         return Ok(());
     }
 
-    // Get the next message to be sent
+    /// Get the next message to be sent
     pub fn poll_transmit(&mut self) -> Option<Transmit<MTU>> {
         self.buffered_transmits.pop_front()
     }
 
-    // Receive a message from raw bytes
+    /// Receive a message from raw bytes
     pub fn handle_receive(&mut self, packet: &mut [u8]) {
         // Push the recieved bytes into the serialization buffer
-        if let Err(_) = self.serialization_buffer.extend_from_slice(packet) {
+        if let Err(_) = self.deserialization_buffer.extend_from_slice(packet) {
             // We can't add to the buffer because it is full
             // Clear it and append
-            self.serialization_buffer.clear();
-            self.serialization_buffer.extend_from_slice(packet).unwrap();
+            self.deserialization_buffer.clear();
+            self.deserialization_buffer
+                .extend_from_slice(packet)
+                .unwrap();
         }
     }
 
-    pub fn poll_receive(&mut self) -> Result<Option<I>, postcard::Error> {
+    /// Poll for new messages in the recv buffer
+    pub fn poll_receive(&mut self) -> Result<Option<I>, Error> {
         // Check if the buffer contains the COBS delimiter (zero)
-        while let Some(end) = self.serialization_buffer.iter().position(|&x| x == 0) {
+        while let Some(end) = self.deserialization_buffer.iter().position(|&x| x == 0) {
             // If it does, attempt to deserialize
             let mut idx = 0;
             loop {
                 if idx == end {
-                    self.serialization_buffer =
-                        Vec::from_slice(&self.serialization_buffer[(end + 1)..]).unwrap();
+                    self.deserialization_buffer =
+                        heapless::Vec::from_slice(&self.deserialization_buffer[(end + 1)..])
+                            .unwrap();
                     break;
                 }
-                match take_from_bytes_cobs::<I>(&mut self.serialization_buffer.clone()[idx..=end]) {
+                match take_from_bytes_cobs::<I>(&mut self.deserialization_buffer.clone()[idx..=end])
+                {
                     Ok((msg, remainder)) => {
-                        self.serialization_buffer = Vec::from_slice(remainder).unwrap();
+                        self.deserialization_buffer = heapless::Vec::from_slice(remainder).unwrap();
                         return Ok(Some(msg));
                     }
                     Err(_) => {
@@ -106,45 +131,46 @@ where
     }
 }
 
-// Used by the host to send commands to mote during runtime
-pub type HostRuntimeCommandLink = SansIo<
+/// Used by the host to send commands to mote during runtime
+
+pub type HostRuntimeCommandLink = MoteComms<
     1460, // TCP MSS
     2000,
     runtime::mote_to_host::command::Message,
     runtime::host_to_mote::Message,
 >;
 
-pub type HostRuntimeDataOffloadLink = SansIo<
+pub type HostRuntimeDataOffloadLink = MoteComms<
     1460,
     2000,
     runtime::mote_to_host::data_offload::Message,
     runtime::host_to_mote::data_offload::DataOffloadSubscribeRequest,
 >;
 
-// Used by mote to respond to control commands during runtime
+/// Used by mote to respond to control commands during runtime
 pub type MoteRuntimeCommandLink =
-    SansIo<1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::command::Message>;
+    MoteComms<1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::command::Message>;
 
-// Used by mote to offload sensor data
-pub type MoteRuntimeDataOffloadLink = SansIo<
+/// Used by mote to offload sensor data
+pub type MoteRuntimeDataOffloadLink = MoteComms<
     1460,
     2000,
     runtime::host_to_mote::data_offload::DataOffloadSubscribeRequest,
     runtime::mote_to_host::data_offload::Message,
 >;
 
-// Used by mote to respond to control commands during runtime
+/// Used by mote to respond to control commands during runtime
 pub type MoteRuntimeLink =
-    SansIo<1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::command::Message>;
+    MoteComms<1460, 2000, runtime::host_to_mote::Message, runtime::mote_to_host::command::Message>;
 
-// Used by the host to talk to mote during configuration
-pub type HostConfigurationLink = SansIo<
+/// Used by the host to talk to mote during configuration
+pub type HostConfigurationLink = MoteComms<
     64, // Serial MTU
     2000,
     configuration::mote_to_host::Message,
     configuration::host_to_mote::Message,
 >;
 
-// Used by mote to talk to the host during configuration
+/// Used by mote to talk to the host during configuration
 pub type MoteConfigurationLink =
-    SansIo<64, 1000, configuration::host_to_mote::Message, configuration::mote_to_host::Message>;
+    MoteComms<64, 1000, configuration::host_to_mote::Message, configuration::mote_to_host::Message>;
