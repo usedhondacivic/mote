@@ -1,6 +1,6 @@
 # Mote
 
-[![Rust Build and Test](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml)
+[![Build and Test](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml)
 [![Deploy Docs](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml)
 
 A low cost and high confidence mobile robot.
@@ -23,11 +23,10 @@ For the past two years, Little Red Rover has been used to teach the Foundations 
 ### Rust Packages
 * mote-firmware :
     * Firmware for the RP2350 based Mote circuit board. Built with [Embassy](https://github.com/embassy-rs/embassy).
-* mote-messages
+* mote-api
     * Message definitions for communication to and from Mote.
-* mote-sansio-driver
-    * SansIO communication driver.
-* web/mote-configuration
+    * SansIO communication driver, with bindings for Python and TypeScript
+* mote-configuration
     * [Web app](https://michael-crum.com/mote/configuration/) for configuration and debugging. Built with [Svelte](https://svelte.dev/) and [WebAssembly](https://wasm-bindgen.github.io/wasm-bindgen/).
 
 ### Hardware
