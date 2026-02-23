@@ -1,8 +1,10 @@
+use alloc::vec::Vec;
+
 use defmt::{error, info, warn};
 use embassy_futures::select::select;
 use embassy_net::Stack;
 use embassy_net::udp::{PacketMetadata, SendError, UdpMetadata, UdpSocket};
-use mote_sansio_driver::MoteRuntimeDataOffloadLink;
+use mote_api::HostLink;
 
 use crate::tasks::wifi::MOTE_TO_HOST_DATA_OFFLOAD;
 
@@ -10,8 +12,8 @@ const UDP_SERVER_PORT: u16 = 7475;
 
 #[embassy_executor::task]
 pub async fn udp_server_task(stack: Stack<'static>) -> ! {
-    let mut data_offload_subscribers: heapless::Vec<UdpMetadata, 10> = heapless::Vec::new();
-    let mut dead_connections: heapless::Vec<usize, 10> = heapless::Vec::new();
+    let mut data_offload_subscribers: Vec<UdpMetadata> = Vec::new();
+    let mut dead_connections: Vec<usize> = Vec::new();
 
     loop {
         let mut rx_buffer = [0; 4096];
@@ -25,7 +27,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
             continue;
         }
 
-        let mut link = MoteRuntimeDataOffloadLink::new();
+        let mut link = HostLink::new();
 
         let mut message_buffer = [0; 4096];
 
@@ -39,10 +41,8 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                 embassy_futures::select::Either::First(Ok((_, ep))) => {
                     info!("Registering data offload subscriber {}", ep);
 
-                    if let None = data_offload_subscribers.iter().find(|&&i| ep == i)
-                        && let Err(_) = data_offload_subscribers.push(ep)
-                    {
-                        warn!("Failed to register data offload subscriber, to many already registered.");
+                    if let None = data_offload_subscribers.iter().find(|&&i| ep == i) {
+                        data_offload_subscribers.push(ep)
                     }
                 }
                 embassy_futures::select::Either::First(Err(err)) => {

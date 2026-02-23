@@ -1,0 +1,14 @@
+[default]
+_default:
+    just --list
+
+build-wasm:
+    wasm-pack build --target web
+
+run-dev: build-wasm
+    deno run -A npm:vite
+
+[working-directory: 'app']
+ci-build: build-wasm
+    npm ci
+    npm run build

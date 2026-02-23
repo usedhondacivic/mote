@@ -4,8 +4,7 @@ version = "0.0.0"
 edition = "2024"
 
 [dependencies]
-mote-messages = { path = "../mote-messages" }
-mote-sansio-driver = { path = "../mote-sansio-driver" }
+mote-api = { path = "../mote-api" }
 
 embassy-embedded-hal = { version = "0.5", features = ["defmt"] }
 embassy-executor = { version = "0.9", features = [
@@ -45,40 +44,33 @@ embassy-futures = { version = "0.1" }
 embassy-sync = { version = "0.7", features = ["defmt"] }
 
 # defmt output is painfully verbose for this driver
-# cyw43 = { version = "0.5.0", features = ["defmt"] }
-cyw43 = { version = "0.6.0" }
-cyw43-pio = { version = "0.9.0", features = ["defmt"] }
+# cyw43 = { version = "0.6", features = ["defmt"] }
+cyw43 = { version = "0.6" }
+cyw43-pio = { version = "0.9", features = ["defmt"] }
 
 assign-resources = { git = "https://github.com/adamgreig/assign-resources", rev = "bd22cb7a92031fb16f74a5da42469d466c33383e" }
 
-heapless = "0.8"
-defmt = "1.0.1"
-defmt-rtt = "1.0.0"
-cortex-m = { version = "0.7.6", features = ["inline-asm"] }
-cortex-m-rt = "0.7.0"
-panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+defmt = { version = "1.0", features = ["alloc"] }
+defmt-rtt = "1.0"
+cortex-m = { version = "0.7", features = ["inline-asm"] }
+cortex-m-rt = "0.7"
+panic-probe = { version = "1.0", features = ["print-defmt"] }
 static_cell = "2.1"
-rand = { version = "0.8.5", default-features = false }
+rand = { version = "0.8", default-features = false }
 embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
 
-# postcard does not re-export heapless, so care must be taken to keep them in lockstep
-postcard = { version = "1.1.3", features = ["use-defmt"] }
-heapless-postcard = { package = "heapless", version = "0.7.1", features = [
-    "defmt-impl",
-    "serde",
-] }
-
-serde = { version = "1.0.*", default-features = false, features = ["derive"] }
-serde_with = { version = "3.14.0", default-features = false, features = [
+serde = { version = "1.0", default-features = false, features = ["derive"] }
+serde_with = { version = "3.14", default-features = false, features = [
     "macros",
 ] }
 
 edge-mdns = { version = "0.6", features = ["defmt"] }
 edge-nal-embassy = { version = "0.6", features = ["defmt"] }
 edge-nal = "0.5"
-fixed = "1.29.0"
-pid = "4.0.0"
-embedded-hal = "1.0.0"
+fixed = "1.29"
+pid = "4.0"
+embedded-hal = "1.0"
+embedded-alloc = "0.7"
 
 [profile.release]
 lto = true

@@ -1,6 +1,6 @@
 # Mote
 
-[![Rust Build and Test](https://github.com/usedhondacivic/mote/actions/workflows/rust.yml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/rust.yml)
+[![Rust Build and Test](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml)
 [![Deploy Docs](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml)
 
 A low cost and high confidence mobile robot.

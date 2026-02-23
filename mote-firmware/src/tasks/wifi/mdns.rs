@@ -14,7 +14,7 @@ use embassy_rp::clocks::RoscRng;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
-use mote_messages::configuration::mote_to_host::BITResult;
+use mote_api::messages::mote_to_host::BITResult;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::helpers::update_bit_result;

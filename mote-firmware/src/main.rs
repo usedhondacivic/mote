@@ -5,11 +5,14 @@
 // Used minimally in the LiDAR driver, still very unstable
 #![feature(generic_const_exprs)]
 
+extern crate alloc;
+
 use defmt::info;
 use embassy_executor::{Executor, Spawner};
 use embassy_rp::clocks::{ClockConfig, CoreVoltage, clk_sys_freq};
 use embassy_rp::config::Config;
 use embassy_rp::multicore::{Stack, spawn_core1};
+use embedded_alloc::LlffHeap as Heap;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -17,6 +20,11 @@ use crate::tasks::*;
 
 mod helpers;
 mod tasks;
+
+#[global_allocator]
+static HEAP: Heap = Heap::empty();
+
+const HEAP_SIZE: usize = 100 * 1024;
 
 // Program metadata for `picotool info`.
 #[unsafe(link_section = ".bi_entries")]
@@ -42,6 +50,11 @@ fn main() -> ! {
     let r = split_resources!(p);
 
     info!("System clock frequency: {} MHz", clk_sys_freq() / 1_000_000);
+
+    // Init the allocator
+    unsafe {
+        embedded_alloc::init!(HEAP, HEAP_SIZE);
+    }
 
     spawn_core1(
         p.CORE1,
@@ -97,7 +110,7 @@ async fn core1_task(
     /* Set initial configuration state */
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        (*configuration_state).uid = heapless::String::try_from("mote-:3").expect("Failed to assign to uid.");
+        (*configuration_state).uid = "mote-:3".into();
 
         // TODO: read / write wifi configuration to flash, then use it to update
         // config

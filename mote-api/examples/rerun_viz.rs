@@ -9,16 +9,15 @@ use std::{
     net::{TcpStream, UdpSocket},
 };
 
-use mote_comms::{HostRuntimeCommandLink, HostRuntimeDataOffloadLink};
-
-use mote_messages::runtime::{host_to_mote, mote_to_host};
+use mote_api::MoteLink;
+use mote_api::messages::{host_to_mote, mote_to_host};
 
 // This thread starts a TCP socket for sending commands to Mote
 // Right now all we do is ping the robot
 fn command_thread() {
     'socket_error: loop {
         if let Ok(mut socket) = TcpStream::connect("192.168.0.78:7465") {
-            let mut command_link = HostRuntimeCommandLink::new();
+            let mut command_link = MoteLink::new();
 
             // Ping the robot
             println!("Pinging Mote");
@@ -41,15 +40,15 @@ fn command_thread() {
                 while let Ok(Some(message)) = command_link.poll_receive() {
                     // Check what kind of message we got
                     match message {
-                        mote_to_host::command::Message::PingResponse => {
-                            println!("Got ping response from Mote.");
+                        mote_to_host::Message::Pong => {
+                            println!("Got pong from Mote.");
                         }
-                        mote_to_host::command::Message::Ping => {
+                        mote_to_host::Message::Ping => {
                             println!("Mote pinged host.");
-                            command_link
-                                .send(host_to_mote::Message::PingResponse)
-                                .unwrap();
+                            command_link.send(host_to_mote::Message::Pong).unwrap();
                         }
+                        mote_to_host::Message::Scan(_) => todo!(),
+                        mote_to_host::Message::State(_) => todo!(),
                     }
                 }
             }
@@ -79,12 +78,10 @@ fn data_offload_thread() {
                 continue;
             }
 
-            let mut data_link = HostRuntimeDataOffloadLink::new();
+            let mut data_link = MoteLink::new();
 
             // Subscribe to sensor data
-            data_link
-                .send(host_to_mote::data_offload::DataOffloadSubscribeRequest)
-                .unwrap();
+            data_link.send(host_to_mote::Message::Ping).unwrap();
 
             loop {
                 // Retrieve and transmit all messages queued to be sent
@@ -103,7 +100,7 @@ fn data_offload_thread() {
                 while let Ok(Some(message)) = data_link.poll_receive() {
                     // Check what kind of message we got
                     match message {
-                        mote_to_host::data_offload::Message::Scan(scan_data) => {
+                        mote_to_host::Message::Scan(scan_data) => {
                             // We got a LiDAR scan message, lets push the points to rerun for visualization
                             let points: Vec<glam::Vec2> = scan_data
                                 .iter()
@@ -136,6 +133,9 @@ fn data_offload_thread() {
                             )
                             .unwrap();
                         }
+                        mote_to_host::Message::Ping => todo!(),
+                        mote_to_host::Message::Pong => todo!(),
+                        mote_to_host::Message::State(_) => todo!(),
                     }
                 }
             }

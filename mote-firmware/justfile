@@ -1,0 +1,11 @@
+[default]
+_default:
+    just --list
+
+build:
+    cargo build --release
+
+deploy:
+    cargo run --release
+
+ci: build

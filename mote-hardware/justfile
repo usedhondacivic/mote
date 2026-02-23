@@ -1,0 +1,3 @@
+[default]
+_default:
+    just --list

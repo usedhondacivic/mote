@@ -1,33 +1,84 @@
-use alloc::collections::vec_deque::VecDeque;
-use alloc::vec::Vec;
-use core::{fmt::Debug, marker::PhantomData};
-use serde::de::DeserializeOwned;
+#![no_std]
 
-use crate::messages::{configuration, runtime};
-use crate::{from_bytes, to_slice};
-use serde::{Deserialize, Serialize};
+//! Messages used by Mote for firmware <--> host communication
 
-use crate::Error;
+// I'd prefer to move away from alloc, but it's here for now.
+extern crate alloc;
+use core::marker::PhantomData;
+
+use alloc::{collections::vec_deque::VecDeque, vec::Vec};
+
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
+use thiserror::Error;
+
+use crate::messages::{host_to_mote, mote_to_host};
+
+pub mod messages;
+
+// Conditionally enable bindings for python and web assembly
+#[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
+extern crate std;
+#[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
+pub mod ffi;
+
+/// Error type
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("Bitcode ser/de failed")]
+    BitCodeError(#[from] bitcode::Error),
+    #[error("Cobs pack/unpack failed")]
+    CobsError(corncobs::CobsError),
+}
+
+impl From<corncobs::CobsError> for Error {
+    fn from(value: corncobs::CobsError) -> Self {
+        Self::CobsError(value)
+    }
+}
+
+/// Implements encoding of message types.
+fn to_slice<M>(message: &M) -> Result<Vec<u8>, Error>
+where
+    M: Serialize + ?Sized,
+{
+    let ser_buff = bitcode::serialize(message)?;
+    let encoded_size = corncobs::max_encoded_len(ser_buff.len());
+    let mut cobs_buff: Vec<u8> = Vec::with_capacity(encoded_size);
+    cobs_buff.resize(encoded_size, 0);
+    corncobs::encode_buf(&ser_buff, &mut cobs_buff);
+
+    return Ok(cobs_buff);
+}
+
+/// Implements decoding of message types.
+fn from_bytes<M>(bytes: &Vec<u8>) -> Result<M, Error>
+where
+    M: DeserializeOwned + ?Sized,
+{
+    let encoded_size = corncobs::max_encoded_len(bytes.len());
+    let mut cobs_buff: Vec<u8> = Vec::with_capacity(encoded_size);
+    cobs_buff.resize(encoded_size, 0);
+    corncobs::decode_buf(bytes, &mut cobs_buff)?;
+    Ok(bitcode::deserialize::<M>(&cobs_buff)?)
+}
 
 // Sets the capacity for the deserialization ringbuffer
 const MAX_MESSAGE_LENGTH: usize = 5000;
 
 /// Data structure representing a transmission
 /// Returned by sansio driver for the application to transmit
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Transmit<const MTU: usize> {
     pub payload: Vec<u8>,
 }
 
-/// Bidirectional SansIO communication link betweek mote and a host.
+/// Bidirectional SansIO communication link betweek mote and the host.
 ///
 /// You probably do not want to directly construct this. Instead, use the type aliases:
-/// HostRuntimeCommandLink
-/// HostRuntimeDataOffloadLink
-/// HostConfigurationLink
-/// MoteRuntimeCommandLink
-/// MoteRuntimeDataOffloadLink
-/// MoteConfigurationLink
+/// MoteLink (use on host)
+/// HostLink (use on mote)
+/// MoteConfigLink
+/// HostConfigLink
 pub struct MoteComms<const MTU: usize, I, O>
 where
     I: DeserializeOwned, // Input type
@@ -36,7 +87,7 @@ where
     buffered_transmits: VecDeque<Transmit<MTU>>,
     deserialization_buffer: VecDeque<u8>,
 
-    in_type: PhantomData<I>,
+    pub in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 }
 
@@ -75,11 +126,11 @@ where
     }
 
     /// Receive a message from raw bytes
-    pub fn handle_receive(&mut self, packet: Vec<u8>) {
+    pub fn handle_receive(&mut self, packet: &[u8]) {
         // Push the recieved bytes into the serialization buffer, potentially dropping the first
         // value if the buffer is full
         packet.into_iter().for_each(|byte| {
-            self.deserialization_buffer.push_back(byte);
+            self.deserialization_buffer.push_back(byte.clone());
             if self.deserialization_buffer.len() > MAX_MESSAGE_LENGTH {
                 self.deserialization_buffer.pop_front();
             }
@@ -103,44 +154,36 @@ where
                 }
             }
         } else {
-            // Shortcut for truncated messages, don't need to try to decode
-            return Err(Error::CobsError(corncobs::CobsError::Truncated));
+            // No end byte = no message
+            return Ok(None);
         }
     }
 }
 
-/// Used by the host to send commands to mote during runtime
-
-pub type HostRuntimeCommandLink = MoteComms<
-    1460, // TCP MSS
-    runtime::mote_to_host::command::Message,
-    runtime::host_to_mote::Message,
+/// Used by the host to send commands to and receive data from Mote
+pub type MoteLink = MoteComms<
+    1400, // UDP MTU(ish)
+    mote_to_host::Message,
+    host_to_mote::Message,
 >;
 
-pub type HostRuntimeDataOffloadLink = MoteComms<
-    1460,
-    runtime::mote_to_host::data_offload::Message,
-    runtime::host_to_mote::data_offload::DataOffloadSubscribeRequest,
+/// Used by Mote to send data to and receive commands from the host
+pub type HostLink = MoteComms<
+    1400, // UDP MTU(ish)
+    host_to_mote::Message,
+    mote_to_host::Message,
 >;
 
-/// Used by mote to respond to control commands during runtime
-pub type MoteRuntimeCommandLink =
-    MoteComms<1460, runtime::host_to_mote::Message, runtime::mote_to_host::command::Message>;
-
-/// Used by mote to offload sensor data
-pub type MoteRuntimeDataOffloadLink = MoteComms<
-    1460,
-    runtime::host_to_mote::data_offload::DataOffloadSubscribeRequest,
-    runtime::mote_to_host::data_offload::Message,
->;
-
-/// Used by the host to talk to mote during configuration
-pub type HostConfigurationLink = MoteComms<
+/// Used by the host to send commands to and receive data from Mote
+pub type MoteConfigLink = MoteComms<
     64, // Serial MTU
-    configuration::mote_to_host::Message,
-    configuration::host_to_mote::Message,
+    mote_to_host::Message,
+    host_to_mote::Message,
 >;
 
-/// Used by mote to talk to the host during configuration
-pub type MoteConfigurationLink =
-    MoteComms<64, configuration::host_to_mote::Message, configuration::mote_to_host::Message>;
+/// Used by Mote to send data to and receive commands from the host
+pub type HostConfigLink = MoteComms<
+    64, // Serial MTU
+    host_to_mote::Message,
+    mote_to_host::Message,
+>;

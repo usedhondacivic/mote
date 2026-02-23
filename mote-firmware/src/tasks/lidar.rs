@@ -2,8 +2,8 @@ mod rp_c1_driver;
 
 use embassy_executor::Spawner;
 use embassy_rp::uart::{BufferedUart, Config, DataBits, Parity, StopBits};
-use mote_messages::configuration::mote_to_host::{BIT, BITResult};
-use mote_messages::runtime::mote_to_host;
+use mote_api::messages::mote_to_host;
+use mote_api::messages::mote_to_host::{BIT, BITResult};
 use static_cell::StaticCell;
 
 use super::{Irqs, RplidarC1Resources};
@@ -12,9 +12,11 @@ use crate::tasks::CONFIGURATION_STATE;
 use crate::tasks::lidar::rp_c1_driver::{LidarState, Point, RPLidarC1};
 use crate::wifi::MOTE_TO_HOST_DATA_OFFLOAD;
 
-impl From<Point> for mote_to_host::data_offload::Point {
+const MAX_POINTS_PER_SCAN_MESSAGE: usize = 100;
+
+impl From<Point> for mote_to_host::Point {
     fn from(value: Point) -> Self {
-        mote_to_host::data_offload::Point {
+        mote_to_host::Point {
             quality: value.quality,
             // Feels expensive, but the RP2350 has a FPU
             angle_rads: (value.angle as f32 / 64.0).to_radians(),
@@ -39,8 +41,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 
     let mut state = LidarState::Reset;
 
-    let mut point_buf: [rp_c1_driver::Point; mote_to_host::data_offload::MAX_POINTS_PER_SCAN_MESSAGE] =
-        [rp_c1_driver::Point::default(); _];
+    let mut point_buf: [rp_c1_driver::Point; MAX_POINTS_PER_SCAN_MESSAGE] = [rp_c1_driver::Point::default(); _];
     let mut valid_points = 0;
 
     let mut driver = RPLidarC1::new(uart);
@@ -71,7 +72,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
             LidarState::ReceiveSample => {
                 match driver.receive_samples(&mut point_buf).await {
                     Ok(count) => {
-                        if count < mote_to_host::data_offload::MAX_POINTS_PER_SCAN_MESSAGE >> 1 {
+                        if count < (MAX_POINTS_PER_SCAN_MESSAGE >> 1) {
                             // More than 50% of points were not read correctly
                             LidarState::CheckHealth
                         } else {
@@ -88,7 +89,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
             LidarState::ProcessSample => {
                 // We don't care if these packets get lost, so don't block if the channel is
                 // full
-                let _ = MOTE_TO_HOST_DATA_OFFLOAD.try_send(mote_to_host::data_offload::Message::Scan(
+                let _ = MOTE_TO_HOST_DATA_OFFLOAD.try_send(mote_to_host::Message::Scan(
                     point_buf[..valid_points]
                         .into_iter()
                         .map(|&point| point.into())
@@ -107,19 +108,15 @@ pub async fn init(spawner: Spawner, r: RplidarC1Resources) {
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         let init = BIT {
-            name: heapless::String::try_from("Init").expect("Failed to assign name to BIT"),
+            name: "Init".into(),
             result: BITResult::Waiting,
         };
         let check_health = BIT {
-            name: heapless::String::try_from("Check Health").expect("Failed to assign name to BIT"),
+            name: "Check Health".into(),
             result: BITResult::Waiting,
         };
         for test in [init, check_health] {
-            configuration_state
-                .built_in_test
-                .lidar
-                .push(test)
-                .expect("Failed to add test");
+            configuration_state.built_in_test.lidar.push(test);
         }
     }
 

@@ -42,48 +42,31 @@ jobs:
         with:
           node-version: lts/*
           cache: 'npm'
-          cache-dependency-path: 'web/mote-configuration/app/package-lock.json'
+          cache-dependency-path: 'mote-configuration/app/package-lock.json'
 
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
-            web/mote-configuration
+            mote-api
+            mote-configuration
 
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
           mdbook-version: 'latest'
 
-      - name: Build Book
-        run: |
-          cd web/mote-book
-          mdbook build
-
-      - name: Test Book
-        run: |
-          cd web/mote-book
-          mdbook test
-
       - name: Install wasm-pack
         run: |
           cargo install wasm-pack --vers "^0.13" --locked
 
-      - name: Build configuration wasm
-        run: |
-          cd web/mote-configuration
-          wasm-pack build --target web
+      - name: Install just
+        uses: extractions/setup-just@v2
 
-      - name: Build Svelte app
-        run: |
-          cd web/mote-configuration/app
-          npm ci
-          npm run build
+      - name: Test Book
+        run: just book::test
 
-      - name: Collect artifacts
-        run: |
-          mkdir -p output/configuration
-          cp -r web/mote-book/book/* output
-          cp -r web/mote-configuration/app/dist/* output/configuration
+      - name: Run CI web build
+        run: just ci-web-artifact
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

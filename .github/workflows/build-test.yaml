@@ -1,0 +1,38 @@
+name: Build Test
+description: Build, format, lint, and test all code
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: |
+          mote-firmware
+          mote-api
+
+    - name: Setup mdBook
+      uses: peaceiris/actions-mdbook@v2
+      with:
+        mdbook-version: 'latest'
+
+    - name: Install just
+      uses: extractions/setup-just@v2
+
+    - name: Run CI validation
+      run: just ci

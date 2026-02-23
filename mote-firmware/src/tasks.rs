@@ -5,6 +5,7 @@ pub mod usb_serial;
 pub mod wifi;
 
 // Split resources between each of the tasks
+
 use assign_resources::assign_resources;
 use embassy_rp::{Peri, bind_interrupts, peripherals};
 
@@ -78,10 +79,11 @@ bind_interrupts!(pub struct Irqs {
 });
 
 // and init global configuration state
+use alloc::vec::Vec;
+
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::mutex::Mutex;
-use heapless::Vec;
-use mote_messages::configuration::mote_to_host::{BITCollection, State, UID};
+use mote_api::messages::mote_to_host::{BITCollection, State, UID};
 
 pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::new(State {
     uid: UID::new(),

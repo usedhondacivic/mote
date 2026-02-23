@@ -13,8 +13,8 @@ use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
-use mote_messages::configuration::mote_to_host::{BIT, BITResult};
-use mote_messages::runtime::{host_to_mote, mote_to_host};
+use mote_api::messages::mote_to_host::{BIT, BITResult};
+use mote_api::messages::{host_to_mote, mote_to_host};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -22,8 +22,7 @@ use super::{Cyw43Resources, Irqs};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 
-pub static MOTE_TO_HOST_DATA_OFFLOAD: Channel<CriticalSectionRawMutex, mote_to_host::data_offload::Message, 32> =
-    Channel::new();
+pub static MOTE_TO_HOST_DATA_OFFLOAD: Channel<CriticalSectionRawMutex, mote_to_host::Message, 32> = Channel::new();
 pub static HOST_TO_MOTE_COMMAND: Channel<CriticalSectionRawMutex, host_to_mote::Message, 32> = Channel::new();
 
 #[embassy_executor::task]
@@ -41,31 +40,27 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         let init = BIT {
-            name: heapless::String::try_from("Init").expect("Failed to assign name to BIT"),
+            name: "Init".into(),
             result: BITResult::Waiting,
         };
         let connection = BIT {
-            name: heapless::String::try_from("Connected to Network").expect("Failed to assign name to BIT"),
+            name: "Connected to Network".into(),
             result: BITResult::Waiting,
         };
         let ip_v4 = BIT {
-            name: heapless::String::try_from("IPV4 UP").expect("Failed to assign name to BIT"),
+            name: "IPV4 UP".into(),
             result: BITResult::Waiting,
         };
         let multicast = BIT {
-            name: heapless::String::try_from("mDNS UP").expect("Failed to assign name to BIT"),
+            name: "mDNS UP".into(),
             result: BITResult::Waiting,
         };
         let client = BIT {
-            name: heapless::String::try_from("Client Connected").expect("Failed to assign name to BIT"),
+            name: "Client Connected".into(),
             result: BITResult::Waiting,
         };
         for test in [init, connection, ip_v4, multicast, client] {
-            configuration_state
-                .built_in_test
-                .wifi
-                .push(test)
-                .expect("Failed to add test");
+            configuration_state.built_in_test.wifi.push(test);
         }
     }
 

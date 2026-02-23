@@ -5,27 +5,27 @@ use embassy_net::{IpAddress, Stack};
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
 use embedded_io_async::Write;
-use mote_messages::configuration::mote_to_host::BITResult;
-use mote_messages::runtime::{host_to_mote, mote_to_host};
-use mote_sansio_driver::MoteRuntimeCommandLink;
+use mote_api::messages::mote_to_host::BITResult;
+use mote_api::messages::{host_to_mote, mote_to_host};
+use mote_api::{HostConfigLink, HostLink};
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 
 pub const TCP_SERVER_PORT: u16 = 7465;
-pub static MOTE_TO_HOST_COMMAND: Channel<CriticalSectionRawMutex, mote_to_host::command::Message, 32> = Channel::new();
+pub static MOTE_TO_HOST_COMMAND: Channel<CriticalSectionRawMutex, mote_to_host::Message, 32> = Channel::new();
 
 async fn parse_command_message<'a>(
     rx_message: &host_to_mote::Message,
-    link: &mut MoteRuntimeCommandLink,
+    link: &mut HostConfigLink,
 ) -> Result<(), embassy_net::tcp::Error> {
     match rx_message {
         host_to_mote::Message::Ping => {
             info!("Parsed ping request, responding.");
-            let _ = link.send(mote_to_host::command::Message::PingResponse);
+            let _ = link.send(mote_to_host::Message::Pong);
         }
-        host_to_mote::Message::PingResponse => {
+        host_to_mote::Message::Pong => {
             info!("Received ping response from host.")
         }
         _ => {
@@ -72,7 +72,7 @@ pub async fn tcp_server_task(stack: Stack<'static>) -> ! {
 
             let mut message_buffer = [0; 4096];
 
-            let mut link = MoteRuntimeCommandLink::new();
+            let mut link = HostConfigLink::new();
 
             loop {
                 match select(socket.read(&mut message_buffer), MOTE_TO_HOST_COMMAND.receive()).await {
@@ -90,7 +90,7 @@ pub async fn tcp_server_task(stack: Stack<'static>) -> ! {
                         break;
                     }
                     Either::First(Ok(bytes_read)) => {
-                        link.handle_receive(&mut message_buffer[..bytes_read]);
+                        link.handle_receive(&message_buffer[..bytes_read]);
                         while let Ok(Some(message)) = link.poll_receive() {
                             if let Some(endpoint) = socket.remote_endpoint() {
                                 if let IpAddress::Ipv4(_) = endpoint.addr {

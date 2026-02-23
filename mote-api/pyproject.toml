@@ -1,0 +1,17 @@
+[project]
+name = "mote-api"
+version = "0.0.0"
+description = "Python library for communicating with Mote"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "ruff>=0.15.2",
+]
+
+[tool.maturin]
+features = ["python_ffi"]
+cargo-extra-args = ["--crate-type=dylib"]
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"

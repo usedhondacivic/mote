@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
-use mote_messages::configuration::{host_to_mote, mote_to_host};
-use mote_sansio_driver::HostConfigurationLink;
+use mote_api::MoteConfigLink;
+use mote_api::messages::{host_to_mote, mote_to_host};
 
 #[wasm_bindgen]
 extern "C" {
@@ -15,7 +15,7 @@ macro_rules! console_log {
 
 #[wasm_bindgen]
 pub struct ConfigurationLink {
-    link: HostConfigurationLink,
+    link: MoteConfigLink,
 }
 
 // WASM Wrapper for HostConfigurationLink
@@ -25,7 +25,7 @@ impl ConfigurationLink {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         Self {
-            link: HostConfigurationLink::new(),
+            link: MoteConfigLink::new(),
         }
     }
 
@@ -55,6 +55,6 @@ impl ConfigurationLink {
     pub fn poll_receive(&mut self) -> JsValue {
         let message: Result<Option<mote_to_host::Message>, _> = self.link.poll_receive();
         console_log!("[RX] Configuration link unpacked: {:?}", message);
-        serde_wasm_bindgen::to_value(&message).unwrap()
+        serde_wasm_bindgen::to_value(&message.map_err(|_| ())).unwrap()
     }
 }

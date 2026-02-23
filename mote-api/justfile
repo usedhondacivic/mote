@@ -1,0 +1,43 @@
+[default]
+_default:
+    just --list
+
+# PYTHON
+
+# Sync dev dependencies
+dev-sync:
+    uv sync --all-extras --cache-dir .uv_cache
+
+# Sync production dependencies (excludes dev dependencies)
+prod-sync:
+	uv sync --all-extras --no-dev --cache-dir .uv_cache
+
+# Run ruff formatting
+format-python:
+	uv run ruff format
+
+lint:
+    uv run ty check
+
+build-python:
+    @echo 'placeholder'
+
+# WASM / TS
+
+build-wasm:
+    @echo 'placeholder'
+
+# RUST
+
+build-examples:
+    cargo build --examples
+
+run-example example:
+    cargo run --example {{example}}
+
+test:
+    cargo test
+
+# CI
+
+ci: build-examples test

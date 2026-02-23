@@ -1,17 +1,9 @@
 //!  Sensor and state data telemetered to the host
 
-use alloc::{boxed::Box, string::String, vec::Vec};
-use serde::{Deserialize, Serialize, de::DeserializeOwned};
+use alloc::{string::String, vec::Vec};
+use serde::{Deserialize, Serialize};
 
-trait MoteToHostMessage: Serialize + DeserializeOwned {}
-
-// RUNTIME MESSAGES
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum Ping {
-    Ping,
-    Pong,
-}
+// RUNTIME MESSEGES
 
 // Lidar Data
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -62,8 +54,10 @@ pub struct State {
     pub built_in_test: BITCollection,
 }
 
-// Everything that can be sent from Mote to the host
-impl MoteToHostMessage for Point {}
-impl MoteToHostMessage for State {}
-
-pub type Message = Box<dyn MoteToHostMessage>;
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum Message {
+    Ping,
+    Pong,
+    Scan(Vec<Point>),
+    State(State),
+}

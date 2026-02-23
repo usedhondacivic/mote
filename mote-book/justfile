@@ -1,0 +1,11 @@
+[default]
+_default:
+    just --list
+
+build:
+    mdbook build
+
+test: build
+    mdbook test
+
+ci: build test

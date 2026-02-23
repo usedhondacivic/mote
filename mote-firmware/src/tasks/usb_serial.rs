@@ -7,8 +7,8 @@ use embassy_time::{Duration, Ticker, with_timeout};
 use embassy_usb::UsbDevice;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
-use mote_messages::configuration::{host_to_mote, mote_to_host};
-use mote_sansio_driver::MoteConfigurationLink;
+use mote_api::messages::{host_to_mote, mote_to_host};
+use mote_api::{HostConfigLink, MoteConfigLink};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -45,6 +45,7 @@ async fn handle_host_message(msg: host_to_mote::Message) {
         host_to_mote::Message::RequestNetworkScan => {
             WIFI_REQUEST_RESCAN.signal(());
         }
+        _ => todo!(),
     }
 }
 
@@ -58,7 +59,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
     let mut ticker = Ticker::every(Duration::from_millis(500));
 
     // Link to the host
-    let mut link = MoteConfigurationLink::new();
+    let mut link = HostConfigLink::new();
 
     loop {
         match select(class.read_packet(&mut serial_buffer), ticker.next()).await {
@@ -68,7 +69,6 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                 debug!("USB Serial got: {:x}", serial_buffer[..bytes_read]);
 
                 while let Ok(Some(message)) = link.poll_receive() {
-                    info!("USB Serial unpacked {:?}", message);
                     handle_host_message(message).await;
                 }
                 Ok(())

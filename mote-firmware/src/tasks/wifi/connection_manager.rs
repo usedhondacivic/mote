@@ -1,3 +1,4 @@
+use alloc::string::String;
 use core::cmp::min;
 
 use cyw43::JoinOptions;
@@ -6,8 +7,8 @@ use embassy_futures::select::{Either, select};
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::signal::Signal;
-use mote_messages::configuration::host_to_mote::SetNetworkConnectionConfig;
-use mote_messages::configuration::mote_to_host::{BITResult, NetworkConnection};
+use mote_api::messages::host_to_mote::SetNetworkConnectionConfig;
+use mote_api::messages::mote_to_host::{BITResult, NetworkConnection};
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::helpers::update_bit_result;
@@ -17,7 +18,7 @@ pub static WIFI_REQUEST_CONNECT: Channel<CriticalSectionRawMutex, SetNetworkConn
 pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
 async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) {
-    async fn update_network_bit(current_network: Option<heapless::String<32>>, result: BITResult) {
+    async fn update_network_bit(current_network: Option<String>, result: BITResult) {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         configuration_state.current_network_connection = current_network;
         update_bit_result(
@@ -76,8 +77,7 @@ async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
                 let mut configuration_state = CONFIGURATION_STATE.lock().await;
 
                 let new_connection = NetworkConnection {
-                    ssid: heapless::String::try_from(ssid_str)
-                        .expect("Failed to create SSID from the value returned by the scan."),
+                    ssid: ssid_str.into(),
                     strength: -bss.rssi as u8,
                 };
 
@@ -92,7 +92,7 @@ async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
                 }
 
                 // If we've run out of entries, drop the weakest
-                if configuration_state.available_network_connections.is_full() {
+                if configuration_state.available_network_connections.len() > 50 {
                     let (weakest_index, weakest) = configuration_state
                         .available_network_connections
                         .iter()
@@ -123,7 +123,11 @@ pub async fn connection_manager_task(mut control: cyw43::Control<'static>) -> ! 
     loop {
         match select(WIFI_REQUEST_CONNECT.receive(), WIFI_REQUEST_RESCAN.wait()).await {
             Either::First(config) => {
-                info!("Got join request {}, {}", config.ssid, config.password);
+                info!(
+                    "Got join request {}, {}",
+                    config.ssid.as_str(),
+                    config.password.as_str()
+                );
                 attempt_join_network(&mut control, config).await;
             }
             Either::Second(_) => run_network_scan(&mut control).await,
