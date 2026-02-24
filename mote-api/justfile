@@ -40,4 +40,4 @@ test:
 
 # CI
 
-ci: build-examples test
+ci: build-examples build-wasm test

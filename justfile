@@ -14,7 +14,7 @@ _default:
     just --list
 
 # Run the full CI suite
-ci: firmware::ci api::ci book::ci
+ci: firmware::ci api::ci book::ci config::ci
 
 # Generate a folder for uploading to gh pages
 ci-web-artifact: book::build config::ci-build

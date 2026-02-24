@@ -15,7 +15,8 @@ use crate::messages::{host_to_mote, mote_to_host};
 
 pub mod messages;
 
-// Conditionally enable bindings for python and web assembly #[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
+// Conditionally enable bindings for python and web assembly
+#[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
 extern crate std;
 #[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
 pub mod ffi;

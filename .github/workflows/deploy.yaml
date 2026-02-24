@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: lts/*
           cache: 'npm'
-          cache-dependency-path: 'mote-configuration/app/package-lock.json'
+          cache-dependency-path: 'mote-configuration/package-lock.json'
 
       - uses: Swatinem/rust-cache@v2
         with:

@@ -8,6 +8,8 @@ build:
 run-dev: build
     npx vite
 
+ci: build
+
 ci-build: build
     npm ci
     npm run build
