@@ -2,7 +2,7 @@
     import { tick } from "svelte";
     import ShortSpinner from "./ShortSpinner.svelte";
 
-    import { set_uid } from "./mote_api";
+    import { set_uid } from "./link";
 
     let { uid, ip } = $props();
 

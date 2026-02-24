@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 // RUNTIME MESSEGES
 
 // Lidar Data
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Point {
     pub quality: u8,
     pub angle_rads: f32,
@@ -15,27 +15,27 @@ pub struct Point {
 
 // CONFIGURATION MESSAGES
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct NetworkConnection {
     pub ssid: String,
     pub strength: u8, // rssi
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum BITResult {
     Waiting,
     Pass,
     Fail,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct BIT {
     pub name: String,
     pub result: BITResult,
 }
 pub type BITList = Vec<BIT>;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct BITCollection {
     pub wifi: BITList,
     pub lidar: BITList,
@@ -45,7 +45,7 @@ pub struct BITCollection {
 
 pub type UID = String;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct State {
     pub uid: UID,
     pub ip: Option<String>,
@@ -54,7 +54,7 @@ pub struct State {
     pub built_in_test: BITCollection,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum Message {
     Ping,
     Pong,

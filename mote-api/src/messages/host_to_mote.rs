@@ -5,14 +5,14 @@ use serde::{Deserialize, Serialize};
 
 // RUNTIME MESSAGES
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct SetNetworkConnectionConfig {
     pub ssid: String,
     pub password: String,
 }
 
 pub type UID = String;
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct SetUID {
     pub uid: UID,
 }
@@ -33,7 +33,7 @@ pub struct SetEnabled {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SoftReset;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum Message {
     Ping,
     Pong,

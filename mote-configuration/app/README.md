@@ -1,1 +1,0 @@
-Svelte based configuration page

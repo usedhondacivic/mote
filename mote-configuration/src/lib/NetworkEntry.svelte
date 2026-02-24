@@ -1,6 +1,6 @@
 <script lang="ts">
     import { tick } from "svelte";
-    import { network_connect } from "./mote_api";
+    import { network_connect } from "./link";
 
     let { ssid, strength, is_current_connection } = $props();
 

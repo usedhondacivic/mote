@@ -79,6 +79,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                     with_timeout(Duration::from_millis(500), CONFIGURATION_STATE.lock()).await
                 {
                     let message = mote_to_host::Message::State(configuration_state.clone());
+
                     link.send(message).unwrap();
                 }
                 Ok(())
@@ -86,6 +87,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
         }?;
 
         while let Some(transmit) = link.poll_transmit() {
+            debug!("USB Serial send: {:x}", transmit.payload);
             if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&transmit.payload)).await {
                 res?;
             }

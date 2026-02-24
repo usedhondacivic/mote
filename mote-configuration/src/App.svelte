@@ -1,6 +1,6 @@
 <script lang="ts">
     import { handle_telem_recv, mote_telem } from "./lib/shared.svelte";
-    import { rescan, serial_connect } from "./lib/mote_api";
+    import { rescan, serial_connect } from "./lib/link";
 
     import LongSpinner from "./lib/LongSpinner.svelte";
 

@@ -2,13 +2,12 @@
 _default:
     just --list
 
-build-wasm:
-    wasm-pack build --target web
+build:
+    just -f ../mote-api/justfile build-wasm
 
-run-dev: build-wasm
-    deno run -A npm:vite
+run-dev: build
+    npx vite
 
-[working-directory: 'app']
-ci-build: build-wasm
+ci-build: build
     npm ci
     npm run build

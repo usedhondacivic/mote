@@ -25,8 +25,8 @@ build-python:
 # WASM / TS
 
 build-wasm:
-    @echo 'placeholder'
-
+   wasm-pack build --out-dir target/pkg-node --target bundler --features wasm_ffi
+ 
 # RUST
 
 build-examples:

@@ -3,7 +3,7 @@
 use std::string::String;
 use std::vec::Vec;
 
-use crate::{Error as MoteCommsError, MoteComms, Transmit};
+use crate::{Error as MoteCommsError, MoteComms};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;

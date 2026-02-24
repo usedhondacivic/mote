@@ -15,8 +15,7 @@ use crate::messages::{host_to_mote, mote_to_host};
 
 pub mod messages;
 
-// Conditionally enable bindings for python and web assembly
-#[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
+// Conditionally enable bindings for python and web assembly #[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
 extern crate std;
 #[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
 pub mod ffi;
@@ -44,8 +43,9 @@ where
     let ser_buff = bitcode::serialize(message)?;
     let encoded_size = corncobs::max_encoded_len(ser_buff.len());
     let mut cobs_buff: Vec<u8> = Vec::with_capacity(encoded_size);
-    cobs_buff.resize(encoded_size, 0);
-    corncobs::encode_buf(&ser_buff, &mut cobs_buff);
+    cobs_buff.resize(encoded_size, 10);
+    let encoded_size = corncobs::encode_buf(&ser_buff, &mut cobs_buff);
+    cobs_buff.truncate(encoded_size);
 
     return Ok(cobs_buff);
 }
@@ -55,10 +55,11 @@ fn from_bytes<M>(bytes: &Vec<u8>) -> Result<M, Error>
 where
     M: DeserializeOwned + ?Sized,
 {
-    let encoded_size = corncobs::max_encoded_len(bytes.len());
-    let mut cobs_buff: Vec<u8> = Vec::with_capacity(encoded_size);
-    cobs_buff.resize(encoded_size, 0);
-    corncobs::decode_buf(bytes, &mut cobs_buff)?;
+    let mut cobs_buff: Vec<u8> = Vec::with_capacity(bytes.len());
+    cobs_buff.resize(bytes.len(), 10);
+    let decoded_size = corncobs::decode_buf(bytes, &mut cobs_buff)?;
+    cobs_buff.truncate(decoded_size);
+
     Ok(bitcode::deserialize::<M>(&cobs_buff)?)
 }
 
@@ -85,7 +86,7 @@ where
     O: Serialize,        // Output type
 {
     buffered_transmits: VecDeque<Transmit<MTU>>,
-    deserialization_buffer: VecDeque<u8>,
+    pub deserialization_buffer: VecDeque<u8>,
 
     pub in_type: PhantomData<I>,
     out_type: PhantomData<O>,
@@ -187,3 +188,72 @@ pub type HostConfigLink = MoteComms<
     host_to_mote::Message,
     mote_to_host::Message,
 >;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const MOTE_MESSAGES: &[mote_to_host::Message] = &[
+        mote_to_host::Message::Ping,
+        mote_to_host::Message::Pong,
+        // mote_to_host::Message::State(mote_to_host::State {
+        //     uid: String::new("testtesttest"),
+        //     ip: None,
+        //     current_network_connection: None,
+        //     available_network_connections: Vec::new(),
+        //     built_in_test: mote_to_host::BITCollection {
+        //         wifi: Vec::new(),
+        //         lidar: Vec::new(),
+        //         imu: Vec::new(),
+        //         encoders: Vec::new(),
+        //     },
+        // }),
+    ];
+    const HOST_MESSAGES: &[host_to_mote::Message] =
+        &[host_to_mote::Message::Ping, host_to_mote::Message::Pong];
+
+    #[test]
+    fn test_encode_decode() -> Result<(), Error> {
+        for msg in MOTE_MESSAGES {
+            let bytes = to_slice(msg)?;
+            let recv_msg: mote_to_host::Message = from_bytes(&bytes)?;
+            assert_eq!(msg, &recv_msg);
+        }
+        for msg in HOST_MESSAGES {
+            let bytes = to_slice(msg)?;
+            let recv_msg: host_to_mote::Message = from_bytes(&bytes)?;
+            assert_eq!(msg, &recv_msg);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_config_links() -> Result<(), Error> {
+        for sent_msg in MOTE_MESSAGES {
+            let mut host_l = HostConfigLink::new();
+            host_l.send(sent_msg.clone())?;
+            let transmission = host_l.poll_transmit().unwrap();
+
+            let mut mote_l = MoteConfigLink::new();
+            mote_l.handle_receive(&transmission.payload);
+            let recv_msg = mote_l.poll_receive()?.unwrap();
+
+            assert_eq!(sent_msg, &recv_msg);
+        }
+
+        for sent_msg in HOST_MESSAGES {
+            let mut mote_l = MoteConfigLink::new();
+            mote_l.send(sent_msg.clone())?;
+            let transmission = mote_l.poll_transmit().unwrap();
+
+            let mut host_l = HostConfigLink::new();
+            host_l.handle_receive(&transmission.payload);
+            let recv_msg = host_l.poll_receive()?.unwrap();
+
+            assert_eq!(sent_msg, &recv_msg);
+        }
+
+        Ok(())
+    }
+}

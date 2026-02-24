@@ -1,8 +1,7 @@
-import init, { ConfigurationLink } from '../../../pkg/configuration.js';
+import { Link } from 'mote-api';
 
 // Init WASM, init comms link
-await init();
-let link = new ConfigurationLink();
+let link = new Link();
 
 // webserial constructs
 let port;
@@ -56,7 +55,8 @@ async function readLoop(telemetry_recv) {
 
         // Check if one or more messages completed by the packet
         let data = link.poll_receive();
-        while (data?.Ok) {
+        while (data?.Ok !== undefined) {
+            console.log(data);
             telemetry_recv(data);
             data = link.poll_receive();
         }
