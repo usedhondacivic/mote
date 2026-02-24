@@ -48,16 +48,15 @@ jobs:
         with:
           workspaces: |
             mote-api
-            mote-configuration
 
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
           mdbook-version: 'latest'
 
-      - name: Install wasm-pack
-        run: |
-          cargo install wasm-pack --vers "^0.13" --locked
+      - uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          version: 'latest'
 
       - name: Install just
         uses: extractions/setup-just@v2

@@ -20,5 +20,5 @@ ci: firmware::ci api::ci book::ci config::ci
 ci-web-artifact: book::build config::ci-build
     mkdir -p output/configuration
     cp -r mote-book/book/* output
-    cp -r mote-configuration/app/dist/* output/configuration
+    cp -r mote-configuration/dist/* output/configuration
 
