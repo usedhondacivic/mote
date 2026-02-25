@@ -90,10 +90,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                 // We don't care if these packets get lost, so don't block if the channel is
                 // full
                 let _ = MOTE_TO_HOST_DATA_OFFLOAD.try_send(mote_to_host::Message::Scan(
-                    point_buf[..valid_points]
-                        .into_iter()
-                        .map(|&point| point.into())
-                        .collect(),
+                    point_buf[..valid_points].iter().map(|&point| point.into()).collect(),
                 ));
 
                 LidarState::ReceiveSample

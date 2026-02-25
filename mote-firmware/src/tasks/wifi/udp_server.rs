@@ -41,7 +41,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                 embassy_futures::select::Either::First(Ok((_, ep))) => {
                     info!("Registering data offload subscriber {}", ep);
 
-                    if let None = data_offload_subscribers.iter().find(|&&i| ep == i) {
+                    if data_offload_subscribers.iter().find(|&&i| ep == i).is_none() {
                         data_offload_subscribers.push(ep)
                     }
                 }
@@ -58,7 +58,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                     match socket.send_to(&transmit.payload, *ep).await {
                         Ok(_) => continue,
                         Err(SendError::NoRoute) => {
-                            let _ = dead_connections.push(idx);
+                            dead_connections.push(idx);
                             info!("Removing data offload subscriber {}", ep)
                         }
                         Err(err) => error!("UDP server got error: {}", err),

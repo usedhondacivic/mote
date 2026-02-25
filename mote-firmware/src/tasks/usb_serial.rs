@@ -7,8 +7,8 @@ use embassy_time::{Duration, Ticker, with_timeout};
 use embassy_usb::UsbDevice;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
+use mote_api::HostConfigLink;
 use mote_api::messages::{host_to_mote, mote_to_host};
-use mote_api::{HostConfigLink, MoteConfigLink};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -64,7 +64,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
     loop {
         match select(class.read_packet(&mut serial_buffer), ticker.next()).await {
             Either::First(Ok(bytes_read)) => {
-                link.handle_receive(&mut serial_buffer[..bytes_read]);
+                link.handle_receive(&serial_buffer[..bytes_read]);
 
                 debug!("USB Serial got: {:x}", serial_buffer[..bytes_read]);
 
@@ -117,15 +117,14 @@ async fn usb_serial_task(spawner: Spawner, r: UsbSerialResources) {
         static BOS_DESCRIPTOR: StaticCell<[u8; 256]> = StaticCell::new();
         static CONTROL_BUF: StaticCell<[u8; 64]> = StaticCell::new();
 
-        let builder = embassy_usb::Builder::new(
+        embassy_usb::Builder::new(
             driver,
             config,
             CONFIG_DESCRIPTOR.init([0; 256]),
             BOS_DESCRIPTOR.init([0; 256]),
             &mut [], // no msos descriptors
             CONTROL_BUF.init([0; 64]),
-        );
-        builder
+        )
     };
 
     // Create classes on the builder.

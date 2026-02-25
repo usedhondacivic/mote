@@ -1,6 +1,5 @@
 // Adapted from https://github.com/milewski/drv8833-driver, which requires std :(
 
-use embedded_hal::digital::OutputPin;
 use embedded_hal::pwm::SetDutyCycle;
 
 pub fn remap(value: u8, min: u16, max: u16) -> u16 {

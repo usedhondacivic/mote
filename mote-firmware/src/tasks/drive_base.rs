@@ -1,4 +1,4 @@
-use defmt::{error, info};
+use defmt::error;
 use embassy_executor::Spawner;
 use embassy_rp::pio::{Instance, Pio};
 use embassy_rp::pwm::SetDutyCycle;
@@ -17,7 +17,7 @@ const ENCODER_PULSES_PER_ROTATION: u16 = 2340;
 const MOTOR_DEADBAND: u8 = 60;
 
 fn encoder_pulses_to_rad_per_second(pulses: i32) -> f32 {
-    return (pulses as f32 / ENCODER_PULSES_PER_ROTATION as f32) * 2. * 3.14159;
+    (pulses as f32 / ENCODER_PULSES_PER_ROTATION as f32) * 2. * 3.14159
 }
 
 struct Motor<'d, T: SetDutyCycle, P: Instance, const SM: usize> {
@@ -149,7 +149,7 @@ async fn motor_task(
     let right_pwm_bridge = PwmBridge::new(right_a, right_b, 0);
     let mut right_motor = Motor::new(right_pwm_bridge, right_encoder);
 
-    let sleep = gpio::Output::new(motor_driver_r.sleep, gpio::Level::High);
+    let _sleep = gpio::Output::new(motor_driver_r.sleep, gpio::Level::High);
 
     // Run PID at 50Hz
     let mut ticker = Ticker::every(Duration::from_millis(20));

@@ -110,7 +110,7 @@ async fn core1_task(
     /* Set initial configuration state */
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        (*configuration_state).uid = "mote-:3".into();
+        configuration_state.uid = "mote-:3".into();
 
         // TODO: read / write wifi configuration to flash, then use it to update
         // config

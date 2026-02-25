@@ -5,9 +5,9 @@ use embassy_net::{IpAddress, Stack};
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
 use embedded_io_async::Write;
+use mote_api::HostConfigLink;
 use mote_api::messages::mote_to_host::BITResult;
 use mote_api::messages::{host_to_mote, mote_to_host};
-use mote_api::{HostConfigLink, HostLink};
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::helpers::update_bit_result;
@@ -92,10 +92,10 @@ pub async fn tcp_server_task(stack: Stack<'static>) -> ! {
                     Either::First(Ok(bytes_read)) => {
                         link.handle_receive(&message_buffer[..bytes_read]);
                         while let Ok(Some(message)) = link.poll_receive() {
-                            if let Some(endpoint) = socket.remote_endpoint() {
-                                if let IpAddress::Ipv4(_) = endpoint.addr {
-                                    parse_command_message(&message, &mut link).await.unwrap();
-                                }
+                            if let Some(endpoint) = socket.remote_endpoint()
+                                && let IpAddress::Ipv4(_) = endpoint.addr
+                            {
+                                parse_command_message(&message, &mut link).await.unwrap();
                             }
                         }
                     }

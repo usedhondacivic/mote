@@ -105,7 +105,7 @@ async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
                     }
                 }
 
-                let _ = configuration_state.available_network_connections.push(new_connection);
+                configuration_state.available_network_connections.push(new_connection);
             }
         }
     }

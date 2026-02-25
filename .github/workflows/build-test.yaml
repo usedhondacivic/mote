@@ -1,5 +1,5 @@
-name: Build Test
-description: Build, format, lint, and test all code
+name: Build Lint Format Test
+description: Build, lint, format and test all code
 
 on:
   push:
@@ -15,7 +15,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  build-lint-format-test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -31,8 +31,15 @@ jobs:
       with:
         mdbook-version: 'latest'
 
-    - uses: jetli/wasm-pack-action@v0.4.0
+    - name: Setup wasm-pack
+      uses: jetli/wasm-pack-action@v0.4.0
       with:
+        version: 'latest'
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
         version: 'latest'
 
     - name: Install just

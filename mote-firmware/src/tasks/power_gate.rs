@@ -1,6 +1,5 @@
 use core::cmp::{max, min};
 
-use defmt::info;
 use embassy_executor::Spawner;
 use embassy_rp::adc::{Adc, Channel, Config};
 use embassy_rp::gpio::Pull;

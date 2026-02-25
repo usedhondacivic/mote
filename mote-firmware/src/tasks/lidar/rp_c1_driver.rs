@@ -87,13 +87,13 @@ where
                 // Clear the UART buffer
                 self.clear_read().await;
 
-                return LidarState::CheckHealth;
+                LidarState::CheckHealth
             }
             Err(err) => {
                 // Otherwise we have an error, attempt to reset again after a short delay
                 error!("Failed to send RESET command to LiDAR ({}), retrying...", err);
                 Timer::after_millis(1000).await;
-                return LidarState::Reset;
+                LidarState::Reset
             }
         }
     }
@@ -138,7 +138,7 @@ where
             }
         }
 
-        return LidarState::Reset;
+        LidarState::Reset
     }
 
     pub async fn scan_request(&mut self) -> LidarState {
@@ -169,7 +169,7 @@ where
                 );
             }
         }
-        return LidarState::CheckHealth;
+        LidarState::CheckHealth
     }
 
     pub async fn receive_samples<const N: usize>(
@@ -201,20 +201,20 @@ where
 
                         point_buf[idx] = Point {
                             quality: (resp[0] & !0b11) >> 2,
-                            angle: angle,
-                            distance: distance,
+                            angle,
+                            distance,
                         };
                         idx += 1;
                     }
                 }
 
-                return Ok(idx);
+                Ok(idx)
             }
             Ok(Err(err)) => {
                 error!("Failed to read point from LiDAR ({}), reseting...", err);
-                return Err(ReadSamplesError::IoError(err));
+                Err(ReadSamplesError::IoError(err))
             }
-            Err(TimeoutError) => return Ok(0),
+            Err(TimeoutError) => Ok(0),
         }
     }
 }
