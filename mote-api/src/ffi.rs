@@ -27,6 +27,7 @@ pub enum Error {
 // These methods erase the underlying message types, instead using their json string representation.
 // This makes FFI implementation easier, as they don't need to worry about converting complex native type.
 // JSON schemas are generated at build time, from which foreign language implementations may generate native type information.
+#[allow(dead_code)]
 impl<const MTU: usize, I, O> MoteComms<MTU, I, O>
 where
     I: Serialize + for<'de> Deserialize<'de>, // Input type

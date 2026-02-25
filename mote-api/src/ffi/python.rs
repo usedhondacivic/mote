@@ -37,7 +37,7 @@ mod mote_api {
         }
 
         fn handle_receive(&mut self, packet: String) -> Result<(), Error> {
-            self.link.handle_receive_json(&*packet)
+            self.link.handle_receive_json(&packet)
         }
 
         fn poll_receive(&mut self) -> Result<Option<String>, Error> {

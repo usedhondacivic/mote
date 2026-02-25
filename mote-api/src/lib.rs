@@ -48,13 +48,13 @@ where
     let encoded_size = corncobs::encode_buf(&ser_buff, &mut cobs_buff);
     cobs_buff.truncate(encoded_size);
 
-    return Ok(cobs_buff);
+    Ok(cobs_buff)
 }
 
 /// Implements decoding of message types.
-fn from_bytes<M>(bytes: &Vec<u8>) -> Result<M, Error>
+fn from_bytes<M>(bytes: &[u8]) -> Result<M, Error>
 where
-    M: DeserializeOwned + ?Sized,
+    M: DeserializeOwned,
 {
     let mut cobs_buff: Vec<u8> = Vec::with_capacity(bytes.len());
     cobs_buff.resize(bytes.len(), 10);
@@ -92,6 +92,15 @@ where
     pub in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 }
+impl<const MTU: usize, I, O> Default for MoteComms<MTU, I, O>
+where
+    I: for<'de> Deserialize<'de>, // Input type
+    O: Serialize,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl<const MTU: usize, I, O> MoteComms<MTU, I, O>
 where
@@ -114,12 +123,12 @@ where
 
         // Break message into packets given the MTU
         for chunk in encoded_bytes.chunks(MTU) {
-            let _ = self.buffered_transmits.push_back(Transmit {
+            self.buffered_transmits.push_back(Transmit {
                 payload: Vec::from(chunk),
             });
         }
 
-        return Ok(());
+        Ok(())
     }
 
     /// Get the next message to be sent
@@ -131,8 +140,8 @@ where
     pub fn handle_receive(&mut self, packet: &[u8]) {
         // Push the recieved bytes into the serialization buffer, potentially dropping the first
         // value if the buffer is full
-        packet.into_iter().for_each(|byte| {
-            self.deserialization_buffer.push_back(byte.clone());
+        packet.iter().for_each(|byte| {
+            self.deserialization_buffer.push_back(*byte);
             if self.deserialization_buffer.len() > MAX_MESSAGE_LENGTH {
                 self.deserialization_buffer.pop_front();
             }
@@ -142,8 +151,8 @@ where
     /// Poll for new messages in the recv buffer
     pub fn poll_receive(&mut self) -> Result<Option<I>, Error> {
         if let Some(end) = self.deserialization_buffer.iter().position(|&x| x == 0) {
-            let mut linear_buf = self.deserialization_buffer.drain(0..=end).collect();
-            match from_bytes::<I>(&mut linear_buf) {
+            let linear_buf: Vec<u8> = self.deserialization_buffer.drain(0..=end).collect();
+            match from_bytes::<I>(&linear_buf) {
                 Ok(msg) => Ok(Some(msg)),
                 Err(Error::BitCodeError(err)) => Err(err.into()),
                 Err(Error::CobsError(corncobs::CobsError::Corrupt)) => {
@@ -157,7 +166,7 @@ where
             }
         } else {
             // No end byte = no message
-            return Ok(None);
+            Ok(None)
         }
     }
 }

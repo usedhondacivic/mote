@@ -20,11 +20,12 @@ macro_rules! console_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
 
+#[allow(dead_code)]
 #[wasm_bindgen]
 struct Link {
     link: MoteConfigLink,
 }
-
+#[allow(dead_code)]
 #[wasm_bindgen]
 impl Link {
     #[wasm_bindgen(constructor)]
@@ -52,9 +53,9 @@ impl Link {
     }
 
     pub fn handle_receive(&mut self, bytes: JsValue) {
-        let mut bytes: Vec<u8> = JsValue::into_serde(&bytes).unwrap();
+        let bytes: Vec<u8> = JsValue::into_serde(&bytes).unwrap();
         console_log!("[RX] Configuration link received: {:?}", bytes);
-        self.link.handle_receive(&mut bytes);
+        self.link.handle_receive(&bytes);
     }
 
     pub fn poll_receive(&mut self) -> JsValue {

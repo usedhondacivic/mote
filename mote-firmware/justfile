@@ -2,10 +2,23 @@
 _default:
     just --list
 
+test:
+    cargo test
+
 build:
     cargo build --release
 
 deploy:
     cargo run --release
 
-ci: build
+format:
+    cargo fmt
+
+lint:
+    @echo "Linting mote-api"
+    cargo clippy --all-features
+
+format-check:
+    cargo fmt --check
+
+ci: build format-check
