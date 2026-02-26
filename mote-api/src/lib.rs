@@ -87,7 +87,7 @@ where
     O: Serialize,        // Output type
 {
     buffered_transmits: VecDeque<Transmit<MTU>>,
-    pub deserialization_buffer: VecDeque<u8>,
+    deserialization_buffer: VecDeque<u8>,
 
     pub in_type: PhantomData<I>,
     out_type: PhantomData<O>,

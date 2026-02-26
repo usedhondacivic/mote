@@ -59,7 +59,6 @@ impl Link {
     }
 
     pub fn poll_receive(&mut self) -> JsValue {
-        console_log!("Serialization buf: {:?}", self.link.deserialization_buffer);
         let message: Result<Option<mote_to_host::Message>, _> = self.link.poll_receive();
         console_log!("[RX] Configuration link unpacked: {:?}", message);
         JsValue::from_serde(&message.map_err(|_| ())).unwrap()
