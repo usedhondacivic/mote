@@ -90,6 +90,7 @@ pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::n
     current_network_connection: None,
     available_network_connections: Vec::new(),
     built_in_test: BITCollection {
+        power: Vec::new(),
         lidar: Vec::new(),
         imu: Vec::new(),
         wifi: Vec::new(),

@@ -1,4 +1,4 @@
-use defmt::{debug, info};
+use defmt::{debug, info, trace};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_rp::peripherals::USB;
@@ -66,7 +66,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
             Either::First(Ok(bytes_read)) => {
                 link.handle_receive(&serial_buffer[..bytes_read]);
 
-                debug!("USB Serial got: {:x}", serial_buffer[..bytes_read]);
+                trace!("USB Serial got: {:x}", serial_buffer[..bytes_read]);
 
                 while let Ok(Some(message)) = link.poll_receive() {
                     handle_host_message(message).await;
@@ -87,7 +87,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
         }?;
 
         while let Some(transmit) = link.poll_transmit() {
-            debug!("USB Serial send: {:x}", transmit.payload);
+            trace!("USB Serial send: {:x}", transmit.payload);
             if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&transmit.payload)).await {
                 res?;
             }
