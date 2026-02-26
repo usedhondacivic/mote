@@ -35,8 +35,9 @@ pub struct BIT {
 }
 pub type BITList = Vec<BIT>;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct BITCollection {
+    pub power: BITList,
     pub wifi: BITList,
     pub lidar: BITList,
     pub imu: BITList,
@@ -45,7 +46,7 @@ pub struct BITCollection {
 
 pub type UID = String;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct State {
     pub uid: UID,
     pub ip: Option<String>,

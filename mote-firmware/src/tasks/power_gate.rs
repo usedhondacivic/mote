@@ -6,8 +6,10 @@ use embassy_rp::gpio::Pull;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::watch::Watch;
 use embassy_time::Timer;
+use mote_api::messages::mote_to_host::{BIT, BITResult};
 
-use crate::tasks::{Irqs, UsbPowerDetectionResources};
+use crate::helpers::update_bit_result;
+use crate::tasks::{CONFIGURATION_STATE, Irqs, UsbPowerDetectionResources};
 
 #[derive(Clone, PartialEq)]
 enum PowerState {
@@ -41,6 +43,8 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
 
     let sender = POWER_GATE_WATCH.sender();
 
+    let last_state = PowerState::Invalid;
+
     loop {
         let cc1_reading = adc.read(&mut cc1).await.unwrap();
         let cc2_reading = adc.read(&mut cc2).await.unwrap();
@@ -59,6 +63,26 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
             _ => PowerState::Invalid,
         };
 
+        if state != last_state {
+            {
+                let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                if state == PowerState::Max3a {
+                    update_bit_result(
+                        &mut configuration_state.built_in_test.power,
+                        "15W Capable (enables drive base)",
+                        BITResult::Pass,
+                    );
+                }
+                if state == PowerState::Max1_5a || state == PowerState::Max3a {
+                    update_bit_result(
+                        &mut configuration_state.built_in_test.power,
+                        "7.5W Capable (enables WIFI)",
+                        BITResult::Pass,
+                    );
+                };
+            }
+        }
+
         sender.send(state);
 
         Timer::after_secs(1).await;
@@ -66,6 +90,26 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
 }
 
 pub async fn init(spawner: Spawner, r: UsbPowerDetectionResources) {
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: "Init".into(),
+            result: BITResult::Pass,
+        };
+        let comms_power = BIT {
+            name: "7.5W Capable (enables WIFI)".into(),
+            result: BITResult::Waiting,
+        };
+        let motor_power = BIT {
+            name: "15W Capable (enables drive base)".into(),
+            result: BITResult::Waiting,
+        };
+        for test in [init, comms_power, motor_power] {
+            configuration_state.built_in_test.power.push(test);
+        }
+    }
+
     spawner.spawn(power_gate_task(r)).unwrap();
 }
 
