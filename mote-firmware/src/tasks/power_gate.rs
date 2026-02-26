@@ -66,20 +66,24 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
         if state != last_state {
             {
                 let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                if state == PowerState::Max3a {
-                    update_bit_result(
-                        &mut configuration_state.built_in_test.power,
-                        "15W Capable (enables drive base)",
-                        BITResult::Pass,
-                    );
-                }
+                let mut wifi_pass = BITResult::Fail;
+                let mut drive_base_pass = BITResult::Fail;
                 if state == PowerState::Max1_5a || state == PowerState::Max3a {
-                    update_bit_result(
-                        &mut configuration_state.built_in_test.power,
-                        "7.5W Capable (enables WIFI)",
-                        BITResult::Pass,
-                    );
+                    wifi_pass = BITResult::Pass;
+                    if state == PowerState::Max3a {
+                        drive_base_pass = BITResult::Pass;
+                    }
                 };
+                update_bit_result(
+                    &mut configuration_state.built_in_test.power,
+                    "7.5W Capable (enables WIFI)",
+                    wifi_pass,
+                );
+                update_bit_result(
+                    &mut configuration_state.built_in_test.power,
+                    "15W Capable (enables drive base)",
+                    drive_base_pass,
+                );
             }
         }
 
