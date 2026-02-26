@@ -51,11 +51,12 @@ async function readLoop(telemetry_recv) {
         }
 
         // Parse message
-        link.handle_receive(new TextEncoder().encode(value));
+        let message = Array.from(new TextEncoder().encode(value));
+        link.handle_receive(message);
 
         // Check if one or more messages completed by the packet
         let data = link.poll_receive();
-        while (data?.Ok !== undefined) {
+        while (data?.Ok !== null) {
             console.log(data);
             telemetry_recv(data);
             data = link.poll_receive();
