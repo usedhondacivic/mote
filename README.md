@@ -27,7 +27,7 @@ For the past two years, Little Red Rover has been used to teach the Foundations 
     * Message definitions for communication to and from Mote.
     * SansIO communication driver, with bindings for Python and TypeScript
 * mote-configuration
-    * [Web app](https://mote-robotics.github.io/mote-core/configuration/) for configuration and debugging. Built with [Svelte](https://svelte.dev/) and [WebAssembly](https://wasm-bindgen.github.io/wasm-bindgen/).
+    * [Web app](https://empriselab.github.io/mote-core/configuration/) for configuration and debugging. Built with [Svelte](https://svelte.dev/) and [WebAssembly](https://wasm-bindgen.github.io/wasm-bindgen/).
 
 ### Hardware
 * mote-hardware 
@@ -35,5 +35,5 @@ For the past two years, Little Red Rover has been used to teach the Foundations 
 
 ### Documentation
 * web/mote-book
-    * [Documentation and examples](https://mote-robotics.github.io/mote-core/), build with [mdBook](https://rust-lang.github.io/mdBook/).
+    * [Documentation and examples](https://empriselab.github.io/mote-core/), build with [mdBook](https://rust-lang.github.io/mdBook/).
 
