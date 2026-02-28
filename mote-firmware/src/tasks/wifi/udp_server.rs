@@ -41,7 +41,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                 embassy_futures::select::Either::First(Ok((_, ep))) => {
                     info!("Registering data offload subscriber {}", ep);
 
-                    if data_offload_subscribers.iter().find(|&&i| ep == i).is_none() {
+                    if !data_offload_subscribers.iter().any(|&i| ep == i) {
                         data_offload_subscribers.push(ep)
                     }
                 }
