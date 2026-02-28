@@ -1,7 +1,7 @@
 # Mote
 
-[![Build and Test](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/build-test.yaml)
-[![Deploy Docs](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml/badge.svg)](https://github.com/usedhondacivic/mote/actions/workflows/deploy.yaml)
+[![Build and Test](https://github.com/mote-robotics/mote-core/actions/workflows/build-test.yaml/badge.svg)](https://github.com/mote-robotics/mote-core/actions/workflows/build-test.yaml)
+[![Deploy Docs](https://github.com/mote-robotics/mote-core/actions/workflows/deploy.yaml/badge.svg)](https://github.com/mote-robotics/mote-core/actions/workflows/deploy.yaml)
 
 A low cost and high confidence mobile robot.
 
@@ -14,20 +14,20 @@ Mote is my answer to the problem.
 
 ## History
 
-Mote is the spiritual successor of my master's thesis, [the Little Red Rover project](https://github.com/little-red-rover).
+Spiritual successor of [the Little Red Rover project](https://github.com/little-red-rover).
 
-For the past two years, Little Red Rover has been used to teach the Foundations of Robotics course at Cornell University. Mote is the product of the many lessons I've learned during that effort.
+For the past two years, Little Red Rover has been used to teach the Foundations of Robotics course at Cornell University. Mote is the product of the many lessons learned during that effort.
 
 ## Project Structure
 
 ### Rust Packages
 * mote-firmware :
-    * Firmware for the RP2350 based Mote circuit board. Built with [Embassy](https://github.com/embassy-rs/embassy).
+    * Firmware for the RP2350 based Mote circuit board. Built with [Embassy](https://github.com/embassy-rs/embassy/).
 * mote-api
     * Message definitions for communication to and from Mote.
     * SansIO communication driver, with bindings for Python and TypeScript
 * mote-configuration
-    * [Web app](https://michael-crum.com/mote/configuration/) for configuration and debugging. Built with [Svelte](https://svelte.dev/) and [WebAssembly](https://wasm-bindgen.github.io/wasm-bindgen/).
+    * [Web app](https://mote-robotics.github.io/mote-core/configuration/) for configuration and debugging. Built with [Svelte](https://svelte.dev/) and [WebAssembly](https://wasm-bindgen.github.io/wasm-bindgen/).
 
 ### Hardware
 * mote-hardware 
@@ -35,5 +35,5 @@ For the past two years, Little Red Rover has been used to teach the Foundations 
 
 ### Documentation
 * web/mote-book
-    * [Documentation and examples](https://michael-crum.com/mote/), build with [mdBook](https://rust-lang.github.io/mdBook/).
+    * [Documentation and examples](https://mote-robotics.github.io/mote-core/), build with [mdBook](https://rust-lang.github.io/mdBook/).
 
