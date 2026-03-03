@@ -11,15 +11,9 @@ use alloc::{collections::vec_deque::VecDeque, vec::Vec};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use thiserror::Error;
 
-use crate::messages::{host_to_mote, mote_to_host};
-
 pub mod messages;
 
-// Conditionally enable bindings for python and web assembly
-#[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
-extern crate std;
-#[cfg(any(feature = "python_ffi", feature = "wasm_ffi"))]
-pub mod ffi;
+use crate::messages::{host_to_mote, mote_to_host};
 
 /// Error type
 #[derive(Error, Debug)]
@@ -89,7 +83,7 @@ where
     buffered_transmits: VecDeque<Transmit<MTU>>,
     deserialization_buffer: VecDeque<u8>,
 
-    pub in_type: PhantomData<I>,
+    in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 }
 impl<const MTU: usize, I, O> Default for MoteComms<MTU, I, O>
