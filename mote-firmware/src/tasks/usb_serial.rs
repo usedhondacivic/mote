@@ -1,20 +1,20 @@
 use defmt::{debug, info, trace};
 use embassy_executor::Spawner;
-use embassy_futures::select::{Either, select};
+use embassy_futures::select::{select, Either};
 use embassy_rp::peripherals::USB;
 use embassy_rp::usb::{Driver as UsbDriver, Instance as UsbInstance};
-use embassy_time::{Duration, Ticker, with_timeout};
-use embassy_usb::UsbDevice;
+use embassy_time::{with_timeout, Duration, Ticker};
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
-use mote_api::HostConfigLink;
+use embassy_usb::UsbDevice;
 use mote_api::messages::{host_to_mote, mote_to_host};
+use mote_api::HostConfigLink;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 use super::{Irqs, UsbSerialResources};
-use crate::tasks::CONFIGURATION_STATE;
 use crate::tasks::wifi::connection_manager::{WIFI_REQUEST_CONNECT, WIFI_REQUEST_RESCAN};
+use crate::tasks::CONFIGURATION_STATE;
 
 #[embassy_executor::task]
 async fn usb_task(mut usb: UsbDevice<'static, UsbDriver<'static, USB>>) -> ! {

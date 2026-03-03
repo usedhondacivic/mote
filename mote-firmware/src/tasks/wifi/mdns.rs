@@ -1,3 +1,4 @@
+use alloc::string::ToString;
 use core::net::{Ipv4Addr, Ipv6Addr};
 
 use defmt::*;
@@ -25,13 +26,13 @@ use crate::tasks::wifi::tcp_server::TCP_SERVER_PORT;
 pub async fn mdns_task(stack: Stack<'static>) -> ! {
     // Wait for IPV4 to come up
     stack.wait_config_up().await;
+    let ip = stack.config_v4().unwrap().address.address();
+    info!("Got ip: {}", ip);
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
+        configuration_state.ip = Some(ip.to_string());
     }
-
-    let ip = stack.config_v4().unwrap().address.address();
-    info!("Got ip: {}", ip);
 
     info!(
         "Running mDNS responder. It will be addressable using {}.local, so try to `ping {}.local`.",
