@@ -4,11 +4,8 @@ use wasm_bindgen::prelude::*;
 
 use gloo_utils::format::JsValueSerdeExt;
 
-use alloc::string::ToString;
-use alloc::vec::Vec;
-
-use crate::MoteConfigLink;
-use mote_messages::{host_to_mote, mote_to_host};
+use mote_api::MoteConfigLink;
+use mote_api::messages::{host_to_mote, mote_to_host};
 
 #[wasm_bindgen]
 extern "C" {

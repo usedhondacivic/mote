@@ -1,0 +1,47 @@
+[default]
+_default:
+    just --list
+
+
+# WASM / TS
+
+build-wasm:
+   wasm-pack build --out-dir target/pkg-node --target bundler --features wasm_ffi
+ 
+# RUST
+
+build-examples:
+    cargo build --examples
+
+run-example example:
+    cargo run --example {{example}}
+
+# General
+
+dev-setup:
+    uv sync --all-extras --cache-dir .uv_cache
+
+prod-setup:
+	uv sync --all-extras --no-dev --cache-dir .uv_cache
+
+test:
+    cargo test
+
+format:
+    cargo fmt
+    uv format
+
+lint:
+    @echo "Linting mote-api"
+    uv run ty check
+    cargo clippy --all-features
+
+build: build-wasm build-examples
+
+# CI
+
+format-check:
+    cargo fmt --check
+    uv format --check
+
+ci: build lint test format-check

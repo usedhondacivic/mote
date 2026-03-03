@@ -1,0 +1,28 @@
+[package]
+name = "mote-ffi"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = ["wasm_ffi"]
+python_ffi = ["serde_json", "pyo3"]
+wasm_ffi = ["serde_json", "wasm-bindgen", "gloo-utils"]
+
+[lib]
+name = "mote_ffi"
+# This shouldn't be required, but wasm-pack doesn't support passing --crate-type throught to rustc :(
+# https://github.com/drager/wasm-pack/issues/1297
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+mote-api = { path = "../mote-api", features = ["schemars"] }
+
+serde_json = { version = "1.0", optional = true }
+pyo3 = { version = "0.28.0", features = ["abi3-py38"], optional = true }
+wasm-bindgen = { version = "0.2", optional = true }
+gloo-utils = { version = "0.2", features = ["serde"], optional = true }
+
+schemars = "1.2"
+anyhow = "1.0.102"
+thiserror = "2.0.18"
+serde = "1.0.228"
