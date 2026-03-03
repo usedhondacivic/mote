@@ -1,5 +1,5 @@
 [book]
-authors = ["usedhondacivic"]
+authors = ["Mote Contributors"]
 language = "en"
 src = "src"
 title = "The Mote Book"
@@ -7,5 +7,5 @@ title = "The Mote Book"
 [output.html]
 default-theme = "ayu"
 preferred-dark-theme = "ayu"
-git-repository-url = "https://github.com/usedhondacivic/mote/tree/main/mote-web/mote-book"
-edit-url-template = "https://github.com/usedhondacivic/mote/edit/main/mote-web/mote-book/{path}"
+git-repository-url = "https://github.com/empriselab/mote-core/tree/main/mote-book"
+edit-url-template = "https://github.com/empriselab/mote-core/tree/main/mote-book/{path}"
