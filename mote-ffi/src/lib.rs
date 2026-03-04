@@ -35,6 +35,20 @@ where
     link: MoteComms<MTU, I, O>,
 }
 
+impl<const MTU: usize, I, O> From<MoteComms<MTU, I, O>> for MoteCommsFFI<MTU, I, O>
+where
+    I: DeserializeOwned, // Input type
+    O: Serialize,        // Output type
+{
+    fn from(link: MoteComms<MTU, I, O>) -> Self {
+        Self {
+            link,
+            in_type: PhantomData,
+            out_type: PhantomData,
+        }
+    }
+}
+
 // Add JSON shim methods to MoteComms.
 // These methods erase the underlying message types, instead using their json string representation.
 // This makes FFI implementation easier, as they don't need to worry about converting complex native type.
