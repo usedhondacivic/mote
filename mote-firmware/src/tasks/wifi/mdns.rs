@@ -61,11 +61,11 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     };
 
     let command_service = Service {
-        name: "Mote Command Server",
+        name: "Mote Server",
         priority: 1,
         weight: 5,
-        service: "_mote",
-        protocol: "_tcp",
+        service: "_mote-api",
+        protocol: "_udp",
         port: TCP_SERVER_PORT,
         service_subtypes: &[],
         txt_kvs: &[],

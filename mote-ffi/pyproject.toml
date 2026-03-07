@@ -1,18 +1,26 @@
 [project]
-name = "mote-api"
+name = "mote_link"
 version = "0.0.0"
 description = "Python library for communicating with Mote"
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = ["ruff>=0.15.2"]
+dependencies = ["zeroconf>=0.136.2" ]
+
+[tool.uv]
+package = true
 
 [tool.maturin]
 features = ["python_ffi"]
 cargo-extra-args = ["--crate-type=dylib"]
+include = ["mote_link/**/*", "../LICENSE"]
+module-name = "mote_link.mote_ffi"
 
 [build-system]
 requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
+[tool.uv.sources]
+mote_link = { workspace = true }
+
 [dependency-groups]
-dev = ["ty>=0.0.18"]
+dev = ["ty>=0.0.18", "ruff>=0.15.2"]
