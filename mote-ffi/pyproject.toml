@@ -19,8 +19,5 @@ module-name = "mote_link.mote_ffi"
 requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
-[tool.uv.sources]
-mote_link = { workspace = true }
-
 [dependency-groups]
 dev = ["ty>=0.0.18", "ruff>=0.15.2"]
