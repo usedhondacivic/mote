@@ -1,6 +1,6 @@
 //! Generates json schema files for the mote message types
 
-use std::{env, fs, path::PathBuf};
+use std::{env, fs};
 
 use schemars::schema_for;
 
