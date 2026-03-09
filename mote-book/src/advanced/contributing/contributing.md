@@ -6,20 +6,23 @@ First time contributors are recommended to read through the documentation, then 
 
 ## Project Structure
 
-`mote-core` contains the core libraries required for mote to function. It is composed of the following components:
+`mote-core` contains the core libraries required for Mote to function. It includes the following components:
 
 - `mote-firmware`
     - Embedded firmware for the RP2350 MCU
 - `mote-api`
-    - Provides Rust, Python, and Typescript libraries for sending and receiving messages from Mote
+    - Defines message types and serialization protocols for communicating with Mote
+- `mote-ffi`
+    - Foreign Function Interface (FFI)
+    - Wraps `mote-api` in Python, C++, and Typescript libraries, allowing popular application languages to communicate with Mote
 - `mote-configuration`
     - Webpage used to configure / debug Mote
-    - Uses the `mote-api` Typescript library to read / write configuration values, connect the robot to the network, and display errors
+    - Uses the `mote-ffi` Typescript library to read / write configuration values, connect the robot to the network, and display errors
 - `mote-hardware`
     - KiCAD circuit board design files
 - `mote-book`
     - You're reading it!
     - Documentation and tutorials
 
-Extension repositories use libraries from `mote-api` and implement bridges to other frameworks.
-`mote-ros`, for example, wraps `mote-api`'s python communication library to implement a Robot Operating System (ROS) package for the robot.
+Extension repositories use libraries from `mote-ffi` to implement bridges to other frameworks.
+[`mote-ros`](https://github.com/empriselab/mote-ros), for example, wraps `mote-ffi`'s C++ library to implement a Robot Operating System (ROS) node for the robot.
