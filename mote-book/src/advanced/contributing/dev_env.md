@@ -12,7 +12,8 @@ Install the following tools:
 
 | Tool | Purpose | Installation Method | 
 |---|---|---|
-| Rust | cargo (package manager), rustc (compiler), rust-analyzer (language server) | [https://rustup.rs/](https://rustup.rs/) |
+| rust | cargo (package manager), rustc (compiler), rust-analyzer (language server) | [https://rustup.rs/](https://rustup.rs/) |
+| just | task runner | [https://just.systems/man/en/introduction.html](https://just.systems/man/en/introduction.html) |
 | uv | python package and project manager | [https://docs.astral.sh/uv/getting-started/installation/](https://docs.astral.sh/uv/getting-started/installation/) |
 | node | build / run configuration webpage via typescript, vite, and svelte | [https://nodejs.org/en/download](https://nodejs.org/en/download) |
 | probe-rs | flash and debug embedded systems | [https://probe.rs/docs/getting-started/installation/](https://probe.rs/docs/getting-started/installation/) |
