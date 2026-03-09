@@ -5,6 +5,9 @@ _default:
 build:
     mdbook build
 
+open:
+    mdbook serve --open
+
 test: build
     mdbook test
 

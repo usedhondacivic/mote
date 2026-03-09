@@ -4,6 +4,7 @@ _default:
 
 build:
     just -f ../mote-api/justfile build-wasm
+    npm install
 
 run-dev: build
     npx vite
