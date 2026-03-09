@@ -3,7 +3,7 @@ _default:
     just --list
 
 build:
-    just -f ../mote-api/justfile build-wasm
+    just -f ../mote-ffi/justfile build-wasm
     npm install
 
 run-dev: build

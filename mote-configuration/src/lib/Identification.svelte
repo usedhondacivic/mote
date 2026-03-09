@@ -62,6 +62,6 @@
 <li>
     IP:
     {#if ip}
-        ip
+        {ip}
     {:else}<ShortSpinner />{/if}
 </li>

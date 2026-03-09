@@ -1,3 +1,5 @@
+use alloc::borrow::ToOwned;
+use alloc::string::{String, ToString};
 use core::net::{Ipv4Addr, Ipv6Addr};
 
 use defmt::*;
@@ -25,13 +27,15 @@ use crate::tasks::wifi::tcp_server::TCP_SERVER_PORT;
 pub async fn mdns_task(stack: Stack<'static>) -> ! {
     // Wait for IPV4 to come up
     stack.wait_config_up().await;
+    let ip = stack.config_v4().unwrap().address.address();
+    let hostname: String;
+    info!("Got ip: {}", ip);
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
+        hostname = configuration_state.uid.clone();
+        configuration_state.ip = Some(ip.to_string());
     }
-
-    let ip = stack.config_v4().unwrap().address.address();
-    info!("Got ip: {}", ip);
 
     info!(
         "Running mDNS responder. It will be addressable using {}.local, so try to `ping {}.local`.",
@@ -53,18 +57,18 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     let (recv, send) = socket.split();
 
     let host = Host {
-        hostname: "mote",
+        hostname: &*hostname,
         ipv4: ip,
         ipv6: Ipv6Addr::UNSPECIFIED,
         ttl: Ttl::from_secs(60),
     };
 
     let command_service = Service {
-        name: "Mote Command Server",
+        name: "Mote Server",
         priority: 1,
         weight: 5,
-        service: "_mote",
-        protocol: "_tcp",
+        service: "_mote-api",
+        protocol: "_udp",
         port: TCP_SERVER_PORT,
         service_subtypes: &[],
         txt_kvs: &[],
