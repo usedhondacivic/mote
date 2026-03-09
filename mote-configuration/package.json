@@ -20,6 +20,6 @@
         "vite-plugin-wasm": "^3.5.0"
     },
     "dependencies": {
-        "mote-api": "file:../mote-api/target/pkg-node"
+        "mote-ffi": "file:../mote-ffi/target/pkg-node"
     }
 }

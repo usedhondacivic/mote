@@ -18,6 +18,6 @@ export default defineConfig({
         preserveSymlinks: true
     },
     optimizeDeps: {
-        exclude: ['mote-api']
+        exclude: ['mote-ffi']
     },
 })

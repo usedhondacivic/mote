@@ -63,5 +63,11 @@ class MoteClient:
         self.ip = ip
         pass
 
+    async def send(self):
+        pass
+
+    async def recv(self):
+        pass
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         pass

@@ -1,4 +1,4 @@
-import { Link } from 'mote-api';
+import { Link } from 'mote-ffi';
 
 // Init WASM, init comms link
 let link = new Link();

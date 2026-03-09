@@ -1,4 +1,5 @@
-use alloc::string::ToString;
+use alloc::borrow::ToOwned;
+use alloc::string::{String, ToString};
 use core::net::{Ipv4Addr, Ipv6Addr};
 
 use defmt::*;
@@ -27,10 +28,12 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     // Wait for IPV4 to come up
     stack.wait_config_up().await;
     let ip = stack.config_v4().unwrap().address.address();
+    let hostname: String;
     info!("Got ip: {}", ip);
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
+        hostname = configuration_state.uid.clone();
         configuration_state.ip = Some(ip.to_string());
     }
 
@@ -54,7 +57,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     let (recv, send) = socket.split();
 
     let host = Host {
-        hostname: "mote",
+        hostname: &*hostname,
         ipv4: ip,
         ipv6: Ipv6Addr::UNSPECIFIED,
         ttl: Ttl::from_secs(60),
