@@ -17,7 +17,7 @@ const ENCODER_PULSES_PER_ROTATION: u16 = 2340;
 const MOTOR_DEADBAND: u8 = 60;
 
 fn encoder_pulses_to_rad_per_second(pulses: i32) -> f32 {
-    (pulses as f32 / ENCODER_PULSES_PER_ROTATION as f32) * 2. * 3.14159
+    (pulses as f32 / ENCODER_PULSES_PER_ROTATION as f32) * 2. * core::f32::consts::PI
 }
 
 struct Motor<'d, T: SetDutyCycle, P: Instance, const SM: usize> {
@@ -43,6 +43,7 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
         }
     }
 
+    #[allow(dead_code)]
     fn set_setpoint(&mut self, setpoint: f32) {
         self.pid.setpoint(setpoint);
     }
@@ -78,6 +79,7 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
         }
     }
 
+    #[allow(dead_code)]
     fn pio_encoder(&self) -> &PioEncoder<'d, P, SM> {
         &self.pio_encoder
     }

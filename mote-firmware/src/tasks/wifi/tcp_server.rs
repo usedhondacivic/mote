@@ -16,7 +16,7 @@ use crate::tasks::CONFIGURATION_STATE;
 pub const TCP_SERVER_PORT: u16 = 7465;
 pub static MOTE_TO_HOST_COMMAND: Channel<CriticalSectionRawMutex, mote_to_host::Message, 32> = Channel::new();
 
-async fn parse_command_message<'a>(
+async fn parse_command_message(
     rx_message: &host_to_mote::Message,
     link: &mut HostConfigLink,
 ) -> Result<(), embassy_net::tcp::Error> {
@@ -37,81 +37,79 @@ async fn parse_command_message<'a>(
 
 #[embassy_executor::task]
 pub async fn tcp_server_task(stack: Stack<'static>) -> ! {
+    let mut rx_buffer = [0; 4096];
+    let mut tx_buffer = [0; 4096];
+
     loop {
-        let mut rx_buffer = [0; 4096];
-        let mut tx_buffer = [0; 4096];
+        // Update client connection status
+        {
+            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+            update_bit_result(
+                &mut configuration_state.built_in_test.wifi,
+                "Client Connected",
+                BITResult::Waiting,
+            );
+        }
+
+        let mut socket = TcpSocket::new(stack, &mut rx_buffer, &mut tx_buffer);
+
+        if let Err(e) = socket.accept(TCP_SERVER_PORT).await {
+            warn!("bind error: {:?}", e);
+            continue;
+        }
+
+        info!("Received connection from {:?}", socket.remote_endpoint());
+
+        {
+            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+            update_bit_result(
+                &mut configuration_state.built_in_test.wifi,
+                "Client Connected",
+                BITResult::Pass,
+            );
+        }
+
+        let mut message_buffer = [0; 4096];
+
+        let mut link = HostConfigLink::new();
 
         loop {
-            // Update client connection status
-            {
-                let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                update_bit_result(
-                    &mut configuration_state.built_in_test.wifi,
-                    "Client Connected",
-                    BITResult::Waiting,
-                );
-            }
-
-            let mut socket = TcpSocket::new(stack, &mut rx_buffer, &mut tx_buffer);
-
-            if let Err(e) = socket.accept(TCP_SERVER_PORT).await {
-                warn!("bind error: {:?}", e);
-                continue;
-            }
-
-            info!("Received connection from {:?}", socket.remote_endpoint());
-
-            {
-                let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                update_bit_result(
-                    &mut configuration_state.built_in_test.wifi,
-                    "Client Connected",
-                    BITResult::Pass,
-                );
-            }
-
-            let mut message_buffer = [0; 4096];
-
-            let mut link = HostConfigLink::new();
-
-            loop {
-                match select(socket.read(&mut message_buffer), MOTE_TO_HOST_COMMAND.receive()).await {
-                    Either::First(Ok(0)) => {
-                        info!("Socket connection closed");
-                        // Update client connection status
+            match select(socket.read(&mut message_buffer), MOTE_TO_HOST_COMMAND.receive()).await {
+                Either::First(Ok(0)) => {
+                    info!("Socket connection closed");
+                    // Update client connection status
+                    {
+                        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                        update_bit_result(
+                            &mut configuration_state.built_in_test.wifi,
+                            "Client Connected",
+                            BITResult::Waiting,
+                        );
+                    }
+                    break;
+                }
+                Either::First(Ok(bytes_read)) => {
+                    link.handle_receive(&message_buffer[..bytes_read]);
+                    while let Ok(Some(message)) = link.poll_receive() {
+                        if let Some(endpoint) = socket.remote_endpoint()
+                            && let IpAddress::Ipv4(_) = endpoint.addr
                         {
-                            let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                            update_bit_result(
-                                &mut configuration_state.built_in_test.wifi,
-                                "Client Connected",
-                                BITResult::Waiting,
-                            );
+                            parse_command_message(&message, &mut link).await.unwrap();
                         }
-                        break;
-                    }
-                    Either::First(Ok(bytes_read)) => {
-                        link.handle_receive(&message_buffer[..bytes_read]);
-                        while let Ok(Some(message)) = link.poll_receive() {
-                            if let Some(endpoint) = socket.remote_endpoint()
-                                && let IpAddress::Ipv4(_) = endpoint.addr
-                            {
-                                parse_command_message(&message, &mut link).await.unwrap();
-                            }
-                        }
-                    }
-                    Either::First(Err(embassy_net::tcp::Error::ConnectionReset)) => {
-                        break;
-                    }
-                    Either::Second(tx_message) => {
-                        link.send(tx_message).unwrap();
                     }
                 }
+                Either::First(Err(embassy_net::tcp::Error::ConnectionReset)) => {
+                    break;
+                }
+                Either::Second(tx_message) => {
+                    link.send(tx_message).unwrap();
+                }
+            }
 
-                while let Some(transmit) = link.poll_transmit() {
-                    if let Err(error) = socket.write_all(&transmit.payload).await {
-                        error!("TX message failed, got {:?}", error);
-                        break;
-                    }
+            while let Some(transmit) = link.poll_transmit() {
+                if let Err(error) = socket.write_all(&transmit.payload).await {
+                    error!("TX message failed, got {:?}", error);
+                    break;
                 }
             }
         }

@@ -33,7 +33,7 @@ format:
 lint:
     @echo "Linting mote-api"
     uv run ty check
-    cargo clippy --all-features
+    cargo clippy --all-features  -- -D warnings
 
 build: build-wasm build-examples
 

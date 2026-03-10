@@ -23,6 +23,7 @@ use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 
 pub static MOTE_TO_HOST_DATA_OFFLOAD: Channel<CriticalSectionRawMutex, mote_to_host::Message, 32> = Channel::new();
+#[allow(dead_code)]
 pub static HOST_TO_MOTE_COMMAND: Channel<CriticalSectionRawMutex, host_to_mote::Message, 32> = Channel::new();
 
 #[embassy_executor::task]

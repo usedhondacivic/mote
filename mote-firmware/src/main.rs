@@ -1,9 +1,14 @@
 #![no_std]
 #![no_main]
-#![allow(async_fn_in_trait)]
-#![feature(impl_trait_in_assoc_type)]
+// generic_const_exprs is intentionally used in the LiDAR driver
+#![allow(incomplete_features)]
+// Embassy tasks pass ownership of hardware resources as arguments
+#![allow(clippy::too_many_arguments)]
 // Used minimally in the LiDAR driver, still very unstable
 #![feature(generic_const_exprs)]
+// Embassy-isms
+#![feature(impl_trait_in_assoc_type)]
+#![allow(async_fn_in_trait)]
 
 extern crate alloc;
 
