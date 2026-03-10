@@ -20,7 +20,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
-use crate::tasks::wifi::tcp_server::TCP_SERVER_PORT;
+use crate::tasks::wifi::udp_server::UDP_SERVER_PORT;
 
 #[embassy_executor::task]
 pub async fn mdns_task(stack: Stack<'static>) -> ! {
@@ -68,7 +68,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
         weight: 5,
         service: "_mote-api",
         protocol: "_udp",
-        port: TCP_SERVER_PORT,
+        port: UDP_SERVER_PORT,
         service_subtypes: &[],
         txt_kvs: &[],
     };

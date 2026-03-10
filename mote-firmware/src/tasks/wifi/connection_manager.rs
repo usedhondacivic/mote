@@ -59,6 +59,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
 }
 
 async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
+    info!("Running network scan...");
     // Clear previous scan
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
@@ -130,7 +131,10 @@ pub async fn connection_manager_task(mut control: cyw43::Control<'static>) -> ! 
                 );
                 attempt_join_network(&mut control, config).await;
             }
-            Either::Second(_) => run_network_scan(&mut control).await,
+            Either::Second(_) => {
+                info!("Got network scan request");
+                run_network_scan(&mut control).await
+            }
         }
     }
 }
