@@ -40,10 +40,11 @@ async fn handle_host_message(msg: host_to_mote::Message) {
         host_to_mote::Message::SetUID(set_uid) => {
             let mut configuration_state = CONFIGURATION_STATE.lock().await;
             configuration_state.uid = set_uid.uid.clone();
-            info!("Setting UID: {}", configuration_state.uid);
+            info!("Set UID: {}", configuration_state.uid);
         }
         host_to_mote::Message::RequestNetworkScan => {
             WIFI_REQUEST_RESCAN.signal(());
+            info!("Requesting network scan");
         }
         _ => todo!(),
     }
