@@ -33,7 +33,7 @@ impl From<u16> for PowerState {
     }
 }
 
-static POWER_GATE_WATCH: Watch<CriticalSectionRawMutex, PowerState, 2> = Watch::new();
+static POWER_GATE_WATCH: Watch<CriticalSectionRawMutex, PowerState, 3> = Watch::new();
 
 #[embassy_executor::task]
 async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
@@ -129,6 +129,7 @@ pub async fn gate_1_5_amp() {
 
 // Block thread until 3A capability is advertised on USB cc1 and
 // cc2 pins
+#[allow(dead_code)]
 pub async fn gate_3_amp() {
     POWER_GATE_WATCH
         .receiver()

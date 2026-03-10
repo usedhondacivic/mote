@@ -134,9 +134,12 @@ async fn core1_task(
     lidar::init(spawner, lidar_r).await;
     info!("LiDAR INIT complete");
 
-    info!("Gating on 3A capable before starting drive base");
-    power_gate::gate_3_amp().await;
-    info!("Power supply is 3A capable");
+    // Enabling this check causes the wifi network scan to fail and I can't figure
+    // out why. For now we can just hope gating on 1.5A is enough to prevent brown
+    // outs.
+    // info!("Gating on 3A capable before starting drive base");
+    // power_gate::gate_3_amp().await;
+    // info!("Power supply is 3A capable");
 
     drive_base::init(
         spawner,
