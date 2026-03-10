@@ -133,6 +133,6 @@ pub async fn gate_3_amp() {
     POWER_GATE_WATCH
         .receiver()
         .unwrap()
-        .get_and(|v| *v == PowerState::Max1_5a || *v == PowerState::Max3a)
+        .get_and(|v| *v == PowerState::Max3a)
         .await;
 }
