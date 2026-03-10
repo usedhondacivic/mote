@@ -1,4 +1,3 @@
-use alloc::borrow::ToOwned;
 use alloc::string::{String, ToString};
 use core::net::{Ipv4Addr, Ipv6Addr};
 
@@ -57,7 +56,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     let (recv, send) = socket.split();
 
     let host = Host {
-        hostname: &*hostname,
+        hostname: &hostname,
         ipv4: ip,
         ipv6: Ipv6Addr::UNSPECIFIED,
         ttl: Ttl::from_secs(60),
