@@ -16,9 +16,9 @@ format:
 
 lint:
     @echo "Linting mote-api"
-    cargo clippy --all-features
+    cargo clippy --all-features -- -D warnings
 
 format-check:
     cargo fmt --check
 
-ci: build format-check
+ci: build format-check lint

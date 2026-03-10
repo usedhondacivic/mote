@@ -1,6 +1,8 @@
 #![no_std]
 #![no_main]
 #![allow(async_fn_in_trait)]
+#![allow(incomplete_features)] // generic_const_exprs is intentionally used in the LiDAR driver
+#![allow(clippy::too_many_arguments)] // Embassy tasks pass ownership of hardware resources as arguments
 #![feature(impl_trait_in_assoc_type)]
 // Used minimally in the LiDAR driver, still very unstable
 #![feature(generic_const_exprs)]

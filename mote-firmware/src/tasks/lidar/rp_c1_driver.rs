@@ -13,6 +13,7 @@ const START_FLAG: u8 = 0xA5;
 #[non_exhaustive]
 struct Requests;
 
+#[allow(dead_code)]
 impl Requests {
     pub const STOP: [u8; 2] = [START_FLAG, 0x25];
     pub const RESET: [u8; 2] = [START_FLAG, 0x40];
@@ -25,6 +26,7 @@ impl Requests {
 }
 
 #[derive(PartialEq, Eq)]
+#[allow(dead_code)]
 pub enum LidarState {
     Idle,
     Start,
@@ -45,6 +47,7 @@ pub struct Point {
     pub distance: u16,
 }
 
+#[allow(dead_code)]
 pub enum ReadSamplesError<T> {
     Timeout,
     CheckBitIncorrect,

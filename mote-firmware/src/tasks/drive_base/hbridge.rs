@@ -17,8 +17,10 @@ pub enum MotorDriverError {
     /// Returned when fail to set duty value.
     UnableToSetDuty,
     /// Returned when we are unable to acquire mutex lock.
+    #[allow(dead_code)]
     PwmLocked,
     /// Returned when in PWM mode and a duty value is not within 0-100 range.
+    #[allow(dead_code)]
     InvalidRange,
 }
 
@@ -47,6 +49,7 @@ impl<T: SetDutyCycle> PwmBridge<T> {
         }
     }
 
+    #[allow(dead_code)]
     fn set_min_duty(&mut self, duty: u16) {
         self.min_duty = duty;
     }
@@ -85,6 +88,7 @@ impl<T: SetDutyCycle> PwmBridge<T> {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn coast(&mut self) -> Result<(), MotorDriverError> {
         self.bridge
             .a1

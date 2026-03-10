@@ -1,4 +1,4 @@
-use defmt::{debug, info, trace};
+use defmt::{info, trace};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_rp::peripherals::USB;
