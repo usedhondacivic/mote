@@ -2,12 +2,7 @@
 # https://github.com/PyO3/maturin/pull/2940
 import mote_link.mote_ffi  # ty:ignore[unresolved-import]
 
-from zeroconf.asyncio import AsyncZeroconf
-from zeroconf import Zeroconf, IPVersion, AddressResolver
-
-import asyncio
 import ipaddress
-
 import socket
 
 
@@ -44,12 +39,13 @@ class MoteClient:
         try:
             # This will use the underlying OS resolution mechanism
             hostname = f"{uid}.local"
+            print(f"Attempting to connect to {hostname}...")
             self.ip = socket.gethostbyname(hostname)
             print(f"Resolved IP address for {hostname}: {self.ip}")
         except socket.error as e:
             print(f"Error resolving {hostname}: {e}")
             print(
-                "Did you use the correct uid? Is Mote connected to your network? Does your network support mdns?"
+                "Did you use the correct uid? Is Mote connected to your network? Does your network support mdns? If you know the ip of your robot, try using connect_with_ip."
             )
 
     async def connect_with_ip(self, ip: ipaddress.IPv4Address):
@@ -61,7 +57,6 @@ class MoteClient:
         You can find your robots IP by connecting using USB and visiting [the configuration page](https://empriselab.github.io/mote-core/configuration/).
         """
         self.ip = ip
-        pass
 
     async def send(self):
         pass
