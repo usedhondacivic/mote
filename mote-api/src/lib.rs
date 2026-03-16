@@ -61,13 +61,6 @@ where
 // Sets the capacity for the deserialization ringbuffer
 const MAX_MESSAGE_LENGTH: usize = 5000;
 
-/// Data structure representing a transmission
-/// Returned by sansio driver for the application to transmit
-#[derive(Debug, Serialize)]
-pub struct Transmit<const MTU: usize> {
-    pub payload: Vec<u8>,
-}
-
 /// Bidirectional SansIO communication link betweek mote and the host.
 ///
 /// You probably do not want to directly construct this. Instead, use the type aliases:
@@ -80,7 +73,7 @@ where
     I: DeserializeOwned, // Input type
     O: Serialize,        // Output type
 {
-    buffered_transmits: VecDeque<Transmit<MTU>>,
+    buffered_transmits: VecDeque<Vec<u8>>,
     deserialization_buffer: VecDeque<u8>,
 
     in_type: PhantomData<I>,
@@ -117,16 +110,14 @@ where
 
         // Break message into packets given the MTU
         for chunk in encoded_bytes.chunks(MTU) {
-            self.buffered_transmits.push_back(Transmit {
-                payload: Vec::from(chunk),
-            });
+            self.buffered_transmits.push_back(Vec::from(chunk));
         }
 
         Ok(())
     }
 
-    /// Get the next message to be sent
-    pub fn poll_transmit(&mut self) -> Option<Transmit<MTU>> {
+    /// Get the next packet to be sent
+    pub fn poll_transmit(&mut self) -> Option<Vec<u8>> {
         self.buffered_transmits.pop_front()
     }
 
@@ -237,10 +228,10 @@ mod tests {
         for sent_msg in MOTE_MESSAGES {
             let mut host_l = HostConfigLink::new();
             host_l.send(sent_msg.clone())?;
-            let transmission = host_l.poll_transmit().unwrap();
+            let payload = host_l.poll_transmit().unwrap();
 
             let mut mote_l = MoteConfigLink::new();
-            mote_l.handle_receive(&transmission.payload);
+            mote_l.handle_receive(&payload);
             let recv_msg = mote_l.poll_receive()?.unwrap();
 
             assert_eq!(sent_msg, &recv_msg);
@@ -249,10 +240,10 @@ mod tests {
         for sent_msg in HOST_MESSAGES {
             let mut mote_l = MoteConfigLink::new();
             mote_l.send(sent_msg.clone())?;
-            let transmission = mote_l.poll_transmit().unwrap();
+            let payload = mote_l.poll_transmit().unwrap();
 
             let mut host_l = HostConfigLink::new();
-            host_l.handle_receive(&transmission.payload);
+            host_l.handle_receive(&payload);
             let recv_msg = host_l.poll_receive()?.unwrap();
 
             assert_eq!(sent_msg, &recv_msg);

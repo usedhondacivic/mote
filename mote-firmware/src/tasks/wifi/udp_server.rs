@@ -70,8 +70,8 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                     handle_command(&message, &mut link);
                 }
 
-                while let Some(transmit) = link.poll_transmit() {
-                    if let Err(err) = socket.send_to(&transmit.payload, ep).await {
+                while let Some(payload) = link.poll_transmit() {
+                    if let Err(err) = socket.send_to(&payload, ep).await {
                         error!("UDP send error: {}", err);
                     }
                 }
@@ -82,9 +82,9 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
             Either::Second(message) => {
                 link.send(message).unwrap();
 
-                while let Some(transmit) = link.poll_transmit() {
+                while let Some(payload) = link.poll_transmit() {
                     for (idx, ep) in subscribers.iter().enumerate() {
-                        match socket.send_to(&transmit.payload, *ep).await {
+                        match socket.send_to(&payload, *ep).await {
                             Ok(_) => {}
                             Err(SendError::NoRoute) => {
                                 dead_indices.push(idx);

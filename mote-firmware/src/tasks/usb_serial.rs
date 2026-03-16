@@ -87,9 +87,9 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
             }
         }?;
 
-        while let Some(transmit) = link.poll_transmit() {
-            trace!("USB Serial send: {:x}", transmit.payload);
-            if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&transmit.payload)).await {
+        while let Some(payload) = link.poll_transmit() {
+            trace!("USB Serial send: {:x}", payload);
+            if let Ok(res) = with_timeout(Duration::from_millis(500), class.write_packet(&payload)).await {
                 res?;
             }
         }

@@ -38,8 +38,8 @@ fn main() {
 
             loop {
                 // Retrieve and transmit all messages queued to be sent
-                while let Some(transmit) = link.poll_transmit() {
-                    if let Err(_) = socket.send(&transmit.payload) {
+                while let Some(payload) = link.poll_transmit() {
+                    if let Err(_) = socket.send(&payload) {
                         continue 'socket_error;
                     }
                     continue;

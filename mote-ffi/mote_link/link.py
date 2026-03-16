@@ -253,8 +253,7 @@ class MoteClient:
             transmit_json = self._link.poll_transmit()
             if transmit_json is None:
                 break
-            transmit = json.loads(transmit_json)
-            self._protocol.transport.sendto(bytes(transmit["payload"]))
+            self._protocol.transport.sendto(bytes(json.loads(transmit_json)))
 
     async def recv(self) -> MoteMessage:
         """

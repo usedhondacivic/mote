@@ -74,8 +74,8 @@ where
     }
 
     fn poll_transmit(&mut self) -> Result<Option<String>, Error> {
-        if let Some(v) = self.link.poll_transmit() {
-            Ok(Some(serde_json::to_string(&v)?))
+        if let Some(payload) = self.link.poll_transmit() {
+            Ok(Some(serde_json::to_string(&payload)?))
         } else {
             Ok(None)
         }
@@ -110,15 +110,9 @@ mod tests {
         MoteCommsFFI::from(MoteLink::new())
     }
 
-    /// Extract payload bytes from a poll_transmit JSON result.
+    /// Decode the byte array returned by poll_transmit.
     fn extract_payload(packet_json: &str) -> Vec<u8> {
-        let v: serde_json::Value = serde_json::from_str(packet_json).unwrap();
-        v["payload"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|b| b.as_u64().unwrap() as u8)
-            .collect()
+        serde_json::from_str(packet_json).unwrap()
     }
 
     #[test]
@@ -126,8 +120,8 @@ mod tests {
         let mut host = make_host_ffi();
         host.send("\"Ping\"").unwrap();
         let packet_json = host.poll_transmit().unwrap().unwrap();
-        let v: serde_json::Value = serde_json::from_str(&packet_json).unwrap();
-        assert!(v.get("payload").is_some());
+        let payload: Vec<u8> = serde_json::from_str(&packet_json).unwrap();
+        assert!(!payload.is_empty());
         assert!(host.poll_transmit().unwrap().is_none());
     }
 
@@ -162,8 +156,8 @@ mod tests {
         let mut host_ffi = make_host_ffi();
 
         mote.send(mote_to_host::Message::Pong).unwrap();
-        let transmission = mote.poll_transmit().unwrap();
-        let payload_json = serde_json::to_string(&transmission.payload).unwrap();
+        let payload = mote.poll_transmit().unwrap();
+        let payload_json = serde_json::to_string(&payload).unwrap();
 
         host_ffi.handle_receive(&payload_json).unwrap();
         let received_json = host_ffi.poll_receive().unwrap().unwrap();

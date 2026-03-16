@@ -41,9 +41,9 @@ impl Link {
     }
 
     pub fn poll_transmit(&mut self) -> JsValue {
-        if let Some(transmit) = self.link.poll_transmit() {
-            console_log!("[TX] Sending {:?}", transmit.payload);
-            JsValue::from_serde(&transmit.payload).unwrap()
+        if let Some(payload) = self.link.poll_transmit() {
+            console_log!("[TX] Sending {:?}", payload);
+            JsValue::from_serde(&payload).unwrap()
         } else {
             JsValue::from_serde(&()).unwrap()
         }
