@@ -41,6 +41,11 @@ lint:
 
 build: build-wasm build-examples
 
+# Examples
+
+rerun-demo:
+    uv run rerun-demo
+
 # CI
 
 format-check:

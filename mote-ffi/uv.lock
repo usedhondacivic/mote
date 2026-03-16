@@ -108,6 +108,7 @@ dependencies = [
     { name = "rerun-sdk", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "rerun-sdk", version = "0.26.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
     { name = "rerun-sdk", version = "0.30.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "survey" },
     { name = "zeroconf", version = "0.136.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "zeroconf", version = "0.148.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
 ]
@@ -124,6 +125,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "rerun-sdk", specifier = ">=0.21" },
+    { name = "survey", specifier = ">=5.4.2" },
     { name = "zeroconf", specifier = ">=0.136.2" },
 ]
 
@@ -1042,6 +1044,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/28/3a/950367aee7c69027f4f422059227b290ed780366b6aecee5de5039d50fa8/ruff-0.15.5-py3-none-win32.whl", hash = "sha256:732e5ee1f98ba5b3679029989a06ca39a950cced52143a0ea82a2102cb592b74", size = 10551676, upload-time = "2026-03-05T20:06:13.705Z" },
     { url = "https://files.pythonhosted.org/packages/b8/00/bf077a505b4e649bdd3c47ff8ec967735ce2544c8e4a43aba42ee9bf935d/ruff-0.15.5-py3-none-win_amd64.whl", hash = "sha256:821d41c5fa9e19117616c35eaa3f4b75046ec76c65e7ae20a333e9a8696bc7fe", size = 11678972, upload-time = "2026-03-05T20:06:45.379Z" },
     { url = "https://files.pythonhosted.org/packages/fe/4e/cd76eca6db6115604b7626668e891c9dd03330384082e33662fb0f113614/ruff-0.15.5-py3-none-win_arm64.whl", hash = "sha256:b498d1c60d2fe5c10c45ec3f698901065772730b411f164ae270bb6bfcc4740b", size = 10965572, upload-time = "2026-03-05T20:06:16.984Z" },
+]
+
+[[package]]
+name = "survey"
+version = "5.4.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/72/72/bb870980cf2785eb7b4421a7ad2489e4138e5a6d091c06e30589755e8fc2/survey-5.4.2.tar.gz", hash = "sha256:e2f9e3b526f0db2fe8f9f4960e5fc2a93119925d2350b18e2d445d6740692af6", size = 1569930, upload-time = "2024-10-21T08:33:23.149Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/69/af/4f1313af20d47ba498c0dea05127cf8325530e5513256e4b15028808e24f/survey-5.4.2-py3-none-any.whl", hash = "sha256:49473702e82542ea14c9e983db234935a76add4cd5d5437e72b5ea9a5d214c93", size = 63749, upload-time = "2024-10-21T08:33:21.654Z" },
 ]
 
 [[package]]

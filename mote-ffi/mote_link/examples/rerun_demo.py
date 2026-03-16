@@ -4,7 +4,7 @@ import math
 
 import rerun as rr
 
-from mote_link.link import MoteClient, Ping, Pong, Scan, State
+from mote_link.link import MoteClient, MoteConnectionError, Ping, Pong, Scan, State
 
 
 def _log_scan(scan: Scan):
@@ -29,10 +29,12 @@ def _log_scan(scan: Scan):
 
 # Example application that connects to Mote and logs sensor data to rerun.
 async def run_main():
-    rr.init("mote_rerun_example_python", spawn=True)
+    rr.init("mote_rerun_example_python")
+    server_uri = rr.serve_grpc()
+    rr.serve_web_viewer(connect_to=server_uri)
 
     async with MoteClient() as client:
-        await client.connect_with_uid("mote-:3")
+        await client.connect()
 
         print("Pinging Mote")
         await client.send(Ping())
@@ -51,8 +53,15 @@ async def run_main():
                 print(f"Got system state {message}")
 
 
-if __name__ == "__main__":
+def main():
     try:
         asyncio.run(run_main())
     except KeyboardInterrupt:
         print("\nDisconnected.")
+    except MoteConnectionError as e:
+        print(f"Connection failed: {e}")
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

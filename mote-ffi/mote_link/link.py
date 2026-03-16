@@ -15,6 +15,10 @@ from typing import Union
 
 UDP_PORT = 7475
 
+
+class MoteConnectionError(Exception):
+    """Raised when a connection attempt to Mote fails."""
+
 # Message types
 
 
@@ -155,9 +159,58 @@ def _deserialize_mote_message(data) -> MoteMessage:
     raise ValueError(f"Unknown mote message: {data!r}")
 
 
-# Prompt the client to chose a robot from all devices advertising the mote-api service
-async def chose_from_mdns_service(service_name):
-    return None
+# Prompt the client to chose a robot from all devices advertising on the provided service.
+# Scans for `service_name` via mDNS for 3 seconds, then either auto-connects if only one
+# device is found, or presents a selection prompt if multiple devices are found.
+# Raises MoteConnectionError if no devices are found.
+async def _chose_from_mdns_service(service_name: str) -> str:
+    from zeroconf import ServiceStateChange
+    from zeroconf.asyncio import AsyncServiceBrowser, AsyncServiceInfo, AsyncZeroconf
+    import survey
+
+    found: dict[str, str] = {}  # service instance name -> IPv4 string
+
+    def on_change(zeroconf, service_type, name, state_change):
+        if state_change == ServiceStateChange.Added:
+            asyncio.ensure_future(_fetch(zeroconf, service_type, name))
+
+    async def _fetch(zeroconf, service_type, name):
+        info = AsyncServiceInfo(service_type, name)
+        await info.async_request(zeroconf, 3000)
+        ipv4 = next((a for a in info.addresses if len(a) == 4), None)
+        if ipv4 is not None:
+            ip = socket.inet_ntoa(ipv4)
+            found[name] = ip
+            print(f"  Found: {name} at {ip}")
+
+    azc = AsyncZeroconf()
+    browser = AsyncServiceBrowser(azc.zeroconf, service_name, handlers=[on_change])
+
+    print("Scanning for Mote devices...")
+    await asyncio.sleep(15.0)
+
+    await browser.async_cancel()
+    await azc.async_close()
+
+    if not found:
+        raise MoteConnectionError("No Mote devices found on the network.")
+
+    devices = list(found.items())
+
+    if len(devices) == 1:
+        name, ip = devices[0]
+        print(f"Connecting to {name} at {ip}")
+        return ip
+
+    loop = asyncio.get_event_loop()
+    idx = await loop.run_in_executor(
+        None,
+        lambda: survey.routines.select(
+            "Select a Mote device: ",
+            options=[f"{name} ({ip})" for name, ip in devices],
+        ),
+    )
+    return devices[idx][1]
 
 
 # Simple protocol for dumping byting onto / reading bytes from a queue
@@ -207,7 +260,8 @@ class MoteClient:
         This method will open an interactive discovery prompt.
         Use this method if you do not know the ip or unique ID of your robot and your network supports MDNS.
         """
-        await chose_from_mdns_service("_mote-api._udp.local.")
+        self.ip = await _chose_from_mdns_service("_mote-api._udp.local.")
+        await self._open_connection()
 
     async def connect_with_uid(self, uid: str):
         """
@@ -215,18 +269,18 @@ class MoteClient:
 
         Use this method if you know the unique ID of your robot, and your network / OS support MDNS.
         """
+        hostname = f"{uid}.local"
+        print(f"Attempting to connect to {hostname}...")
         try:
-            # This will use the underlying OS resolution mechanism
-            hostname = f"{uid}.local"
-            print(f"Attempting to connect to {hostname}...")
             self.ip = socket.gethostbyname(hostname)
-            print(f"Resolved IP address for {hostname}: {self.ip}")
-            await self._open_connection()
         except socket.error as e:
-            print(f"Error resolving {hostname}: {e}")
-            print(
-                "Did you use the correct uid? Is Mote connected to your network? Does your network support mdns? If you know the ip of your robot, try using connect_with_ip."
-            )
+            raise MoteConnectionError(
+                f"Could not resolve {hostname}: {e}. "
+                "Check the UID, ensure Mote is on the network, and that mDNS is supported. "
+                "If you know the IP address, use connect_with_ip instead."
+            ) from e
+        print(f"Resolved {hostname} to {self.ip}")
+        await self._open_connection()
 
     async def connect_with_ip(self, ip: ipaddress.IPv4Address):
         """

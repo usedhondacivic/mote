@@ -4,7 +4,10 @@ version = "0.0.0"
 description = "Python library for communicating with Mote"
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = ["zeroconf>=0.136.2", "rerun-sdk>=0.21"]
+dependencies = ["zeroconf>=0.136", "rerun-sdk>=0.21", "survey>=5.4"]
+
+[project.scripts]
+rerun-demo = "mote_link.examples.rerun_demo:main"
 
 [tool.uv]
 package = true
