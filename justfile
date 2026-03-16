@@ -8,13 +8,15 @@ mod book './mote-book'
 mod config './mote-configuration'
 # KiCAD circuit design recipes
 mod hardware './mote-hardware'
+# FFI recipes
+mod ffi './mote-ffi'
 
 [default]
 _default:
     just --list
 
 # Run the full CI suite
-ci: firmware::ci api::ci book::ci config::ci
+ci: firmware::ci api::ci book::ci config::ci ffi::ci
 
 # Generate a folder for uploading to gh pages
 ci-web-artifact: book::build config::ci-build

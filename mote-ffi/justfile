@@ -23,12 +23,16 @@ dev-setup:
 prod-setup:
     uv sync --all-extras --no-dev --cache-dir .uv_cache
 
+test-python:
+    uv run pytest
+
 test:
     cargo test
+    uv run pytest
 
 format:
     cargo fmt
-    uv format
+    uv format --preview-features format
 
 lint:
     @echo "Linting mote-api"
@@ -41,6 +45,6 @@ build: build-wasm build-examples
 
 format-check:
     cargo fmt --check
-    uv format --check
+    uv format --check --preview-features format
 
 ci: build lint test format-check
