@@ -25,7 +25,7 @@ uf2:
     #!/usr/bin/env bash
     set -euo pipefail
     VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
-    cargo build --release
+    cargo build --release --features bake-cyw43-firmware
     elf2uf2-rs target/thumbv8m.main-none-eabihf/release/mote-firmware "mote-firmware-v${VERSION//./_}.uf2"
 
 ci: build format-check lint
