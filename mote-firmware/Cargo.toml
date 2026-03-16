@@ -3,6 +3,9 @@ name = "mote-firmware"
 version = "0.0.0"
 edition = "2024"
 
+[features]
+bake-cyw43-firmware = []
+
 [dependencies]
 mote-api = { path = "../mote-api" }
 

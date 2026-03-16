@@ -3,3 +3,5 @@
 **/.vite
 
 __pycache__/
+
+**/*.uf2
