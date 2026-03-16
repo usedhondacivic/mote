@@ -17,9 +17,12 @@ lint:
 
 build: build-examples
 
+test:
+    cargo test
+
 # CI
 
 format-check:
     cargo fmt --check
 
-ci: build lint format-check
+ci: build lint format-check test

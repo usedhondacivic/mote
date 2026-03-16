@@ -19,7 +19,9 @@ thiserror = { version = "2.0", default-features = false }
 schemars = { version = "1.2", optional = true }
 
 [dev-dependencies]
+async-std = "1"
 color_space = "0.5"
+futures-util = "0.3"
 mdns = "3.0"
-rerun = { version = "0.25", features = ["web_viewer"] }
+rerun = { version = "0.30", features = ["web_viewer"] }
 anyhow = "1.0"
