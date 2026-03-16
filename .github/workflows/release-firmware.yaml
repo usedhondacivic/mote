@@ -27,6 +27,9 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v2
 
+      - name: Install libudev
+        run: sudo apt-get install -y libudev-dev
+
       - name: Install elf2uf2-rs
         run: cargo install elf2uf2-rs
 
