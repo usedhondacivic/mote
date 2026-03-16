@@ -27,11 +27,13 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v2
 
-      - name: Install libudev
-        run: sudo apt-get install -y libudev-dev
-
-      - name: Install elf2uf2-rs
-        run: cargo install elf2uf2-rs
+      - name: Install picotool
+        run: |
+          gh release download --repo raspberrypi/pico-sdk-tools --pattern 'picotool-*-x86_64-lin.tar.gz' --output picotool.tar.gz
+          tar -xzf picotool.tar.gz
+          sudo install -m 755 $(find . -maxdepth 2 -name 'picotool' -type f) /usr/local/bin/picotool
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Check version matches tag
         run: |
