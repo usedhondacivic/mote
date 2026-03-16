@@ -4920,9 +4920,11 @@ name = "mote-api"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "async-std",
  "bitcode",
  "color_space",
  "corncobs",
+ "futures-util",
  "mdns",
  "rerun",
  "schemars",

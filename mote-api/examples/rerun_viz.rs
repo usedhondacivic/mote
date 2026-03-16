@@ -1,14 +1,54 @@
 //! Example usage of mote-sansio-driver
 //! This example publishes sensor data to rerun for visualization
 
+use anyhow::anyhow;
 use color_space::{Hsv, Rgb};
+use futures_util::{StreamExt, pin_mut};
+use mdns::RecordKind;
 use rerun::external::glam;
-use std::net::UdpSocket;
+use std::net::{Ipv4Addr, UdpSocket};
+use std::time::Duration;
 
 use mote_api::MoteLink;
 use mote_api::messages::{host_to_mote, mote_to_host};
 
-fn main() {
+const MDNS_SERVICE: &str = "_mote-api._udp.local";
+const MDNS_TIMEOUT: Duration = Duration::from_secs(15);
+
+fn discover_mote() -> anyhow::Result<Ipv4Addr> {
+    println!("Scanning for Motes...");
+    async_std::task::block_on(async {
+        let stream = mdns::discover::all(MDNS_SERVICE, Duration::from_secs(5))
+            .map_err(|e| anyhow!("mDNS error: {e}"))?
+            .listen();
+        pin_mut!(stream);
+
+        let result = async_std::future::timeout(MDNS_TIMEOUT, async {
+            while let Some(Ok(response)) = stream.next().await {
+                if let Some(addr) = response.records().find_map(|r| match r.kind {
+                    RecordKind::A(ip) => Some(ip),
+                    _ => None,
+                }) {
+                    return Some(addr);
+                }
+            }
+            None
+        })
+        .await;
+
+        match result {
+            Ok(Some(addr)) => {
+                println!("Found Mote at {addr}");
+                Ok(addr)
+            }
+            _ => Err(anyhow!("No Motes found on the network")),
+        }
+    })
+}
+
+fn main() -> anyhow::Result<()> {
+    let ip = discover_mote()?;
+
     // Create the rerun instance
     let rec = rerun::RecordingStreamBuilder::new("mote_rerun_example")
         .serve_grpc()
@@ -25,7 +65,7 @@ fn main() {
     // Both commands and data use the same UDP socket
     'socket_error: loop {
         if let Ok(socket) = UdpSocket::bind("0.0.0.0:0") {
-            if let Err(_) = socket.connect("192.168.0.130:7475") {
+            if let Err(_) = socket.connect((ip, 7475)) {
                 println!("Failed to connect to Mote");
                 continue;
             }

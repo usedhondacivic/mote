@@ -19,6 +19,7 @@ UDP_PORT = 7475
 class MoteConnectionError(Exception):
     """Raised when a connection attempt to Mote fails."""
 
+
 # Message types
 
 
@@ -186,14 +187,14 @@ async def _chose_from_mdns_service(service_name: str) -> str:
     azc = AsyncZeroconf()
     browser = AsyncServiceBrowser(azc.zeroconf, service_name, handlers=[on_change])
 
-    print("Scanning for Mote devices...")
+    print("Scanning for Motes...")
     await asyncio.sleep(15.0)
 
     await browser.async_cancel()
     await azc.async_close()
 
     if not found:
-        raise MoteConnectionError("No Mote devices found on the network.")
+        raise MoteConnectionError("No Motes found on the network.")
 
     devices = list(found.items())
 
@@ -206,7 +207,7 @@ async def _chose_from_mdns_service(service_name: str) -> str:
     idx = await loop.run_in_executor(
         None,
         lambda: survey.routines.select(
-            "Select a Mote device: ",
+            "Select a Mote: ",
             options=[f"{name} ({ip})" for name, ip in devices],
         ),
     )
