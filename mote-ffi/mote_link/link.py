@@ -10,12 +10,12 @@ import json
 import socket
 from dataclasses import dataclass
 from enum import Enum
+from typing import Union
 
 
 UDP_PORT = 7475
 
-
-# ── Types: mote_to_host ────────────────────────────────────────────────────────
+# Message types
 
 
 @dataclass
@@ -61,9 +61,6 @@ class MoteState:
     built_in_test: BITCollection
 
 
-# ── Message variants ───────────────────────────────────────────────────────────
-
-
 @dataclass
 class Ping:
     pass
@@ -101,15 +98,13 @@ class State:
 
 
 # Union of all messages the host can send to Mote
-HostMessage = Ping | Pong | RequestNetworkScan | SetNetworkConnectionConfig | SetUID
+HostMessage = Union[Ping, Pong, RequestNetworkScan, SetNetworkConnectionConfig, SetUID]
 
 # Union of all messages Mote can send to the host
-MoteMessage = Ping | Pong | Scan | State
+MoteMessage = Union[Ping, Pong, Scan, State]
 
 
-# ── Serialization helpers ──────────────────────────────────────────────────────
-
-
+# Converts mote_ffi json based messages into Python native types
 def _serialize_host_message(msg: HostMessage) -> str:
     if isinstance(msg, Ping):
         return json.dumps("Ping")
@@ -126,6 +121,7 @@ def _serialize_host_message(msg: HostMessage) -> str:
     raise TypeError(f"Unknown host message type: {type(msg)}")
 
 
+# Python native types into mote_ffi json based messages
 def _deserialize_mote_message(data) -> MoteMessage:
     if data == "Ping":
         return Ping()
@@ -159,13 +155,12 @@ def _deserialize_mote_message(data) -> MoteMessage:
     raise ValueError(f"Unknown mote message: {data!r}")
 
 
-# ── Transport ──────────────────────────────────────────────────────────────────
-
-
+# Prompt the client to chose a robot from all devices advertising the mote-api service
 async def chose_from_mdns_service(service_name):
     return None
 
 
+# Simple protocol for dumping byting onto / reading bytes from a queue
 class _MoteProtocol(asyncio.DatagramProtocol):
     def __init__(self):
         self.transport: asyncio.DatagramTransport | None = None
@@ -184,6 +179,7 @@ class _MoteProtocol(asyncio.DatagramProtocol):
         pass
 
 
+#
 class MoteClient:
     def __init__(self):
         """
@@ -247,6 +243,10 @@ class MoteClient:
         """
         Send a message to Mote.
         """
+        assert self._link is not None and self._protocol is not None, (
+            "Not connected, try calling MoteClient.connect"
+        )
+        assert self._protocol.transport is not None
 
         self._link.send(_serialize_host_message(message))
         while True:
@@ -256,22 +256,26 @@ class MoteClient:
             transmit = json.loads(transmit_json)
             self._protocol.transport.sendto(bytes(transmit["payload"]))
 
-    async def recv(self) -> MoteMessage | None:
+    async def recv(self) -> MoteMessage:
         """
         Receive one message from Mote.
 
-        Suspends until a UDP packet arrives (yielding control to the event loop)
-        and returns the decoded message, or ``None`` if the packet did not
-        complete a full message.
+        Suspends until a complete message is decoded, yielding control to the
+        event loop between packets.
         """
-        data = await self._protocol._queue.get()
-        self._link.handle_receive(json.dumps(list(data)))
-        message_json = self._link.poll_receive()
-        if message_json is None:
-            return None
-        return _deserialize_mote_message(json.loads(message_json))
+        assert self._link is not None and self._protocol is not None, (
+            "Not connected, try calling MoteClient.connect"
+        )
+
+        while True:
+            data = await self._protocol._queue.get()
+            self._link.handle_receive(json.dumps(list(data)))
+            message_json = self._link.poll_receive()
+            if message_json is not None:
+                return _deserialize_mote_message(json.loads(message_json))
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self._protocol is not None:
+            assert self._protocol.transport is not None
             self._protocol.transport.close()
             self._protocol = None

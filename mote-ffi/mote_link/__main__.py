@@ -4,7 +4,7 @@ import math
 
 import rerun as rr
 
-from mote_link.link import MoteClient, Ping, Pong, RequestNetworkScan, Scan, State
+from mote_link.link import MoteClient, Ping, Pong, Scan, State
 
 
 def _log_scan(scan: Scan):
@@ -17,7 +17,7 @@ def _log_scan(scan: Scan):
     ]
     colors = []
     for p in scan.points:
-        h = (p.distance_mm / 20.0) % 1.0
+        h = (p.distance_mm / 200.0) % 1.0
         r, g, b = colorsys.hsv_to_rgb(h, 1.0, 1.0)
         colors.append([int(r * 255), int(g * 255), int(b * 255)])
 
@@ -39,8 +39,6 @@ async def run_main():
 
         while True:
             message = await client.recv()
-            if message is None:
-                continue
 
             if isinstance(message, Pong):
                 print("Got pong from Mote.")
@@ -50,8 +48,11 @@ async def run_main():
             elif isinstance(message, Scan):
                 _log_scan(message)
             elif isinstance(message, State):
-                pass  # TODO: log robot state
+                print(f"Got system state {message}")
 
 
 if __name__ == "__main__":
-    asyncio.run(run_main())
+    try:
+        asyncio.run(run_main())
+    except KeyboardInterrupt:
+        print("\nDisconnected.")

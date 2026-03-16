@@ -25,7 +25,8 @@ fn main() {
     // Both commands and data use the same UDP socket
     'socket_error: loop {
         if let Ok(socket) = UdpSocket::bind("0.0.0.0:0") {
-            if let Err(_) = socket.connect("192.168.0.78:7475") {
+            if let Err(_) = socket.connect("192.168.0.130:7475") {
+                println!("Failed to connect to Mote");
                 continue;
             }
 
@@ -71,7 +72,7 @@ fn main() {
                                 .iter()
                                 .map(|point| {
                                     let rgb = Rgb::from(Hsv::new(
-                                        point.distance_mm as f64 / 20.0,
+                                        point.distance_mm as f64 / 200.0,
                                         1.0,
                                         1.0,
                                     ));
