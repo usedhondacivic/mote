@@ -72,7 +72,7 @@ fn main() {
                                 .iter()
                                 .map(|point| {
                                     let rgb = Rgb::from(Hsv::new(
-                                        point.distance_mm as f64 / 200.0,
+                                        point.distance_mm as f64 / 20.0,
                                         1.0,
                                         1.0,
                                     ));

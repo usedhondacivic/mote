@@ -17,7 +17,7 @@ def _log_scan(scan: Scan):
     ]
     colors = []
     for p in scan.points:
-        h = (p.distance_mm / 200.0) % 1.0
+        h = (p.distance_mm / (20.0 * 360.0)) % 1.0
         r, g, b = colorsys.hsv_to_rgb(h, 1.0, 1.0)
         colors.append([int(r * 255), int(g * 255), int(b * 255)])
 
@@ -29,7 +29,7 @@ def _log_scan(scan: Scan):
 
 # Example application that connects to Mote and logs sensor data to rerun.
 async def run_main():
-    rr.init("mote_rerun_example", spawn=True)
+    rr.init("mote_rerun_example_python", spawn=True)
 
     async with MoteClient() as client:
         await client.connect_with_uid("mote-:3")
