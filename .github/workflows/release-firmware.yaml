@@ -1,0 +1,50 @@
+name: Release Firmware
+
+on:
+  push:
+    tags:
+      - 'mote-firmware-v*.*.*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release-firmware:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: mote-firmware
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Install elf2uf2-rs
+        run: cargo install elf2uf2-rs
+
+      - name: Check version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#mote-firmware-v}"
+          CRATE_VERSION=$(grep '^version' mote-firmware/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          if [ "$TAG_VERSION" != "$CRATE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match crate version ($CRATE_VERSION)"
+            exit 1
+          fi
+          echo "Version check passed: $CRATE_VERSION"
+
+      - name: Build UF2
+        working-directory: mote-firmware
+        run: just uf2
+
+      - name: Upload UF2 to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mote-firmware/mote-firmware-v*.uf2
