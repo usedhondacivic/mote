@@ -117,7 +117,7 @@ where
                             }
                             status => {
                                 let mut error: [u8; 2] = [0; 2];
-                                error.copy_from_slice(&resp[7..10]);
+                                error.copy_from_slice(&resp[7..9]);
                                 error!(
                                     "LiDAR GET_HEALTH returned status code {} and error code {}",
                                     status,
