@@ -1,9 +1,7 @@
-use alloc::vec::Vec;
-
 use defmt::{error, info, warn};
 use embassy_futures::select::{Either, select};
 use embassy_net::Stack;
-use embassy_net::udp::{PacketMetadata, SendError, UdpMetadata, UdpSocket};
+use embassy_net::udp::{PacketMetadata, UdpMetadata, UdpSocket};
 use mote_api::HostLink;
 use mote_api::messages::mote_to_host::BITResult;
 use mote_api::messages::{host_to_mote, mote_to_host};
@@ -43,8 +41,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
 
     let mut link = HostLink::new();
     let mut message_buffer = [0; 4096];
-    let mut subscribers: Vec<UdpMetadata> = Vec::new();
-    let mut dead_indices: Vec<usize> = Vec::new();
+    let mut client: Option<UdpMetadata> = None;
 
     loop {
         match select(
@@ -54,15 +51,25 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
         .await
         {
             Either::First(Ok((bytes_read, ep))) => {
-                if !subscribers.contains(&ep) {
-                    info!("Registering subscriber {}", ep);
-                    subscribers.push(ep);
-                    let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                    update_bit_result(
-                        &mut configuration_state.built_in_test.wifi,
-                        "Client Connected",
-                        BITResult::Pass,
-                    );
+                let new_client = match client {
+                    None => {
+                        info!("Client connected: {}", ep);
+                        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                        update_bit_result(
+                            &mut configuration_state.built_in_test.wifi,
+                            "Client Connected",
+                            BITResult::Pass,
+                        );
+                        true
+                    }
+                    Some(ref current) if *current != ep => {
+                        info!("Client changed: {} -> {}", current, ep);
+                        true
+                    }
+                    _ => false,
+                };
+                if new_client {
+                    client = Some(ep);
                 }
 
                 link.handle_receive(&message_buffer[..bytes_read]);
@@ -80,31 +87,26 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                 error!("UDP recv error: {}", err);
             }
             Either::Second(message) => {
-                link.send(message).unwrap();
+                if let Some(ep) = client {
+                    link.send(message).unwrap();
 
-                while let Some(payload) = link.poll_transmit() {
-                    for (idx, ep) in subscribers.iter().enumerate() {
-                        match socket.send_to(&payload, *ep).await {
-                            Ok(_) => {}
-                            Err(SendError::NoRoute) => {
-                                dead_indices.push(idx);
-                                info!("Removing subscriber {}", ep);
+                    while let Some(payload) = link.poll_transmit() {
+                        if let Err(err) = socket.send_to(&payload, ep).await {
+                            if matches!(err, embassy_net::udp::SendError::NoRoute) {
+                                info!("Client disconnected: {}", ep);
+                                client = None;
+                                let mut configuration_state = CONFIGURATION_STATE.lock().await;
+                                update_bit_result(
+                                    &mut configuration_state.built_in_test.wifi,
+                                    "Client Connected",
+                                    BITResult::Waiting,
+                                );
+                            } else {
+                                error!("UDP send error: {}", err);
                             }
-                            Err(err) => error!("UDP send error: {}", err),
+                            break;
                         }
                     }
-                }
-
-                for idx in dead_indices.drain(..).rev() {
-                    subscribers.remove(idx);
-                }
-                if subscribers.is_empty() {
-                    let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                    update_bit_result(
-                        &mut configuration_state.built_in_test.wifi,
-                        "Client Connected",
-                        BITResult::Waiting,
-                    );
                 }
             }
         }

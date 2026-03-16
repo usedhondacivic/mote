@@ -125,8 +125,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "rerun-sdk", specifier = ">=0.21" },
-    { name = "survey", specifier = ">=5.4.2" },
-    { name = "zeroconf", specifier = ">=0.136.2" },
+    { name = "survey", specifier = ">=5.4" },
+    { name = "zeroconf", specifier = ">=0.136" },
 ]
 
 [package.metadata.requires-dev]
