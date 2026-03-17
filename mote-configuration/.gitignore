@@ -1,3 +1,6 @@
+# Generated files
+src/lib/mote_api_types.ts
+
 # Logs
 logs
 *.log

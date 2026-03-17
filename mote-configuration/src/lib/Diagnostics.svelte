@@ -1,10 +1,11 @@
 <script lang="ts">
     import ShortSpinner from "./ShortSpinner.svelte";
+    import type { BITCollection } from "./mote_api_types";
 
-    let { diagnostics } = $props();
+    let { diagnostics }: { diagnostics: BITCollection } = $props();
 
     let subsystems = $derived(
-        Object.keys(diagnostics).map((key) => {
+        (Object.keys(diagnostics) as Array<keyof BITCollection>).map((key) => {
             return {
                 name: key,
                 tests: diagnostics[key],

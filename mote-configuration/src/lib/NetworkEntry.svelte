@@ -20,7 +20,7 @@
 
     let input_open = $state(false);
     let input_value = $state("");
-    let input_ref;
+    let input_ref: HTMLInputElement | undefined;
 
     function submit() {
         network_connect(ssid, input_value);
@@ -53,7 +53,7 @@
                 } else {
                     input_open = true;
                     await tick();
-                    input_ref.focus();
+                    input_ref?.focus();
                 }
             }}>[ connect ]</button
         >
