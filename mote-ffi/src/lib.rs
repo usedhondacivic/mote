@@ -15,6 +15,9 @@ pub mod python;
 #[cfg(feature = "wasm_ffi")]
 pub mod wasm;
 
+#[cfg(feature = "c_ffi")]
+pub mod c;
+
 /// Error type
 #[derive(Error, Debug)]
 pub enum Error {

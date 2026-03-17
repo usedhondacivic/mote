@@ -7,6 +7,10 @@ _default:
 build-wasm:
    wasm-pack build --out-dir target/pkg-node --target bundler --features wasm_ffi
 
+# Build the C static library. Output: target/release/libmote_ffi.a  (header: include/mote_link.h)
+build-c:
+    cargo build --release --no-default-features --features c_ffi
+
 # General
 
 dev-setup:
