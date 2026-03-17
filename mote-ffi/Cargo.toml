@@ -7,7 +7,7 @@ edition = "2024"
 default = ["wasm_ffi"]
 python_ffi = ["serde_json", "pyo3"]
 wasm_ffi = ["serde_json", "wasm-bindgen", "gloo-utils"]
-c_ffi = ["serde_json"]
+c_ffi = ["serde_json", "cbindgen"]
 
 [lib]
 name = "mote_ffi"
@@ -15,6 +15,9 @@ name = "mote_ffi"
 # support that flag: https://github.com/drager/wasm-pack/issues/1297
 # staticlib is included to support C/C++ linking via `build-c`.
 crate-type = ["cdylib", "staticlib", "rlib"]
+
+[build-dependencies]
+cbindgen = { version = "0.28", optional = true }
 
 [dependencies]
 mote-api = { path = "../mote-api", features = ["schemars"] }
