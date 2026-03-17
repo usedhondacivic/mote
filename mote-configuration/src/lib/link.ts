@@ -26,12 +26,16 @@ export async function serial_connect(
 
         await port.open({ baudRate: 115200 });
 
-        connect();
-
         // Create and connect streams
         const textEncoder = new TextEncoderStream();
         outputDone = textEncoder.readable.pipeTo(port.writable);
         outputStream = textEncoder.writable.getWriter();
+
+        // Send a zero byte (COBS delimiter) to flush any startup noise in the
+        // UART buffer on the MCU side before the first real message is sent.
+        await outputStream.write(new TextDecoder().decode(new Uint8Array([0])));
+
+        connect();
 
         await readLoop(telemetry_recv);
 
@@ -75,6 +79,7 @@ async function readLoop(telemetry_recv: (data: PollReceiveResult) => void) {
 async function write() {
     if (!outputStream) {
         console.log("[serial] write called by serial connection is not up.");
+        return;
     }
 
     let data = link.poll_transmit() as number[] | null;
