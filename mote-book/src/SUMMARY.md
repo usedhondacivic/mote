@@ -27,7 +27,7 @@
 - [Hardware Sourcing]()
 - [Contributing](./advanced/contributing/contributing.md)
     - [Development Environment](./advanced/contributing/dev_env.md)
-    - [Building, Testing, and Running](./advanced/contributing/build_test_deploy.md)
+    - [Building, Testing, Running, and Releasing](./advanced/contributing/build_test_deploy.md)
     - [Hardware](./advanced/contributing/hardware.md)
     - [FAQ](./advanced/contributing/faq.md)
 # Misc

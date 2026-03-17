@@ -8,6 +8,13 @@ test:
 build:
     cargo build --release
 
+# First time setup. Burns the cyw43's firmware into flash, then deploys firmware
+provision:
+    probe-rs download cyw43-firmware/43439A0.bin --binary-format bin --chip RP235x --base-address 0x10100000
+    probe-rs download cyw43-firmware/43439A0_clm.bin --binary-format bin  --chip RP235x --base-address 0x10140000
+    cargo run --release
+
+# Deploy firmware to Mote
 deploy:
     cargo run --release
 
@@ -27,4 +34,5 @@ uf2:
     VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
     cargo build --release --features bake-cyw43-firmware
     picotool uf2 convert target/thumbv8m.main-none-eabihf/release/mote-firmware -t elf "mote-firmware-v${VERSION//./_}.uf2" --family rp2350-arm-s
+
 ci: build format-check lint

@@ -6,14 +6,6 @@ _default:
 
 build-wasm:
    wasm-pack build --out-dir target/pkg-node --target bundler --features wasm_ffi
- 
-# RUST
-
-build-examples:
-    cargo build --examples
-
-run-example example:
-    cargo run --example {{example}}
 
 # General
 
@@ -22,9 +14,6 @@ dev-setup:
 
 prod-setup:
     uv sync --all-extras --no-dev --cache-dir .uv_cache
-
-test-python:
-    uv run pytest
 
 test:
     cargo test
@@ -39,7 +28,7 @@ lint:
     uv run ty check
     cargo clippy --all-features  -- -D warnings
 
-build: build-wasm build-examples
+build: build-wasm
 
 # Examples
 
