@@ -9,31 +9,17 @@ A low cost and high confidence mobile robot.
 
 Robotics is more fun with real hardware.
 
-The ["low cost"](https://www.robotshop.com/products/clearpath-robotics-turtlebot-4-mobile-robot) robots currently on the market are prohibitively expensive for aspiring engineers.
-Mote is my answer to the problem.
+["Low cost"](https://www.robotshop.com/products/clearpath-robotics-turtlebot-4-mobile-robot) robots are prohibitively expensive for aspiring engineers.
+We believe robotics should be affordable, enjoyable, and obtainable. So we made Mote.
 
 ## History
 
-Spiritual successor of [the Little Red Rover project](https://github.com/little-red-rover).
+Mote is the spiritual successor of [the Little Red Rover project](https://github.com/little-red-rover).
 
-For the past two years, Little Red Rover has been used to teach the Foundations of Robotics course at Cornell University. Mote is the product of the many lessons learned during that effort.
+For the past two years, Little Red Rover has been used to teach the Foundations of Robotics course at Cornell University.
+Mote is the product of the many lessons learned during that effort.
 
-## Project Structure
+## Contributing
 
-### Rust Packages
-* mote-firmware :
-    * Firmware for the RP2350 based Mote circuit board. Built with [Embassy](https://github.com/embassy-rs/embassy/).
-* mote-api
-    * Message definitions for communication to and from Mote.
-    * SansIO communication driver, with bindings for Python and TypeScript
-* mote-configuration
-    * [Web app](https://empriselab.github.io/mote-core/configuration/) for configuration and debugging. Built with [Svelte](https://svelte.dev/) and [WebAssembly](https://wasm-bindgen.github.io/wasm-bindgen/).
-
-### Hardware
-* mote-hardware 
-    * KiCAD board design files.
-
-### Documentation
-* web/mote-book
-    * [Documentation and examples](https://empriselab.github.io/mote-core/), build with [mdBook](https://rust-lang.github.io/mdBook/).
-
+Want to patch a bug, add a feature, or otherwise improve Mote?
+Checkout [the contribution guide](https://empriselab.github.io/mote-core/advanced/contributing/contributing.html).

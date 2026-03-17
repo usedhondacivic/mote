@@ -67,9 +67,9 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     // loaded from known flash addresses, which allows flashing the firmware
     // independently for faster development iteration:
     //   probe-rs download ../../cyw43-firmware/43439A0.bin --binary-format bin \
-    //     --chip RP235x --base-address 0x10100000
-    //   probe-rs download ../../cyw43-firmware/43439A0_clm.bin --binary-format bin
-    // \     --chip RP235x --base-address 0x10140000
+    // --chip RP235x --base-address 0x10100000   probe-rs download
+    // ../../cyw43-firmware/43439A0_clm.bin --binary-format bin  --chip RP235x \
+    // --base-address 0x10140000
     #[cfg(feature = "bake-cyw43-firmware")]
     let fw = include_bytes!("../../cyw43-firmware/43439A0.bin");
     #[cfg(feature = "bake-cyw43-firmware")]

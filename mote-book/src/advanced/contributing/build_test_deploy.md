@@ -1,4 +1,4 @@
-# Building, Testing, and Running
+# Building, Testing, Running, and Releasing
 
 ## Setup
 
@@ -17,86 +17,55 @@ git clone https://github.com/empriselab/mote-core.git
 
 Compile source and generate executable artifacts.
 
-### `mote-firmware`
-
 ```bash
-cd mote-firmware
-just build
-```
-
-### `mote-configuration`
-
-```bash
-cd mote-configuration
-just build
-```
-
-### `mote-book`
-
-```bash
-cd mote-book
-just build
+# Build Mote's firmware
+just firmware::build 
+# Build the configuration webpage
+just configuration::build 
+# Build the book
+just book::build 
 ```
 
 ## Test
 
 Run unit tests.
 
-### `mote-firmware`
-
 ```bash
-cd mote-firmware
-just test
-```
-
-### `mote-book`
-
-```bash
-cd mote-book
-just test
+# Run firmware test cases
+just firmware::test
+# Run api test cases
+just api::test
+# Run ffi test cases
+just ffi::test
+# Test code examples in the book
+just book::test
 ```
 
 ## Run
 
-Run a deployment target.
+Run a target.
 
-### `mote-firmware`
-
-Connect to Mote using [a SWD debug probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html). Then,
+Running firmware requires connecting to Mote using [a SWD debug probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html).
 
 ```bash
-cd mote-firmware
-just deploy
+# Deploy firmware to Mote (first time doing so)
+just firmware::provision
+# Deploy firmware to Mote (any time after)
+just firmware::deploy
+# Serve the configuration page
+just configuration::run-dev
+# Serve / open the book
+just book::open
 ```
 
-### `mote-configuration`
+## Release
 
-```bash
-cd mote-configuration
-just run-dev
-```
+Release artifacts are built and uploaded automatically via continuous integration.
 
-Click the link provided by Vite, and the configuration page will open in your browser.
-
-### `mote-book`
-
-```bash
-cd mote-book
-just open
-```
-
-## Deploy
-
-Release / upload build artifacts for public consumption.
-
-### `mote-firmware`
-
-Coming soon in [#11](https://github.com/empriselab/mote-core/issues/11).
-
-### `mote-book`, `mote-configuration`
-
-Web based targets are deployed automatically to GitHub pages using the [Deploy to Pages workflow](https://github.com/empriselab/mote-core/blob/main/.github/workflows/deploy.yaml).
-
-### `mote-ffi`
-
-Coming soon in [#17](https://github.com/empriselab/mote-core/issues/17)
+* `mote-firmware`
+    * Released on any tag to `mote-cote` matching the pattern `mote-firmware-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-firmware` crate.
+    * Automated via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-firmware.yaml).
+* `mote-ffi`
+    * Not currently released. Coming soon in [#17](https://github.com/empriselab/mote-core/issues/17)
+* `mote-book` and `mote-configuration`
+    * Deployed to GitHub pages via the [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/deploy.yaml).
