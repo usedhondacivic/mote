@@ -18,6 +18,9 @@ crate-type = ["cdylib", "staticlib", "rlib"]
 
 [build-dependencies]
 cbindgen = { version = "0.28", optional = true }
+mote-api = { path = "../mote-api", features = ["schemars"] }
+schemars = "1.2"
+serde_json = "1.0"
 
 [dependencies]
 mote-api = { path = "../mote-api", features = ["schemars"] }

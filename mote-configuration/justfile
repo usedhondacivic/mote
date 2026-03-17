@@ -5,12 +5,15 @@ _default:
 build:
     just -f ../mote-ffi/justfile build-wasm
     npm install
+    npm run generate-types
 
 run-dev: build
     npx vite
 
 ci: build
+    npm run check
 
 ci-build: build
     npm ci
     npm run build
+    npm run check

@@ -43,13 +43,13 @@
                         style="float: right;"
                         onclick={() => {
                             serial_connect(
-                                (_: Event) => {
+                                () => {
                                     serial_connection.connected = true;
                                 },
-                                (_: Event) => {
+                                () => {
                                     serial_connection.connected = false;
                                 },
-                                (telem: Object) => {
+                                (telem) => {
                                     serial_connection.last_telem_time =
                                         new Date();
                                     serial_connection.has_received = true;
@@ -98,7 +98,7 @@
                     {/if}
                 </p>
                 <ul>
-                    {#if mote_telem.latest?.available_network_connections?.length > 0}
+                    {#if (mote_telem.latest?.available_network_connections?.length ?? 0) > 0}
                         <Networks
                             networks={mote_telem.latest
                                 ?.available_network_connections}

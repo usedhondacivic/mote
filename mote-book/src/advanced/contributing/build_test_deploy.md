@@ -21,7 +21,7 @@ Compile source and generate executable artifacts.
 # Build Mote's firmware
 just firmware::build 
 # Build the configuration webpage
-just configuration::build 
+just config::build 
 # Build the book
 just book::build 
 ```
@@ -53,7 +53,7 @@ just firmware::provision
 # Deploy firmware to Mote (any time after)
 just firmware::deploy
 # Serve the configuration page
-just configuration::run-dev
+just config::run-dev
 # Serve / open the book
 just book::open
 ```
