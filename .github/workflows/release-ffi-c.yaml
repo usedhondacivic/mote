@@ -1,0 +1,60 @@
+name: Release FFI C Library
+
+on:
+  push:
+    tags:
+      - 'mote-ffi-v*.*.*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release-ffi-c:
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            recipe: release-package-c-linux
+          - os: macos-latest
+            recipe: release-package-c-macos
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: mote-ffi
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Install cargo-zigbuild
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cargo install cargo-zigbuild
+          pip install ziglang
+
+      - name: Check version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#mote-ffi-v}"
+          CRATE_VERSION=$(grep '^version' mote-ffi/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          if [ "$TAG_VERSION" != "$CRATE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match crate version ($CRATE_VERSION)"
+            exit 1
+          fi
+          echo "Version check passed: $CRATE_VERSION"
+
+      - name: Build and package
+        working-directory: mote-ffi
+        run: just ${{ matrix.recipe }}
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mote-ffi/dist/*.tar.gz

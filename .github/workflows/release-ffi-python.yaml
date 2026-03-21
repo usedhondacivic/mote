@@ -1,0 +1,48 @@
+name: Release FFI Python Wheel
+
+on:
+  push:
+    tags:
+      - 'mote-ffi-v*.*.*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release-ffi-python:
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64
+          - os: macos-latest
+            target: aarch64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#mote-ffi-v}"
+          CRATE_VERSION=$(grep '^version' mote-ffi/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          if [ "$TAG_VERSION" != "$CRATE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match crate version ($CRATE_VERSION)"
+            exit 1
+          fi
+          echo "Version check passed: $CRATE_VERSION"
+
+      - name: Build wheel
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: mote-ffi
+          target: ${{ matrix.target }}
+          args: --release
+          manylinux: auto
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mote-ffi/target/wheels/*.whl

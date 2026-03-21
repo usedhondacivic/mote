@@ -13,10 +13,10 @@ rerun-demo = "mote_link.examples.rerun_demo:main"
 package = true
 
 [tool.maturin]
-features = ["python_ffi"]
-cargo-extra-args = ["--crate-type=dylib"]
-include = ["mote_link/**/*", "../LICENSE"]
+include = ["mote_link/**/*"]
 module-name = "mote_link.mote_ffi"
+features = ["python_ffi"]
+cargo-extra-args = "--crate-type=dylib"
 
 [build-system]
 requires = ["maturin>=1.0,<2.0"]
