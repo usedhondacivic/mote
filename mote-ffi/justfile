@@ -46,3 +46,37 @@ format-check:
     uv format --check --preview-features format
 
 ci: build lint test format-check
+
+
+# Release
+
+# Build the C static library for Linux using cargo-zigbuild targeting glibc 2.17 for broad compatibility.
+# Requires cargo-zigbuild and zig to be installed. Output: target/x86_64-unknown-linux-gnu/release/libmote_ffi.a
+release-build-c-linux:
+    cargo zigbuild --release --no-default-features --features c_ffi --target x86_64-unknown-linux-gnu.2.17
+
+# Build and package the C static library for Linux, header, and schemas into a release tarball. Output: dist/mote-ffi-c-linux-x86_64-v<version>.tar.gz
+release-package-c-linux: release-build-c-linux
+    #!/usr/bin/env bash
+    VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+    mkdir -p dist dist/_pkg/include dist/_pkg/schemas
+    cp target/x86_64-unknown-linux-gnu/release/libmote_ffi.a dist/_pkg/
+    cp include/mote_link.h dist/_pkg/include/
+    cp schemas/*.json dist/_pkg/schemas/
+    tar -czf dist/mote-ffi-c-linux-x86_64-v${VERSION}.tar.gz -C dist/_pkg .
+    rm -rf dist/_pkg
+
+# Build the C static library for macOS (native arm64, requires macOS 12.0+). Output: target/release/libmote_ffi.a
+release-build-c-macos:
+    MACOSX_DEPLOYMENT_TARGET=12.0 cargo build --release --no-default-features --features c_ffi
+
+# Build and package the C static library for macOS, header, and schemas into a release tarball. Output: dist/mote-ffi-c-macos-aarch64-v<version>.tar.gz
+release-package-c-macos: release-build-c-macos
+    #!/usr/bin/env bash
+    VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+    mkdir -p dist dist/_pkg/include dist/_pkg/schemas
+    cp target/release/libmote_ffi.a dist/_pkg/
+    cp include/mote_link.h dist/_pkg/include/
+    cp schemas/*.json dist/_pkg/schemas/
+    tar -czf dist/mote-ffi-c-macos-aarch64-v${VERSION}.tar.gz -C dist/_pkg .
+    rm -rf dist/_pkg
