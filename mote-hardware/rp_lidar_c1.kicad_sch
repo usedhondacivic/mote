@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2025-12-30")
+		(date "2026-03-22")
 		(rev "V0.0.0")
 		(company "github.com/usedhondacivic/mote")
 	)
@@ -590,7 +590,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_XH_S5B-XH-A_1x05_P2.50mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_XH_B5B-XH-A_1x05_P2.50mm_Vertical"
 			(at 110.49 100.33 0)
 			(effects
 				(font
