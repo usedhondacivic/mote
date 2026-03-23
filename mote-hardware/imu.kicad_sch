@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2025-12-30")
+		(date "2026-03-22")
 		(rev "V0.0.0")
 		(company "github.com/usedhondacivic/mote")
 	)

@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2025-12-30")
+		(date "2026-03-22")
 		(rev "V0.0.0")
 		(company "github.com/usedhondacivic/mote")
 	)
@@ -923,16 +923,6 @@
 			)
 			(embedded_fonts no)
 		)
-	)
-	(text "Need mounting connectors for motors"
-		(exclude_from_sim no)
-		(at 96.012 166.624 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "8b2df83b-6e74-4129-868a-4b931d80c886")
 	)
 	(text "1A current limit\n[CHOP = (0.2V / RSENSE)]"
 		(exclude_from_sim no)
