@@ -7882,7 +7882,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "RP2350_60QFN"
+		(property "Value" "RP2354_60QFN"
 			(at 131.6833 172.72 0)
 			(effects
 				(font
@@ -8746,7 +8746,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical"
 			(at 294.64 213.36 0)
 			(effects
 				(font
