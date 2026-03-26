@@ -31,8 +31,6 @@ just book::build
 Run unit tests.
 
 ```bash
-# Run firmware test cases
-just firmware::test
 # Run api test cases
 just api::test
 # Run ffi test cases
@@ -66,6 +64,8 @@ Release artifacts are built and uploaded automatically via continuous integratio
     * Released on any tag to `mote-cote` matching the pattern `mote-firmware-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-firmware` crate.
     * Automated via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-firmware.yaml).
 * `mote-ffi`
-    * Not currently released. Coming soon in [#17](https://github.com/empriselab/mote-core/issues/17)
+    * Released on any tag to `mote-cote` matching the pattern `mote-ffi-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-firmware` crate.
+    * C++ library released via the [GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-ffi-c.yaml)
+    * Python library released via the [GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-ffi-python.yaml)
 * `mote-book` and `mote-configuration`
-    * Deployed to GitHub pages via the [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/deploy.yaml).
+    * Deployed to GitHub pages via the [GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/deploy.yaml).
