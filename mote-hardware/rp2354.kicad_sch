@@ -6,11 +6,174 @@
 	(paper "A3")
 	(title_block
 		(title "Mote")
-		(date "2025-12-30")
+		(date "2026-03-22")
 		(rev "V0.0.0")
 		(company "github.com/usedhondacivic/mote")
 	)
 	(lib_symbols
+		(symbol "Connector:Conn_01x02_Pin"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x02_Pin"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x02, script generated"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x02_Pin_1_1"
+				(rectangle
+					(start 0.8636 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 0.8636 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0.8636 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector:Conn_01x03_Pin"
 			(pin_names
 				(offset 1.016)
@@ -1255,6 +1418,107 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "GND_1"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_1_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "MCU_RaspberryPi_RP2350:RP2354_60QFN"
 			(pin_names
 				(offset 1.016)
@@ -2438,6 +2702,113 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Mechanical:MountingHole_Pad"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole_Pad"
+				(at 0 4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Mounting Hole with connection"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*Pad*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_Pad_0_1"
+				(circle
+					(center 0 1.27)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MountingHole_Pad_1_1"
+				(pin input line
+					(at 0 -2.54 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "RPI_RMC20452T:RPI_RMC20452T"
 			(pin_names
 				(offset 1.016)
@@ -3156,6 +3527,17 @@
 		)
 		(uuid 6274a801-60fb-4616-ba0f-2a1037b3305a)
 	)
+	(text "Tail Mount"
+		(exclude_from_sim no)
+		(at 259.842 259.08 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+			(justify left bottom)
+		)
+		(uuid "08097041-270c-4a0a-b54c-9e9e3779a9fb")
+	)
 	(text "12MHz Crystal"
 		(exclude_from_sim no)
 		(at 260.35 19.304 0)
@@ -3529,6 +3911,12 @@
 		(uuid "ecb0a9f2-fe8e-47f1-a41e-286e41518597")
 	)
 	(junction
+		(at 270.51 275.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f62af945-ffd9-4f80-8f7f-513801feb3b6")
+	)
+	(junction
 		(at 189.23 46.99)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3788,6 +4176,16 @@
 	)
 	(wire
 		(pts
+			(xy 265.43 266.7) (xy 265.43 275.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1943797b-fdc0-4871-8ff7-429365aba21b")
+	)
+	(wire
+		(pts
 			(xy 148.59 237.49) (xy 158.75 237.49)
 		)
 		(stroke
@@ -3815,6 +4213,16 @@
 			(type default)
 		)
 		(uuid "1cb7c62f-a970-4230-a6e2-44d0b766df93")
+	)
+	(wire
+		(pts
+			(xy 350.52 231.14) (xy 335.28 231.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1f779aa1-49ac-4b99-95a4-41053086ccc8")
 	)
 	(polyline
 		(pts
@@ -3935,6 +4343,16 @@
 			(type default)
 		)
 		(uuid "2caffec5-fcf6-43af-a95b-b7c43491a545")
+	)
+	(wire
+		(pts
+			(xy 265.43 275.59) (xy 270.51 275.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2cfc2f07-d35e-40dc-a0d1-1df9b5be202d")
 	)
 	(wire
 		(pts
@@ -4165,6 +4583,16 @@
 			(type default)
 		)
 		(uuid "3ec04fc9-c062-4dac-bfcc-91d1008f97f2")
+	)
+	(wire
+		(pts
+			(xy 275.59 275.59) (xy 275.59 274.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3f37cf48-0c75-43dd-b0d1-ac9444c16220")
 	)
 	(wire
 		(pts
@@ -4725,6 +5153,16 @@
 			(type default)
 		)
 		(uuid "793222b0-664e-4d62-aeb2-20f0500b2812")
+	)
+	(polyline
+		(pts
+			(xy 257.81 252.73) (xy 299.72 252.73)
+		)
+		(stroke
+			(width 0)
+			(type dash)
+		)
+		(uuid "7bf80f79-5609-49a3-86ad-c6c8ab0088cd")
 	)
 	(wire
 		(pts
@@ -5368,6 +5806,16 @@
 	)
 	(wire
 		(pts
+			(xy 270.51 275.59) (xy 275.59 275.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c23b421c-cd62-4a77-84a9-7d614303480a")
+	)
+	(wire
+		(pts
 			(xy 95.25 64.77) (xy 95.25 80.01)
 		)
 		(stroke
@@ -5455,6 +5903,16 @@
 			(type default)
 		)
 		(uuid "cd1081d6-d695-41b5-8b8a-fa077abd3e2c")
+	)
+	(wire
+		(pts
+			(xy 270.51 275.59) (xy 270.51 278.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ce11c933-9aa0-4661-a8f5-499bf609a85f")
 	)
 	(wire
 		(pts
@@ -5858,6 +6316,16 @@
 	)
 	(wire
 		(pts
+			(xy 350.52 228.6) (xy 335.28 228.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f55df61a-a87b-471c-8533-8ef46f9ae395")
+	)
+	(wire
+		(pts
 			(xy 314.96 121.92) (xy 314.96 147.32)
 		)
 		(stroke
@@ -5945,6 +6413,16 @@
 			(justify right bottom)
 		)
 		(uuid "0031e8cd-b152-4686-9f51-ca9ba76b5a94")
+	)
+	(label "UART0_RX"
+		(at 335.28 228.6 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "02b1931a-cb9a-4dd9-ad04-5c3f414524f1")
 	)
 	(label "GPIO26_ADC0"
 		(at 207.01 227.33 0)
@@ -6306,6 +6784,16 @@
 		)
 		(uuid "6c543060-8e0c-4b3e-945a-7892922d4a49")
 	)
+	(label "UART0_TX"
+		(at 335.28 231.14 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "718296af-b550-49e3-b786-b3e939bf0a57")
+	)
 	(label "XOUT"
 		(at 83.82 127 0)
 		(effects
@@ -6536,7 +7024,7 @@
 		)
 		(uuid "d2fd8256-af47-48db-be22-2579f984c418")
 	)
-	(label "GPIO1"
+	(label "UART0_RX"
 		(at 176.53 88.9 180)
 		(effects
 			(font
@@ -6616,7 +7104,7 @@
 		)
 		(uuid "e309c9f2-715f-4a3f-b9db-704b00aaca96")
 	)
-	(label "GPIO0"
+	(label "UART0_TX"
 		(at 176.53 86.36 180)
 		(effects
 			(font
@@ -7800,6 +8288,72 @@
 		)
 	)
 	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 265.43 264.16 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "22a3b83e-1c62-4790-bac1-c9a71b1aad2e")
+		(property "Reference" "H5"
+			(at 268.732 262.636 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 268.732 264.668 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4_DIN965_Pad"
+			(at 265.43 264.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 265.43 264.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 265.43 264.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7eb12cfc-33db-4b43-88a9-505f032f103d")
+		)
+		(instances
+			(project ""
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
+					(reference "H5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 85.09 74.93 0)
 		(unit 1)
@@ -7882,7 +8436,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "RP2350_60QFN"
+		(property "Value" "RP2354_60QFN"
 			(at 131.6833 172.72 0)
 			(effects
 				(font
@@ -8513,6 +9067,73 @@
 		)
 	)
 	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 275.59 271.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4f4e10a1-e0f2-49fc-92b2-9c20ed316409")
+		(property "Reference" "H6"
+			(at 278.13 269.2399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 278.13 271.7799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4_DIN965_Pad"
+			(at 275.59 271.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 275.59 271.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 275.59 271.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "56bf98a6-f46f-4168-a397-633fde4f40cb")
+		)
+		(instances
+			(project "mote-hardware"
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
+					(reference "H6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 313.69 48.26 270)
 		(unit 1)
@@ -8575,6 +9196,73 @@
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
 					(reference "C4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "GND_1")
+		(lib_id "power:GND")
+		(at 270.51 278.13 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "60ed79c9-d0d6-4012-944a-c64d4d42f5d7")
+		(property "Reference" "#PWR01"
+			(at 270.51 284.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 270.51 283.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 270.51 278.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 270.51 278.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 270.51 278.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b4815da5-091e-476f-8ae4-ecaa52a08273")
+		)
+		(instances
+			(project ""
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
+					(reference "#PWR01")
 					(unit 1)
 				)
 			)
@@ -8746,7 +9434,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical"
 			(at 294.64 213.36 0)
 			(effects
 				(font
@@ -8922,6 +9610,73 @@
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
 					(reference "C8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 355.6 231.14 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a5f07420-071c-4a28-bc87-709894fb5321")
+		(property "Reference" "J3"
+			(at 358.394 228.346 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x02_Pin"
+			(at 364.744 230.632 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
+			(at 355.6 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 355.6 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 355.6 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3e42796c-977b-4b1f-9b37-f0ec7a4540bd")
+		)
+		(pin "2"
+			(uuid "867b9c2e-7092-475a-84a0-a0925f332599")
+		)
+		(instances
+			(project ""
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
+					(reference "J3")
 					(unit 1)
 				)
 			)
