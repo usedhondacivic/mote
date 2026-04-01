@@ -1,0 +1,26 @@
+name: Hardware Check
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'mote-hardware/**'
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'mote-hardware/**'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  drc:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/inti-cmnb/kicad9_auto:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run DRC
+        working-directory: mote-hardware
+        run: kibot -b mote-hardware.kicad_pcb -e mote-hardware.kicad_sch -c drc.kibot.yaml

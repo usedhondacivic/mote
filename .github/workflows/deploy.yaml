@@ -67,6 +67,27 @@ jobs:
       - name: Run CI web build
         run: just ci-web-artifact
 
+      - name: Fetch hardware IBOM from latest release
+        run: |
+          LATEST_HW_TAG=$(gh release list \
+            --repo "$GITHUB_REPOSITORY" \
+            --json tagName \
+            --jq '[.[] | select(.tagName | startswith("mote-hardware-"))] | first | .tagName' \
+            2>/dev/null || echo "")
+          if [ -z "$LATEST_HW_TAG" ]; then
+            echo "No hardware release found, skipping IBOM"
+            exit 0
+          fi
+          echo "Fetching IBOM from $LATEST_HW_TAG"
+          mkdir -p output/hardware
+          gh release download "$LATEST_HW_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern 'ibom.html' \
+            --dir output/hardware/ \
+            2>/dev/null || echo "No IBOM in $LATEST_HW_TAG yet, skipping"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

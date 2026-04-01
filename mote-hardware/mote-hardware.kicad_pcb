@@ -798,7 +798,6 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/22a3b83e-1c62-4790-bac1-c9a71b1aad2e")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 3.75 0)
@@ -2724,7 +2723,7 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/a5f07420-071c-4a28-bc87-709894fb5321")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.38 -1.38)
 			(end 0 -1.38)
@@ -3131,7 +3130,7 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/a93ec77c-06fc-4441-accc-53234a58db7e")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.38 1.27)
 			(end 1.38 6.46)
@@ -11191,7 +11190,6 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/4f4e10a1-e0f2-49fc-92b2-9c20ed316409")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 3.75 0)
@@ -12652,7 +12650,7 @@
 				)
 			)
 		)
-		(property "Value" "left_motor"
+		(property "Value" "JST_PH_B6B"
 			(at 5 4 0)
 			(layer "F.Fab")
 			(uuid "b79f72a6-a795-4e4e-a2b4-e714e08bcf3a")
@@ -14079,7 +14077,7 @@
 				)
 			)
 		)
-		(property "Value" "right_motor"
+		(property "Value" "JST_PH_B6B"
 			(at 5 4 0)
 			(layer "F.Fab")
 			(uuid "f4535353-73d9-4b7f-87c8-5a88a945f0a1")
