@@ -13,7 +13,7 @@ jobs:
   release-hardware:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/inti-cmnb/kicad9_auto:latest
+      image: ghcr.io/inti-cmnb/kicad9_auto:1.8.3
     permissions:
       contents: write
     steps:
