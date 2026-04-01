@@ -6,9 +6,9 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2026-03-22")
+		(date "2026-03-31")
 		(rev "V0.0.0")
-		(company "github.com/usedhondacivic/mote")
+		(company "github.com/empriselab/mote-core")
 	)
 	(lib_symbols)
 	(text "Mote Top-Level Design"

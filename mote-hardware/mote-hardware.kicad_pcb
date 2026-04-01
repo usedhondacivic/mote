@@ -9,7 +9,7 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2026-03-22")
+		(date "2026-03-31")
 		(rev "v0.0.0")
 		(company "github.com/empriselab/mote-core")
 	)
