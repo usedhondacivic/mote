@@ -6,9 +6,9 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2025-12-30")
+		(date "2026-03-31")
 		(rev "V0.0.0")
-		(company "github.com/usedhondacivic/mote")
+		(company "github.com/empriselab/mote-core")
 	)
 	(lib_symbols
 		(symbol "Device:R"
@@ -816,7 +816,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+		(property "Footprint" "PCM_JLCPCB:R_0603"
 			(at 140.462 95.25 90)
 			(effects
 				(font
@@ -902,7 +902,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+		(property "Footprint" "PCM_JLCPCB:R_0603"
 			(at 132.842 95.25 90)
 			(effects
 				(font

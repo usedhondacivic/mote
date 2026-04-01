@@ -38,8 +38,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 0.53,
-          "width": 0.47
+          "height": 0.895,
+          "width": 1.47
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -49,7 +49,7 @@
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.14
+          "min_clearance": 0.15
         }
       },
       "diff_pair_dimensions": [
@@ -59,7 +59,16 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "footprint_type_mismatch|100076000|93069000|421239bb-fffb-4f3b-aee6-240057e47bf7|00000000-0000-0000-0000-000000000000",
+          "Component has thermal vias"
+        ],
+        [
+          "starved_thermal|101561000|88469000|a5c95b9d-1c43-4337-923c-843ac4c15290|9a91b33e-2629-4f43-9200-bd33571b76fd|F.Cu",
+          "Thermal relief not required"
+        ]
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -478,7 +487,7 @@
   },
   "meta": {
     "filename": "mote-hardware.kicad_pro",
-    "version": 1
+    "version": 3
   },
   "net_settings": {
     "classes": [
@@ -493,6 +502,7 @@
         "microvia_drill": 0.1,
         "name": "Default",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.15,
         "via_diameter": 0.6,
@@ -510,6 +520,7 @@
         "microvia_drill": 0.1,
         "name": "USB_DIFF_90",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.15,
         "via_diameter": 0.6,
@@ -518,7 +529,7 @@
       }
     ],
     "meta": {
-      "version": 3
+      "version": 4
     },
     "net_colors": null,
     "netclass_assignments": null,

@@ -49,3 +49,5 @@ fp-info-cache
 *.dxf
 *.ps
 *.plt
+
+jlcpcb/

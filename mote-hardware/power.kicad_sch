@@ -6,9 +6,9 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2025-12-30")
+		(date "2026-03-31")
 		(rev "V0.0.0")
-		(company "github.com/usedhondacivic/mote")
+		(company "github.com/empriselab/mote-core")
 	)
 	(lib_symbols
 		(symbol "Connector:USB_C_Receptacle_USB2.0_16P"
@@ -1430,7 +1430,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 100.33) (xy 105.41 106.68)
+			(xy 105.41 102.87) (xy 105.41 106.68)
 		)
 		(stroke
 			(width 0)
@@ -1510,7 +1510,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 88.9) (xy 105.41 92.71)
+			(xy 105.41 88.9) (xy 105.41 95.25)
 		)
 		(stroke
 			(width 0)
@@ -1807,7 +1807,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "PCM_JLCPCB:C_0805"
 			(at 188.2648 104.14 0)
 			(effects
 				(font
@@ -1875,7 +1875,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "PCM_JLCPCB:C_0805"
 			(at 224.4852 104.14 0)
 			(effects
 				(font
@@ -2021,7 +2021,7 @@
 			(uuid "a9f7c337-8fd9-4a8f-a574-8a267d004128")
 		)
 		(instances
-			(project ""
+			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/b87252c5-15f5-4304-a4f0-d9bd6e688e51"
 					(reference "J1")
 					(unit 1)
@@ -2056,7 +2056,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+		(property "Footprint" "PCM_JLCPCB:R_0402"
 			(at 107.442 99.06 90)
 			(effects
 				(font
@@ -2100,7 +2100,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 105.41 96.52 0)
+		(at 105.41 99.06 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2108,15 +2108,6 @@
 		(dnp no)
 		(uuid "cc5aba02-b8eb-47da-9245-5f4c0d0f8c39")
 		(property "Reference" "R9"
-			(at 99.314 95.25 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "5.1k"
 			(at 99.314 97.79 0)
 			(effects
 				(font
@@ -2125,8 +2116,17 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 103.632 96.52 90)
+		(property "Value" "5.1k"
+			(at 99.314 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:R_0402"
+			(at 103.632 99.06 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2135,7 +2135,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 105.41 96.52 0)
+			(at 105.41 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2144,7 +2144,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 105.41 96.52 0)
+			(at 105.41 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2159,7 +2159,7 @@
 			(uuid "d36ff1aa-8e8e-4aca-8414-e4afdcd217aa")
 		)
 		(instances
-			(project ""
+			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/b87252c5-15f5-4304-a4f0-d9bd6e688e51"
 					(reference "R9")
 					(unit 1)
