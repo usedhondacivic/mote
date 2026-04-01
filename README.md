@@ -2,6 +2,7 @@
 
 [![Build and Test](https://github.com/mote-robotics/mote-core/actions/workflows/build-test.yaml/badge.svg)](https://github.com/mote-robotics/mote-core/actions/workflows/build-test.yaml)
 [![Deploy Docs](https://github.com/mote-robotics/mote-core/actions/workflows/deploy.yaml/badge.svg)](https://github.com/mote-robotics/mote-core/actions/workflows/deploy.yaml)
+[![Hardware Check](https://github.com/mote-robotics/mote-core/actions/workflows/hardware-check.yaml/badge.svg)](https://github.com/mote-robotics/mote-core/actions/workflows/hardware-check.yaml)
 
 A low cost and high confidence mobile robot.
 
