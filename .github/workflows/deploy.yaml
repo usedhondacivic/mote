@@ -84,7 +84,9 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --pattern 'ibom.html' \
             --dir output/hardware/ \
-            2>/dev/null || echo "No IBOM in $LATEST_HW_TAG yet, skipping"
+            2>/dev/null \
+            && mv output/hardware/ibom.html output/hardware/index.html \
+            || echo "No IBOM in $LATEST_HW_TAG yet, skipping"
         env:
           GH_TOKEN: ${{ github.token }}
 
