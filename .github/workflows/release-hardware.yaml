@@ -13,17 +13,22 @@ jobs:
   release-hardware:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/inti-cmnb/kicad9_auto:1.8.3
+      image: ghcr.io/inti-cmnb/kicad9_auto:latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+
+      - name: Run DRC
+        working-directory: mote-hardware
+        run: kibot -b mote-hardware.kicad_pcb -e mote-hardware.kicad_sch -c drc.kibot.yaml
 
       - name: Generate manufacturing files
         working-directory: mote-hardware
         run: |
           kikit fab jlcpcb \
             --assembly \
+            --no-drc \
             --schematic mote-hardware.kicad_sch \
             mote-hardware.kicad_pcb \
             jlcpcb/
