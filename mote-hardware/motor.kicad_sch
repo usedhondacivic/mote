@@ -1916,7 +1916,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "right_motor"
+		(property "Value" "JST_PH_B6B"
 			(at 200.66 128.2699 0)
 			(effects
 				(font
@@ -1998,7 +1998,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "left_motor"
+		(property "Value" "JST_PH_B6B"
 			(at 200.66 106.6799 0)
 			(effects
 				(font

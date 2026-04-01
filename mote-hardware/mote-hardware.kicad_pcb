@@ -798,7 +798,6 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/22a3b83e-1c62-4790-bac1-c9a71b1aad2e")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 3.75 0)
@@ -2724,7 +2723,7 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/a5f07420-071c-4a28-bc87-709894fb5321")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.38 -1.38)
 			(end 0 -1.38)
@@ -3131,7 +3130,7 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/a93ec77c-06fc-4441-accc-53234a58db7e")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.38 1.27)
 			(end 1.38 6.46)
@@ -5010,7 +5009,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "7fa34d94-770d-442e-ae91-668565d512f6")
 		)
 		(pad "61" thru_hole circle
 			(at -1.375 1.375)
@@ -5022,7 +5021,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "25179aa8-6e6d-4b73-9c1c-a85e37733cd7")
 		)
 		(pad "61" thru_hole circle
 			(at 0 -1.375)
@@ -5034,7 +5033,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "4eee8317-2991-4fea-bf8e-594081392180")
 		)
 		(pad "61" thru_hole circle
 			(at 0 0)
@@ -5046,7 +5045,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "2d6bb1a0-e2a4-448a-8610-7d518a062676")
 		)
 		(pad "61" smd roundrect
 			(at 0 0 90)
@@ -5057,7 +5056,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "1e70baca-9734-4f78-ac90-721a0807ac3d")
 		)
 		(pad "61" thru_hole circle
 			(at 0 1.375)
@@ -5069,7 +5068,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "8aa80f07-c880-4690-9feb-f850d1043fe4")
 		)
 		(pad "61" thru_hole circle
 			(at 1.375 -1.375)
@@ -5081,7 +5080,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "61b0c905-2bca-4392-acad-e6b1cecd1ce0")
 		)
 		(pad "61" thru_hole circle
 			(at 1.375 0)
@@ -5093,7 +5092,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "168a5782-c2a3-4a06-8297-eec36f30c241")
 		)
 		(pad "61" thru_hole circle
 			(at 1.375 1.375)
@@ -5105,7 +5104,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "25fcf4cd-3947-452d-b5e6-d2611efe7c97")
+			(uuid "f84de8aa-8527-4c9d-ace4-29560ed55699")
 		)
 		(embedded_fonts no)
 		(model "${KISYS3DMOD}/Package_DFN_QFN.3dshapes/QFN-56-1EP_7x7mm_P0.4mm_EP5.6x5.6mm.wrl"
@@ -11191,7 +11190,6 @@
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/4f4e10a1-e0f2-49fc-92b2-9c20ed316409")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
-		(attr exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 3.75 0)
@@ -12652,7 +12650,7 @@
 				)
 			)
 		)
-		(property "Value" "left_motor"
+		(property "Value" "JST_PH_B6B"
 			(at 5 4 0)
 			(layer "F.Fab")
 			(uuid "b79f72a6-a795-4e4e-a2b4-e714e08bcf3a")
@@ -13770,7 +13768,7 @@
 			(net 1 "GND")
 			(pinfunction "MountPin")
 			(pintype "passive")
-			(uuid "645651b6-5e95-4ffb-a660-427fae9e00f1")
+			(uuid "b5f79071-705b-441a-8bd9-6da03ff888b6")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical.step"
@@ -14037,7 +14035,7 @@
 			(net 10 "/+3v3")
 			(pinfunction "VO")
 			(pintype "power_out")
-			(uuid "29e55194-e08b-416f-9cab-a33c3d945307")
+			(uuid "32fbd55b-750d-4153-b174-c70c4c881080")
 		)
 		(pad "3" smd roundrect
 			(at -3.15 2.3 270)
@@ -14079,7 +14077,7 @@
 				)
 			)
 		)
-		(property "Value" "right_motor"
+		(property "Value" "JST_PH_B6B"
 			(at 5 4 0)
 			(layer "F.Fab")
 			(uuid "f4535353-73d9-4b7f-87c8-5a88a945f0a1")
@@ -14993,49 +14991,49 @@
 			(size 1.47 0.895)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(solder_paste_margin_ratio -0.2)
-			(uuid "8f4244f8-d85a-4cdc-b684-66a202693879")
+			(uuid "2e139f68-768b-4050-95f1-a9b2c860d6d1")
 		)
 		(pad "17" smd rect
 			(at -0.735 0.4475 180)
 			(size 1.47 0.895)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(solder_paste_margin_ratio -0.2)
-			(uuid "8f4244f8-d85a-4cdc-b684-66a202693879")
+			(uuid "c33c7cc4-a123-4aee-9a31-9a651a999919")
 		)
 		(pad "17" smd rect
 			(at -0.735 1.3425 180)
 			(size 1.47 0.895)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(solder_paste_margin_ratio -0.2)
-			(uuid "8f4244f8-d85a-4cdc-b684-66a202693879")
+			(uuid "e78859be-bf62-4939-bc5d-6993eae32dc5")
 		)
 		(pad "17" smd rect
 			(at 0.735 -1.3425 180)
 			(size 1.47 0.895)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(solder_paste_margin_ratio -0.2)
-			(uuid "8f4244f8-d85a-4cdc-b684-66a202693879")
+			(uuid "b6c50e6e-6bec-4a58-b806-bcd6bff98e5a")
 		)
 		(pad "17" smd rect
 			(at 0.735 -0.4475 180)
 			(size 1.47 0.895)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(solder_paste_margin_ratio -0.2)
-			(uuid "8f4244f8-d85a-4cdc-b684-66a202693879")
+			(uuid "9cef9cb3-988c-478a-8aa9-140fdc39ebf9")
 		)
 		(pad "17" smd rect
 			(at 0.735 0.4475 180)
 			(size 1.47 0.895)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(solder_paste_margin_ratio -0.2)
-			(uuid "8f4244f8-d85a-4cdc-b684-66a202693879")
+			(uuid "7c747324-a6ef-4e01-8757-8d2d05514813")
 		)
 		(pad "17" smd rect
 			(at 0.735 1.3425 180)
 			(size 1.47 0.895)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(solder_paste_margin_ratio -0.2)
-			(uuid "8f4244f8-d85a-4cdc-b684-66a202693879")
+			(uuid "583ecf3e-b04e-40d1-9940-4dba57d198a4")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Package_SO.3dshapes/TSSOP-16-1EP_4.4x5mm_P0.65mm.step"
@@ -15430,7 +15428,7 @@
 			(net 1 "GND")
 			(pinfunction "SHIELD")
 			(pintype "passive")
-			(uuid "91b437e2-e89b-48c8-bdf6-a08986084e4b")
+			(uuid "101866b2-b608-4c5e-8598-350efda0f5d9")
 		)
 		(pad "S1" thru_hole oval
 			(at 4.32 -3.125 180)
@@ -15442,7 +15440,7 @@
 			(net 1 "GND")
 			(pinfunction "SHIELD")
 			(pintype "passive")
-			(uuid "91b437e2-e89b-48c8-bdf6-a08986084e4b")
+			(uuid "db1edcca-3b36-4427-b21b-ba43facbe82c")
 		)
 		(pad "S1" thru_hole oval
 			(at 4.32 1.075 180)
@@ -15454,7 +15452,7 @@
 			(net 1 "GND")
 			(pinfunction "SHIELD")
 			(pintype "passive")
-			(uuid "91b437e2-e89b-48c8-bdf6-a08986084e4b")
+			(uuid "131af51a-aa23-4361-b6e7-688ceee1fb46")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_USB.3dshapes/USB_C_Receptacle_G-Switch_GT-USB-7010ASV.step"
@@ -23269,7 +23267,7 @@
 				(xy 86.397613 92.850029) (xy 86.381045 92.790318) (xy 86.381043 92.790314) (xy 86.380965 92.79016)
 				(xy 86.377043 92.782464) (xy 86.374468 92.774052) (xy 86.368894 92.758757) (xy 86.357617 92.744337)
 				(xy 86.35328 92.735825) (xy 86.353273 92.735811) (xy 86.347821 92.728307) (xy 86.324674 92.696446)
-				(xy 86.324671 92.696443) (xy 86.277782 92.649553) (xy 86.250005 92.595036) (xy 86.248801 92.577885)
+				(xy 86.324671 92.696443) (xy 86.277782 92.649553) (xy 86.250005 92.595036) (xy 86.248801 92.577884)
 				(xy 86.260063 91.915006) (xy 86.279956 91.857147) (xy 86.302226 91.835622) (xy 86.334297 91.813144)
 				(xy 86.347119 91.803117) (xy 86.392099 91.736364) (xy 86.411992 91.678503) (xy 86.420418 91.630588)
 				(xy 86.428737 91.140953) (xy 86.44863 91.083093) (xy 86.498734 91.047975)

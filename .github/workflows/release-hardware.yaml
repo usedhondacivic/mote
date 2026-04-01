@@ -1,0 +1,58 @@
+name: Release Hardware
+
+on:
+  push:
+    tags:
+      - 'mote-hardware-v*.*.*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release-hardware:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/inti-cmnb/kicad9_auto:latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run DRC
+        working-directory: mote-hardware
+        run: kibot -b mote-hardware.kicad_pcb -e mote-hardware.kicad_sch -c drc.kibot.yaml
+
+      - name: Generate manufacturing files
+        working-directory: mote-hardware
+        run: |
+          kikit fab jlcpcb \
+            --assembly \
+            --no-drc \
+            --schematic mote-hardware.kicad_sch \
+            mote-hardware.kicad_pcb \
+            jlcpcb/
+
+      - name: Generate IBOM
+        working-directory: mote-hardware
+        run: kibot -b mote-hardware.kicad_pcb -e mote-hardware.kicad_sch -c mote-hardware.kibot.yaml
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            mote-hardware/jlcpcb/gerbers.zip
+            mote-hardware/jlcpcb/bom.csv
+            mote-hardware/jlcpcb/pos.csv
+            mote-hardware/ibom.html
+
+  redeploy-pages:
+    needs: release-hardware
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Trigger pages deployment
+        run: gh workflow run deploy.yaml --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
