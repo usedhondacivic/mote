@@ -816,7 +816,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+		(property "Footprint" "PCM_JLCPCB:R_0603"
 			(at 140.462 95.25 90)
 			(effects
 				(font
@@ -902,7 +902,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+		(property "Footprint" "PCM_JLCPCB:R_0603"
 			(at 132.842 95.25 90)
 			(effects
 				(font

@@ -1807,7 +1807,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "PCM_JLCPCB:C_0805"
 			(at 188.2648 104.14 0)
 			(effects
 				(font
@@ -1875,7 +1875,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "PCM_JLCPCB:C_0805"
 			(at 224.4852 104.14 0)
 			(effects
 				(font
@@ -2021,7 +2021,7 @@
 			(uuid "a9f7c337-8fd9-4a8f-a574-8a267d004128")
 		)
 		(instances
-			(project ""
+			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/b87252c5-15f5-4304-a4f0-d9bd6e688e51"
 					(reference "J1")
 					(unit 1)
@@ -2056,7 +2056,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+		(property "Footprint" "PCM_JLCPCB:R_0402"
 			(at 107.442 99.06 90)
 			(effects
 				(font
@@ -2125,7 +2125,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+		(property "Footprint" "PCM_JLCPCB:R_0402"
 			(at 103.632 99.06 90)
 			(effects
 				(font
@@ -2159,7 +2159,7 @@
 			(uuid "d36ff1aa-8e8e-4aca-8414-e4afdcd217aa")
 		)
 		(instances
-			(project ""
+			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/b87252c5-15f5-4304-a4f0-d9bd6e688e51"
 					(reference "R9")
 					(unit 1)

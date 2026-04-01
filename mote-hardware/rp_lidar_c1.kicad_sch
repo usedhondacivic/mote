@@ -490,7 +490,7 @@
 			)
 		)
 		(instances
-			(project ""
+			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/0a44614a-b30e-47eb-9b35-85ffdcfad2e9"
 					(reference "H1")
 					(unit 1)
@@ -633,7 +633,7 @@
 			(uuid "4fe2920a-ca5c-4c12-9c76-6e093c06f80a")
 		)
 		(instances
-			(project ""
+			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/0a44614a-b30e-47eb-9b35-85ffdcfad2e9"
 					(reference "J2")
 					(unit 1)
