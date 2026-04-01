@@ -2,4 +2,7 @@ kibot:
   version: 1
 
 preflight:
-  run_drc: true
+  drc:
+    filters:
+      - filter: 'Ignore missing PCM_JLCPCB library (not available in CI)'
+        error: 'lib_footprint_issues'
