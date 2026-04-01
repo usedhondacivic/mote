@@ -1708,7 +1708,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100uF"
+		(property "Value" "100u"
 			(at 167.386 70.358 0)
 			(effects
 				(font
@@ -1736,6 +1736,15 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 166.37 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C15008"
 			(at 166.37 67.31 0)
 			(effects
 				(font
@@ -1777,7 +1786,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "10uF"
+		(property "Value" "10u"
 			(at 181.61 69.85 0)
 			(effects
 				(font
@@ -1805,6 +1814,15 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 180.34 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C440198"
 			(at 180.34 67.31 0)
 			(effects
 				(font
@@ -1846,7 +1864,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "0.1u"
 			(at 194.056 70.104 0)
 			(effects
 				(font
@@ -1874,6 +1892,15 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 193.04 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
 			(at 193.04 67.31 0)
 			(effects
 				(font
@@ -1944,6 +1971,15 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 198.12 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C495261"
 			(at 198.12 125.73 0)
 			(effects
 				(font
@@ -2034,6 +2070,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C495261"
+			(at 198.12 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "3"
 			(uuid "9964deb8-c732-4f90-9230-cc64a645c95a")
 		)
@@ -2113,6 +2158,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C7467478"
+			(at 127 104.14 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "bb0e65ea-8af9-419b-b378-e76a35d101c1")
 		)
@@ -2177,6 +2231,15 @@
 			)
 		)
 		(property "Description" "Dual H-Bridge Motor Driver, TSSOP-16"
+			(at 152.4 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C50506"
 			(at 152.4 106.68 0)
 			(effects
 				(font
@@ -2297,6 +2360,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C15195"
+			(at 138.43 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "8dfebe1e-99eb-4462-9ab2-2956482ab016")
 		)
@@ -2357,6 +2429,15 @@
 		)
 		(property "Description" "Resistor"
 			(at 127 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C7467478"
+			(at 127 101.6 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2426,6 +2507,15 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 168.91 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C12530"
 			(at 168.91 88.9 0)
 			(effects
 				(font

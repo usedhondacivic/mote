@@ -441,7 +441,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "05c6753f-29bb-4152-aa52-d135ec4ab5d1")
 		(property "Reference" "H1"
@@ -505,7 +505,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "0667c299-d1c3-46ba-958a-9e63a1037107")
 		(property "Reference" "H3"
@@ -617,6 +617,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C144397"
+			(at 110.49 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "e629e275-9454-4f6a-bf9b-18cd25054262")
 		)
@@ -648,7 +657,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "b704a75d-7472-4a75-8508-6a622c283db4")
 		(property "Reference" "H2"
@@ -712,7 +721,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "e818f8b4-853f-4a54-99ee-5e635a15e2f1")
 		(property "Reference" "H4"
