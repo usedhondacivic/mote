@@ -489,6 +489,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB_CORRECTION" ""
+			(at 165.1 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/0a44614a-b30e-47eb-9b35-85ffdcfad2e9"
@@ -545,6 +554,15 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
+			(at 165.1 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -617,7 +635,16 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C144397"
+		(property "LCSC" "C157991"
+			(at 110.49 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
 			(at 110.49 100.33 0)
 			(effects
 				(font
@@ -705,6 +732,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB_CORRECTION" ""
+			(at 165.1 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/0a44614a-b30e-47eb-9b35-85ffdcfad2e9"
@@ -761,6 +797,15 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
+			(at 165.1 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
 			(at 165.1 106.68 0)
 			(effects
 				(font

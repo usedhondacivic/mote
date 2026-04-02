@@ -1049,6 +1049,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB_CORRECTION" ""
+			(at 72.39 104.14 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "fd8c29cc-4279-4646-8485-7a345f8ce102")
 		)
@@ -1137,6 +1146,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB_CORRECTION" ""
+			(at 204.47 97.79 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "e21b40a7-1a83-4587-8869-ad94395c72dd")
 		)
@@ -1215,6 +1233,15 @@
 			)
 		)
 		(property "LCSC" "C965555"
+			(at 134.62 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
 			(at 134.62 104.14 0)
 			(effects
 				(font
@@ -1315,6 +1342,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB_CORRECTION" ""
+			(at 87.63 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "cbf6188e-4f72-49d7-a718-8134a343f1b2")
 		)
@@ -1399,6 +1435,15 @@
 			)
 		)
 		(property "LCSC" "C965555"
+			(at 111.76 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
 			(at 111.76 104.14 0)
 			(effects
 				(font
@@ -1492,6 +1537,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB_CORRECTION" ""
+			(at 215.9 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "bc1af9b9-009b-4e4c-86cd-3a6016025226")
 		)
@@ -1563,6 +1617,15 @@
 			)
 		)
 		(property "LCSC" "C25879"
+			(at 204.47 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
 			(at 204.47 109.22 0)
 			(effects
 				(font
@@ -1717,6 +1780,15 @@
 			)
 		)
 		(property "LCSC" "C2290"
+			(at 215.9 97.79 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
 			(at 215.9 97.79 90)
 			(effects
 				(font
