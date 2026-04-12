@@ -90,6 +90,8 @@ embedded-hal = "1.0"
 embedded-hal-async = "1.0"
 embedded-alloc = "0.7"
 
+smart-leds = "0.4"
+
 [profile.release]
 lto = true
 opt-level = 3
