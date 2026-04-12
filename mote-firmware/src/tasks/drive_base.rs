@@ -1,6 +1,6 @@
 use defmt::error;
 use embassy_executor::Spawner;
-use embassy_futures::select::{select3, select4};
+use embassy_futures::select::select4;
 use embassy_rp::pio::{Instance, Pio};
 use embassy_rp::pwm::SetDutyCycle;
 use embassy_rp::{gpio, pwm};
@@ -199,8 +199,6 @@ async fn motor_task(
                 // Run PID update
                 left_motor.step(PID_CONTROL_LOOP_PERIOD_MS).await;
                 right_motor.step(PID_CONTROL_LOOP_PERIOD_MS).await;
-                // Push deadline far into the future so it doesn't re-fire immediately
-                watchdog_deadline = Instant::now() + Duration::from_secs(u64::MAX / 2);
             }
             embassy_futures::select::Either4::Second(_) => {
                 // Send a value to the data offload link
@@ -214,6 +212,8 @@ async fn motor_task(
                 sleep.set_low();
                 left_motor.set_setpoint_rad_per_s(0.0);
                 right_motor.set_setpoint_rad_per_s(0.0);
+                // Push deadline far into the future so it doesn't re-fire immediately
+                watchdog_deadline = Instant::now() + Duration::from_secs(10000);
             }
             embassy_futures::select::Either4::Fourth(command) => {
                 // Command received, feed the watchdog

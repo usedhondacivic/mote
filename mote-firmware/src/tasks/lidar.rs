@@ -1,5 +1,6 @@
 mod rp_c1_driver;
 
+use defmt::info;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{BufferedUart, Config, DataBits, Parity, StopBits};
 use mote_api::messages::mote_to_host;
@@ -73,7 +74,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                 match driver.receive_samples(&mut point_buf).await {
                     Ok(count) => {
                         if count < (MAX_POINTS_PER_SCAN_MESSAGE >> 1) {
-                            // More than 50% of points were not read correctly
+                            // More than 50% of points were read incorrectly
                             LidarState::CheckHealth
                         } else {
                             valid_points = count;
