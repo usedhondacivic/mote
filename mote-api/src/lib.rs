@@ -197,12 +197,12 @@ mod tests {
             mote_to_host::Message::Scan(vec![
                 mote_to_host::Point {
                     quality: 255,
-                    angle_rads: 1.5707,
+                    angle_rad: 1.5707,
                     distance_mm: 500.0,
                 },
                 mote_to_host::Point {
                     quality: 0,
-                    angle_rads: 0.0,
+                    angle_rad: 0.0,
                     distance_mm: 0.0,
                 },
             ]),
@@ -354,7 +354,7 @@ mod tests {
             (0..100u8)
                 .map(|i| mote_to_host::Point {
                     quality: i,
-                    angle_rads: i as f32 * 0.01,
+                    angle_rad: i as f32 * 0.01,
                     distance_mm: i as f32 * 10.0,
                 })
                 .collect(),

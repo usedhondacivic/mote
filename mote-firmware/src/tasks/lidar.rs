@@ -1,6 +1,5 @@
 mod rp_c1_driver;
 
-use defmt::info;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{BufferedUart, Config, DataBits, Parity, StopBits};
 use mote_api::messages::mote_to_host;
