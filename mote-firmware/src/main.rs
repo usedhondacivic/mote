@@ -129,9 +129,9 @@ async fn core1_task(
     power_gate::init(spawner, usb_power_r).await;
     info!("Power Gate INIT complete");
 
-    // info!("Gating on 1.5A capable before starting LiDAR");
-    // power_gate::gate_1_5_amp().await;
-    // info!("Power supply is 1.5A capable");
+    info!("Gating on 1.5A capable before starting LiDAR");
+    power_gate::gate_1_5_amp().await;
+    info!("Power supply is 1.5A capable");
 
     lidar::init(spawner, lidar_r).await;
     info!("LiDAR INIT complete");
