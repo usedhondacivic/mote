@@ -1,6 +1,6 @@
 pub mod lib; 
 pub mod regs; 
-pub use lib::Lsm6ds33;
+pub use lib::Lsm6ds3TRC;
 
 use embassy_rp::i2c::{I2c, Error as I2cError, Config} ; // Import the specific error
 use embassy_rp::peripherals::I2C1;
@@ -17,7 +17,7 @@ use crate::wifi::DATA_OFFLOAD_CHANNEL;
 
 // Data retrieval function returning the custom IMUMeasurement struct
 pub async fn get_sensor_data(
-    imu: &mut Lsm6ds33<I2c<'static, I2C1, embassy_rp::i2c::Async>>
+    imu: &mut Lsm6ds3TRC<I2c<'static, I2C1, embassy_rp::i2c::Async>>
 ) -> (f32, IMUMeasurement) {
     match imu.read_all().await {
         Ok((temperature, gyro_tuple, accel_tuple)) => {
@@ -54,7 +54,7 @@ async fn imu_task(r: ImuResources) {
     let i2c = I2c::new_async(r.i2c, r.scl, r.sda, Irqs, Config::default());
 
     // Explicitly handle the Result to help the compiler infer types
-    let mut imu = match Lsm6ds33::new(i2c, 0x6A).await {
+    let mut imu = match Lsm6ds3TRC::new(i2c, 0x6A).await {
         Ok(lsm) => lsm,
         // Match specifically on the communication error to see the I2C error
         Err((_i2c, lib::Error::CommunicationError(e))) => {
@@ -87,11 +87,11 @@ async fn imu_task(r: ImuResources) {
         // 2. Wrap it in the message enum and send
         // Assuming the enum variant is 'Imu' and it takes an IMUMeasurement
         // 3. Log it for local debugging
-        defmt::info!("IMU data offloaded, accel: ({}, {}, {}), gyro: ({}, {}, {}), temp: {}°C",
-            measurement.accel.x, measurement.accel.y, measurement.accel.z,
-            measurement.gyro.x, measurement.gyro.y, measurement.gyro.z,
-            temp
-        );
+        // defmt::info!("IMU data offloaded, accel: ({}, {}, {}), gyro: ({}, {}, {}), temp: {}°C",
+        //     measurement.accel.x, measurement.accel.y, measurement.accel.z,
+        //     measurement.gyro.x, measurement.gyro.y, measurement.gyro.z,
+        //     temp
+        // );
         let _ = DATA_OFFLOAD_CHANNEL.try_send(mote_to_host::Message::IMUMeasurement(measurement));
 
         embassy_time::Timer::after_millis(20).await; 

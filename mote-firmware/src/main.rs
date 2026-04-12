@@ -133,8 +133,8 @@ async fn core1_task(
     // power_gate::gate_1_5_amp().await;
     // info!("Power supply is 1.5A capable");
 
-    // lidar::init(spawner, lidar_r).await;
-    // info!("LiDAR INIT complete");
+    lidar::init(spawner, lidar_r).await;
+    info!("LiDAR INIT complete");
 
     imu::init(spawner, imu_r).await;
     info!("IMU INIT complete");

@@ -5,11 +5,6 @@
 // @date Nov 12 2021
 //
 
-/////////////////////////////////////////////
-/// IT SAYS Lsm6ds33 BUT IT WAS MODIFIED TO BE Lsm6ds3-TRC IMU driver and task
-/////////////////////////////////////////////
-
-
 #![no_std]
 #![allow(unused)]
 use crate::tasks::imu::regs as regs;
@@ -43,28 +38,28 @@ impl<E> From<E> for Error<E> {
 }
 
 // Value of the WHO_AM_I register
-// const CHIP_ID: u8 = 0x69;
-const CHIP_ID: u8 = 0x6A;
+// const CHIP_ID: u8 = 0x69; // FOR LSM6DS33
+const CHIP_ID: u8 = 0x6A; // FOR LSM6DS3-TRC, DIFFERENT FROM LSM6DS33 WHOAMI
 
 // Earth gravity constant for acceleration conversion
 const EARTH_GRAVITY: f32 = 9.80665;
 
 /// 6-DoF IMU accelerometer + gyro
-pub struct Lsm6ds33<I2C> {
+pub struct Lsm6ds3TRC<I2C> {
     i2c: I2C,
     addr: u8,
     accelerometer_scale: Option<AccelerometerScale>,
     gyroscope_scale: Option<GyroscopeFullScale>,
 }
 
-impl<I2C, E> Lsm6ds33<I2C>
+impl<I2C, E> Lsm6ds3TRC<I2C>
 where
     I2C: I2c<Error = E>, // Standardizes on the 1.0 trait
 {
-    /// Create an instance of the Lsm6ds33 driver
+    /// Create an instance of the Lsm6ds3TRC driver
     /// If the device cannot be detected on the bus, an error will be returned
     pub async fn new(i2c: I2C, addr: u8) -> Result<Self, (I2C, Error<E>)> {
-        let mut lsm = Lsm6ds33 {
+        let mut lsm = Lsm6ds3TRC {
             i2c,
             addr,
             accelerometer_scale: None,
