@@ -72,6 +72,7 @@ fn main() -> ! {
                         spawner,
                         r.usb_serial,
                         r.lidar_uart,
+                        r.imu,
                         r.encoder_driver,
                         r.left_encoder,
                         r.right_encoder,
@@ -104,6 +105,7 @@ async fn core1_task(
     spawner: Spawner,
     usb_r: UsbSerialResources,
     lidar_r: RplidarC1Resources,
+    imu_r: ImuResources,
     encoder_driver_r: EncoderDriverResources,
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
@@ -127,12 +129,15 @@ async fn core1_task(
     power_gate::init(spawner, usb_power_r).await;
     info!("Power Gate INIT complete");
 
-    info!("Gating on 1.5A capable before starting LiDAR");
-    power_gate::gate_1_5_amp().await;
-    info!("Power supply is 1.5A capable");
+    // info!("Gating on 1.5A capable before starting LiDAR");
+    // power_gate::gate_1_5_amp().await;
+    // info!("Power supply is 1.5A capable");
 
-    lidar::init(spawner, lidar_r).await;
-    info!("LiDAR INIT complete");
+    // lidar::init(spawner, lidar_r).await;
+    // info!("LiDAR INIT complete");
+
+    imu::init(spawner, imu_r).await;
+    info!("IMU INIT complete");
 
     // Enabling this check causes the wifi network scan to fail and I can't figure
     // out why. For now we can just hope gating on 1.5A is enough to prevent brown
