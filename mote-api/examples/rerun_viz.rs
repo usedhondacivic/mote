@@ -128,7 +128,7 @@ fn main() -> anyhow::Result<()> {
                             )
                             .unwrap();
                         }
-                        mote_to_host::Message::State(_) => todo!(),
+                        _ => todo!(),
                     }
                 }
             }

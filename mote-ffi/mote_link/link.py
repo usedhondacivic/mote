@@ -21,8 +21,6 @@ class MoteConnectionError(Exception):
 
 
 # Message types
-
-
 @dataclass
 class LidarPoint:
     quality: int

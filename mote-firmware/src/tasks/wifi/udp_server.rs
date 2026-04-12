@@ -8,7 +8,7 @@ use mote_api::messages::{host_to_mote, mote_to_host};
 
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
-use crate::tasks::wifi::MOTE_TO_HOST_DATA_OFFLOAD;
+use crate::tasks::wifi::DATA_OFFLOAD_CHANNEL;
 
 pub const UDP_SERVER_PORT: u16 = 7475;
 
@@ -44,12 +44,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
     let mut client: Option<UdpMetadata> = None;
 
     loop {
-        match select(
-            socket.recv_from(&mut message_buffer),
-            MOTE_TO_HOST_DATA_OFFLOAD.receive(),
-        )
-        .await
-        {
+        match select(socket.recv_from(&mut message_buffer), DATA_OFFLOAD_CHANNEL.receive()).await {
             Either::First(Ok((bytes_read, ep))) => {
                 let new_client = match client {
                     None => {
