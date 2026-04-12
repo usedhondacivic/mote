@@ -8,11 +8,11 @@ use mote_api::messages::{host_to_mote, mote_to_host};
 
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
-use crate::tasks::wifi::MOTE_TO_HOST_DATA_OFFLOAD;
+use crate::tasks::wifi::{DATA_OFFLOAD_CHANNEL, MOTOR_COMMAND_CHANNEL};
 
 pub const UDP_SERVER_PORT: u16 = 7475;
 
-fn handle_command(rx_message: &host_to_mote::Message, link: &mut HostLink) {
+async fn handle_command(rx_message: host_to_mote::Message, link: &mut HostLink) {
     match rx_message {
         host_to_mote::Message::Ping => {
             info!("Parsed ping request, responding.");
@@ -20,6 +20,9 @@ fn handle_command(rx_message: &host_to_mote::Message, link: &mut HostLink) {
         }
         host_to_mote::Message::Pong => {
             info!("Received ping response from host.");
+        }
+        host_to_mote::Message::DriveBaseCommand(cmd) => {
+            MOTOR_COMMAND_CHANNEL.send(cmd).await;
         }
         _ => {
             error!("Received unhandled message type");
@@ -44,12 +47,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
     let mut client: Option<UdpMetadata> = None;
 
     loop {
-        match select(
-            socket.recv_from(&mut message_buffer),
-            MOTE_TO_HOST_DATA_OFFLOAD.receive(),
-        )
-        .await
-        {
+        match select(socket.recv_from(&mut message_buffer), DATA_OFFLOAD_CHANNEL.receive()).await {
             Either::First(Ok((bytes_read, ep))) => {
                 let new_client = match client {
                     None => {
@@ -74,7 +72,7 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
 
                 link.handle_receive(&message_buffer[..bytes_read]);
                 while let Ok(Some(message)) = link.poll_receive() {
-                    handle_command(&message, &mut link);
+                    handle_command(message, &mut link).await;
                 }
 
                 while let Some(payload) = link.poll_transmit() {

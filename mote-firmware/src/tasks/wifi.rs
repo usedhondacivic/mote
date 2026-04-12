@@ -12,8 +12,8 @@ use embassy_rp::peripherals::{DMA_CH0, PIO0};
 use embassy_rp::pio::Pio;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
-use mote_api::messages::mote_to_host;
 use mote_api::messages::mote_to_host::{BIT, BITResult};
+use mote_api::messages::{host_to_mote, mote_to_host};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
@@ -21,7 +21,9 @@ use super::{Cyw43Resources, Irqs};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 
-pub static MOTE_TO_HOST_DATA_OFFLOAD: Channel<CriticalSectionRawMutex, mote_to_host::Message, 32> = Channel::new();
+pub static DATA_OFFLOAD_CHANNEL: Channel<CriticalSectionRawMutex, mote_to_host::Message, 32> = Channel::new();
+pub static MOTOR_COMMAND_CHANNEL: Channel<CriticalSectionRawMutex, host_to_mote::SetDriveBaseVelocity, 5> =
+    Channel::new();
 
 #[embassy_executor::task]
 async fn cyw43_task(runner: cyw43::Runner<'static, Output<'static>, PioSpi<'static, PIO0, 0, DMA_CH0>>) -> ! {

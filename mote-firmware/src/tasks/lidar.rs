@@ -10,7 +10,7 @@ use super::{Irqs, RplidarC1Resources};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 use crate::tasks::lidar::rp_c1_driver::{LidarState, Point, RPLidarC1};
-use crate::wifi::MOTE_TO_HOST_DATA_OFFLOAD;
+use crate::wifi::DATA_OFFLOAD_CHANNEL;
 
 const MAX_POINTS_PER_SCAN_MESSAGE: usize = 100;
 
@@ -18,8 +18,8 @@ impl From<Point> for mote_to_host::Point {
     fn from(value: Point) -> Self {
         mote_to_host::Point {
             quality: value.quality,
-            // Feels expensive, but the RP2350 has a FPU
-            angle_rads: (value.angle as f32 / 64.0).to_radians(),
+            // Feels expensive, but the RP2354 has a FPU so probably fine
+            angle_rad: (value.angle as f32 / 64.0).to_radians(),
             distance_mm: value.distance as f32 / 4.0,
         }
     }
@@ -73,7 +73,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                 match driver.receive_samples(&mut point_buf).await {
                     Ok(count) => {
                         if count < (MAX_POINTS_PER_SCAN_MESSAGE >> 1) {
-                            // More than 50% of points were not read correctly
+                            // More than 50% of points were read incorrectly
                             LidarState::CheckHealth
                         } else {
                             valid_points = count;
@@ -89,7 +89,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
             LidarState::ProcessSample => {
                 // We don't care if these packets get lost, so don't block if the channel is
                 // full
-                let _ = MOTE_TO_HOST_DATA_OFFLOAD.try_send(mote_to_host::Message::Scan(
+                let _ = DATA_OFFLOAD_CHANNEL.try_send(mote_to_host::Message::Scan(
                     point_buf[..valid_points].iter().map(|&point| point.into()).collect(),
                 ));
 

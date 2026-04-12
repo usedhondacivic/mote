@@ -13,8 +13,40 @@ use schemars::JsonSchema;
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Point {
     pub quality: u8,
-    pub angle_rads: f32,
+    pub angle_rad: f32,
     pub distance_mm: f32,
+}
+
+// Encoder / Drive Base Data
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct WheelJointState {
+    pub effort_percent: f32,
+    pub velocity_rad_per_s: f32,
+    pub postition_rad: f32,
+}
+
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct DriveBaseState {
+    pub left: WheelJointState,
+    pub right: WheelJointState,
+}
+
+// IMU Data
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct IMUAxisTriple {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct IMUMeasurement {
+    pub accel: IMUAxisTriple,
+    pub gyro: IMUAxisTriple,
 }
 
 // CONFIGURATION MESSAGES
@@ -70,5 +102,7 @@ pub enum Message {
     Ping,
     Pong,
     Scan(Vec<Point>),
+    DriveBaseState(DriveBaseState),
+    IMUMeasurement(IMUMeasurement),
     State(State),
 }

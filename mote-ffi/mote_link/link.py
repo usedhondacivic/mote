@@ -21,12 +21,10 @@ class MoteConnectionError(Exception):
 
 
 # Message types
-
-
 @dataclass
 class LidarPoint:
     quality: int
-    angle_rads: float
+    angle_rad: float
     distance_mm: float
 
 
@@ -93,6 +91,38 @@ class SetUID:
 
 
 @dataclass
+class WheelJointState:
+    effort_percent: float
+    velocity_rad_per_s: float
+    postition_rad: float
+
+
+@dataclass
+class DriveBaseState:
+    left: WheelJointState
+    right: WheelJointState
+
+
+@dataclass
+class IMUAxisTriple:
+    x: float
+    y: float
+    z: float
+
+
+@dataclass
+class IMUMeasurement:
+    accel: IMUAxisTriple
+    gyro: IMUAxisTriple
+
+
+@dataclass
+class SetDriveBaseVelocity:
+    left_velocity_rad: float
+    right_velocity_rad: float
+
+
+@dataclass
 class Scan:
     points: list[LidarPoint]
 
@@ -103,10 +133,17 @@ class State:
 
 
 # Union of all messages the host can send to Mote
-HostMessage = Union[Ping, Pong, RequestNetworkScan, SetNetworkConnectionConfig, SetUID]
+HostMessage = Union[
+    Ping,
+    Pong,
+    RequestNetworkScan,
+    SetNetworkConnectionConfig,
+    SetUID,
+    SetDriveBaseVelocity,
+]
 
 # Union of all messages Mote can send to the host
-MoteMessage = Union[Ping, Pong, Scan, State]
+MoteMessage = Union[Ping, Pong, Scan, DriveBaseState, IMUMeasurement, State]
 
 
 # Converts mote_ffi json based messages into Python native types
@@ -123,6 +160,15 @@ def _serialize_host_message(msg: HostMessage) -> str:
         )
     if isinstance(msg, SetUID):
         return json.dumps({"SetUID": {"uid": msg.uid}})
+    if isinstance(msg, SetDriveBaseVelocity):
+        return json.dumps(
+            {
+                "DriveBaseCommand": {
+                    "left_velocity_rad": msg.left_velocity_rad,
+                    "right_velocity_rad": msg.right_velocity_rad,
+                }
+            }
+        )
     raise TypeError(f"Unknown host message type: {type(msg)}")
 
 
@@ -135,6 +181,18 @@ def _deserialize_mote_message(data) -> MoteMessage:
     if isinstance(data, dict):
         if "Scan" in data:
             return Scan(points=[LidarPoint(**p) for p in data["Scan"]])
+        if "DriveBaseState" in data:
+            d = data["DriveBaseState"]
+            return DriveBaseState(
+                left=WheelJointState(**d["left"]),
+                right=WheelJointState(**d["right"]),
+            )
+        if "IMUMeasurement" in data:
+            d = data["IMUMeasurement"]
+            return IMUMeasurement(
+                accel=IMUAxisTriple(**d["accel"]),
+                gyro=IMUAxisTriple(**d["gyro"]),
+            )
         if "State" in data:
             s = data["State"]
             return State(

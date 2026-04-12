@@ -104,7 +104,7 @@ fn main() -> anyhow::Result<()> {
                             let points: Vec<glam::Vec2> = scan_data
                                 .iter()
                                 .map(|point| {
-                                    glam::Vec2::from_angle(point.angle_rads) * point.distance_mm
+                                    glam::Vec2::from_angle(point.angle_rad) * point.distance_mm
                                 })
                                 .collect();
 
@@ -128,7 +128,7 @@ fn main() -> anyhow::Result<()> {
                             )
                             .unwrap();
                         }
-                        mote_to_host::Message::State(_) => todo!(),
+                        _ => todo!(),
                     }
                 }
             }
