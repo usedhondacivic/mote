@@ -3,19 +3,30 @@ name: Hardware Check
 on:
   push:
     branches: ["main"]
-    paths:
-      - 'mote-hardware/**'
   pull_request:
     branches: ["main"]
-    paths:
-      - 'mote-hardware/**'
 
 defaults:
   run:
     shell: bash
 
 jobs:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      hardware: ${{ steps.filter.outputs.hardware }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            hardware:
+              - 'mote-hardware/**'
+
   drc:
+    needs: filter
+    if: needs.filter.outputs.hardware == 'true'
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/inti-cmnb/kicad9_auto:latest
