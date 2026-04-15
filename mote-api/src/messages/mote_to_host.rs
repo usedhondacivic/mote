@@ -91,6 +91,7 @@ pub type UID = String;
 pub struct State {
     pub uid: UID,
     pub ip: Option<String>,
+    pub mac: Option<String>,
     pub current_network_connection: Option<String>,
     pub available_network_connections: Vec<NetworkConnection>,
     pub built_in_test: BITCollection,

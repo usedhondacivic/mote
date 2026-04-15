@@ -87,6 +87,8 @@ use mote_api::messages::mote_to_host::{BITCollection, State, UID};
 
 pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::new(State {
     uid: UID::new(),
+    ip: None,
+    mac: None,
     current_network_connection: None,
     available_network_connections: Vec::new(),
     built_in_test: BITCollection {
@@ -96,5 +98,4 @@ pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::n
         wifi: Vec::new(),
         encoders: Vec::new(),
     },
-    ip: None,
 });

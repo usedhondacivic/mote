@@ -77,6 +77,7 @@
                         <Identification
                             uid={mote_telem.latest?.uid}
                             ip={mote_telem.latest?.ip}
+                            mac={mote_telem.latest?.mac}
                         />
                     {:else}
                         <li>
