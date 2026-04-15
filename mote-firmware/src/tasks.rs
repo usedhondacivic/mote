@@ -59,6 +59,9 @@ assign_resources! {
         cc1: PIN_26,
         cc2: PIN_28,
         adc: ADC
+    },
+    flash: FlashResources{
+        flash: FLASH,
     }
 }
 

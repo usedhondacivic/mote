@@ -11,6 +11,7 @@ use mote_api::messages::host_to_mote::SetNetworkConnectionConfig;
 use mote_api::messages::mote_to_host::{BITResult, NetworkConnection};
 use {defmt_rtt as _, panic_probe as _};
 
+use crate::flash_config;
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 
@@ -41,6 +42,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
                 continue;
             }
 
+            flash_config::save_wifi(config.clone()).await;
             update_network_bit(Some(config.ssid), BITResult::Pass).await;
             return;
         } else {
@@ -50,6 +52,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
                 continue;
             }
 
+            flash_config::save_wifi(config.clone()).await;
             update_network_bit(Some(config.ssid), BITResult::Pass).await;
             return;
         }
@@ -118,8 +121,10 @@ pub async fn connection_manager_task(mut control: cyw43::Control<'static>) -> ! 
     run_network_scan(&mut control).await;
 
     // Attempt to join whatever network is saved in flash
-    // TODO: Load config from flash, then attempt connect
-    // attempt_join_network(&mut control).await;
+    if let Some(saved_config) = flash_config::load_wifi().await {
+        info!("Found saved WiFi config, attempting auto-connect to {}", saved_config.ssid.as_str());
+        attempt_join_network(&mut control, saved_config).await;
+    }
 
     loop {
         match select(WIFI_REQUEST_CONNECT.receive(), WIFI_REQUEST_RESCAN.wait()).await {

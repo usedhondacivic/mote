@@ -1133,6 +1133,7 @@ name = "mote-firmware"
 version = "0.0.0"
 dependencies = [
  "assign-resources",
+ "bitcode",
  "cortex-m",
  "cortex-m-rt",
  "cyw43",

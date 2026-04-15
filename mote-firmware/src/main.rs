@@ -23,6 +23,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::*;
 
+mod flash_config;
 mod helpers;
 mod tasks;
 
@@ -85,12 +86,15 @@ fn main() -> ! {
 
     let executor0 = EXECUTOR0.init(Executor::new());
 
-    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi)).unwrap());
+    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi, r.flash)).unwrap());
 }
 
 #[embassy_executor::task]
-async fn core0_task(spawner: Spawner, r: Cyw43Resources) {
+async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources) {
     info!("Core 0 spawned");
+
+    flash_config::init(flash_r.flash).await;
+    info!("Flash config INIT complete");
 
     info!("Gating on 1.5A capable before starting WIFI");
     power_gate::gate_1_5_amp().await;
@@ -116,9 +120,6 @@ async fn core1_task(
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         configuration_state.uid = "mote-:3".into();
-
-        // TODO: read / write wifi configuration to flash, then use it to update
-        // config
     }
 
     usb_serial::init(spawner, usb_r).await;
