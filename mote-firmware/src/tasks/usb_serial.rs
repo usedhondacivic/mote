@@ -1,3 +1,5 @@
+use alloc::boxed::Box;
+
 use defmt::{info, trace};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
@@ -40,7 +42,9 @@ async fn handle_host_message(msg: host_to_mote::Message) {
         }
         host_to_mote::Message::SetUID(set_uid) => {
             CONFIGURATION_STATE.lock().await.uid = set_uid.uid.clone();
-            FLASH_SAVE_CHANNEL.send(FlashSaveRequest::Uid(set_uid.uid.clone())).await;
+            FLASH_SAVE_CHANNEL
+                .send(FlashSaveRequest::Uid(set_uid.uid.clone()))
+                .await;
             info!("Set UID: {}", set_uid.uid.as_str());
         }
         host_to_mote::Message::RequestNetworkScan => {
@@ -80,7 +84,7 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
                 if let Ok(configuration_state) =
                     with_timeout(Duration::from_millis(500), CONFIGURATION_STATE.lock()).await
                 {
-                    let message = mote_to_host::Message::State(configuration_state.clone());
+                    let message = mote_to_host::Message::State(Box::new(configuration_state.clone()));
 
                     link.send(message).unwrap();
                 }

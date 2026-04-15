@@ -115,14 +115,15 @@ impl FlashConfig {
         self.scratch[4..6].copy_from_slice(&(encoded.len() as u16).to_le_bytes());
         self.scratch[HEADER_SIZE..HEADER_SIZE + encoded.len()].copy_from_slice(&encoded);
 
-        if let Err(_) = self
+        if self
             .flash
             .blocking_erase(CONFIG_OFFSET, CONFIG_OFFSET + ERASE_SIZE as u32)
+            .is_err()
         {
             defmt::error!("flash_config: erase failed");
             return;
         }
-        if let Err(_) = self.flash.blocking_write(CONFIG_OFFSET, &self.scratch) {
+        if self.flash.blocking_write(CONFIG_OFFSET, &self.scratch).is_err() {
             defmt::error!("flash_config: write failed");
         }
     }

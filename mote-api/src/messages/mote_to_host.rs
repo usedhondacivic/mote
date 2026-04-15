@@ -1,6 +1,6 @@
 //!  Sensor and state data telemetered to the host
 
-use alloc::{string::String, vec::Vec};
+use alloc::{boxed::Box, string::String, vec::Vec};
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "schemars")]
@@ -105,5 +105,5 @@ pub enum Message {
     Scan(Vec<Point>),
     DriveBaseState(DriveBaseState),
     IMUMeasurement(IMUMeasurement),
-    State(State),
+    State(Box<State>),
 }
