@@ -94,7 +94,20 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
     info!("Core 0 spawned");
 
     flash_config::init(flash_r.flash).await;
+    {
+        // No saved UID — derive one from the RP2350 OTP chip ID so it is
+        // stable across reboots and unique per device.
+        let uid = flash_config::load_uid().await.unwrap_or_else(|| {
+            let default_uid = embassy_rp::otp::get_chipid()
+                .map(|id| alloc::format!("mote-{:016x}", id))
+                .unwrap_or("mote-unknown".into());
+            info!("No saved UID, using chip-derived default: {}", default_uid.as_str());
+            default_uid
+        });
+        CONFIGURATION_STATE.lock().await.uid = uid;
+    }
     info!("Flash config INIT complete");
+    spawner.spawn(flash_manager::flash_manager_task()).unwrap();
 
     info!("Gating on 1.5A capable before starting WIFI");
     power_gate::gate_1_5_amp().await;
@@ -116,11 +129,7 @@ async fn core1_task(
 ) {
     info!("Core 1 spawned");
 
-    /* Set initial configuration state */
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        configuration_state.uid = "mote-:3".into();
-    }
+    /* Initial configuration state is set in core0_task after flash init */
 
     usb_serial::init(spawner, usb_r).await;
     info!("USB Serial INIT complete");

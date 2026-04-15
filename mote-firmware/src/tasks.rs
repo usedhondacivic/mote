@@ -1,4 +1,5 @@
 pub mod drive_base;
+pub mod flash_manager;
 pub mod lidar;
 pub mod power_gate;
 pub mod usb_serial;

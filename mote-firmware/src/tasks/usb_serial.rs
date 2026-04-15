@@ -14,6 +14,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 use super::{Irqs, UsbSerialResources};
 use crate::tasks::CONFIGURATION_STATE;
+use crate::tasks::flash_manager::{FLASH_SAVE_CHANNEL, FlashSaveRequest};
 use crate::tasks::wifi::connection_manager::{WIFI_REQUEST_CONNECT, WIFI_REQUEST_RESCAN};
 
 #[embassy_executor::task]
@@ -38,9 +39,9 @@ async fn handle_host_message(msg: host_to_mote::Message) {
             WIFI_REQUEST_CONNECT.send(set_network_connection_config).await;
         }
         host_to_mote::Message::SetUID(set_uid) => {
-            let mut configuration_state = CONFIGURATION_STATE.lock().await;
-            configuration_state.uid = set_uid.uid.clone();
-            info!("Set UID: {}", configuration_state.uid);
+            CONFIGURATION_STATE.lock().await.uid = set_uid.uid.clone();
+            FLASH_SAVE_CHANNEL.send(FlashSaveRequest::Uid(set_uid.uid.clone())).await;
+            info!("Set UID: {}", set_uid.uid.as_str());
         }
         host_to_mote::Message::RequestNetworkScan => {
             WIFI_REQUEST_RESCAN.signal(());
