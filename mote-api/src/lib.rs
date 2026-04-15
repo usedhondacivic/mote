@@ -187,7 +187,7 @@ pub type HostConfigLink = MoteComms<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::{string::String, vec};
+    use alloc::{boxed::Box, string::String, vec};
 
     // Returns all mote_to_host message variants including heap-allocated ones.
     fn all_mote_messages() -> Vec<mote_to_host::Message> {
@@ -206,9 +206,10 @@ mod tests {
                     distance_mm: 0.0,
                 },
             ]),
-            mote_to_host::Message::State(mote_to_host::State {
+            mote_to_host::Message::State(Box::new(mote_to_host::State {
                 uid: String::from("mote-test"),
                 ip: Some(String::from("192.168.1.100")),
+                mac: Some(String::from("aa:bb:cc:dd:ee:ff")),
                 current_network_connection: Some(String::from("MyWifi")),
                 available_network_connections: vec![mote_to_host::NetworkConnection {
                     ssid: String::from("MyWifi"),
@@ -230,7 +231,7 @@ mod tests {
                         result: mote_to_host::BITResult::Fail,
                     }],
                 },
-            }),
+            })),
         ]
     }
 

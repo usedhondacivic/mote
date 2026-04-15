@@ -1,4 +1,5 @@
 pub mod drive_base;
+pub mod flash_manager;
 pub mod lidar;
 pub mod power_gate;
 pub mod usb_serial;
@@ -59,6 +60,9 @@ assign_resources! {
         cc1: PIN_26,
         cc2: PIN_28,
         adc: ADC
+    },
+    flash: FlashResources{
+        flash: FLASH,
     }
 }
 
@@ -87,6 +91,8 @@ use mote_api::messages::mote_to_host::{BITCollection, State, UID};
 
 pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::new(State {
     uid: UID::new(),
+    ip: None,
+    mac: None,
     current_network_connection: None,
     available_network_connections: Vec::new(),
     built_in_test: BITCollection {
@@ -96,5 +102,4 @@ pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::n
         wifi: Vec::new(),
         encoders: Vec::new(),
     },
-    ip: None,
 });
