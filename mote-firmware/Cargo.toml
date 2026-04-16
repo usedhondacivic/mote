@@ -62,6 +62,7 @@ static_cell = "2.1"
 rand = { version = "0.8", default-features = false }
 embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
 
+bitcode = { version = "0.6", default-features = false, features = ["derive", "serde"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_with = { version = "3.14", default-features = false, features = [
     "macros",

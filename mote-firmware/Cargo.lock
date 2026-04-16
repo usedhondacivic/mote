@@ -1140,6 +1140,7 @@ version = "0.0.0"
 dependencies = [
  "arrayref",
  "assign-resources",
+ "bitcode",
  "cortex-m",
  "cortex-m-rt",
  "cyw43",

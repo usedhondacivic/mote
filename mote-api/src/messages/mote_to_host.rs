@@ -1,6 +1,6 @@
 //!  Sensor and state data telemetered to the host
 
-use alloc::{string::String, vec::Vec};
+use alloc::{boxed::Box, string::String, vec::Vec};
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "schemars")]
@@ -91,6 +91,7 @@ pub type UID = String;
 pub struct State {
     pub uid: UID,
     pub ip: Option<String>,
+    pub mac: Option<String>,
     pub current_network_connection: Option<String>,
     pub available_network_connections: Vec<NetworkConnection>,
     pub built_in_test: BITCollection,
@@ -104,5 +105,5 @@ pub enum Message {
     Scan(Vec<Point>),
     DriveBaseState(DriveBaseState),
     IMUMeasurement(IMUMeasurement),
-    State(State),
+    State(Box<State>),
 }

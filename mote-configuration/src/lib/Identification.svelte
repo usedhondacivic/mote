@@ -4,7 +4,7 @@
 
     import { set_uid } from "./link";
 
-    let { uid, ip } = $props();
+    let { uid, ip, mac } = $props();
 
     let input_open = $state(false);
     let input_value = $state("");
@@ -63,5 +63,11 @@
     IP:
     {#if ip}
         {ip}
+    {:else}<ShortSpinner />{/if}
+</li>
+<li>
+    MAC:
+    {#if mac}
+        {mac}
     {:else}<ShortSpinner />{/if}
 </li>

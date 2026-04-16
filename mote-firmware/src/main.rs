@@ -23,6 +23,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 use crate::tasks::*;
 
+mod flash_config;
 mod helpers;
 mod tasks;
 
@@ -86,12 +87,28 @@ fn main() -> ! {
 
     let executor0 = EXECUTOR0.init(Executor::new());
 
-    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi)).unwrap());
+    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi, r.flash)).unwrap());
 }
 
 #[embassy_executor::task]
-async fn core0_task(spawner: Spawner, r: Cyw43Resources) {
+async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources) {
     info!("Core 0 spawned");
+
+    flash_config::init(flash_r.flash).await;
+    {
+        // No saved UID — derive one from the RP2350 OTP chip ID so it is
+        // stable across reboots and unique per device.
+        let uid = flash_config::load_uid().await.unwrap_or_else(|| {
+            let default_uid = embassy_rp::otp::get_chipid()
+                .map(|id| alloc::format!("mote-{:016x}", id))
+                .unwrap_or("mote-unknown".into());
+            info!("No saved UID, using chip-derived default: {}", default_uid.as_str());
+            default_uid
+        });
+        CONFIGURATION_STATE.lock().await.uid = uid;
+    }
+    info!("Flash config INIT complete");
+    spawner.spawn(flash_manager::flash_manager_task()).unwrap();
 
     info!("Gating on 1.5A capable before starting WIFI");
     power_gate::gate_1_5_amp().await;
@@ -114,14 +131,7 @@ async fn core1_task(
 ) {
     info!("Core 1 spawned");
 
-    /* Set initial configuration state */
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        configuration_state.uid = "mote-:3".into();
-
-        // TODO: read / write wifi configuration to flash, then use it to update
-        // config
-    }
+    /* Initial configuration state is set in core0_task after flash init */
 
     usb_serial::init(spawner, usb_r).await;
     info!("USB Serial INIT complete");
@@ -139,12 +149,9 @@ async fn core1_task(
     imu::init(spawner, imu_r).await;
     info!("IMU INIT complete");
 
-    // Enabling this check causes the wifi network scan to fail and I can't figure
-    // out why. For now we can just hope gating on 1.5A is enough to prevent brown
-    // outs.
-    // info!("Gating on 3A capable before starting drive base");
-    // power_gate::gate_3_amp().await;
-    // info!("Power supply is 3A capable");
+    info!("Gating on 3A capable before starting drive base");
+    power_gate::gate_3_amp().await;
+    info!("Power supply is 3A capable");
 
     drive_base::init(
         spawner,

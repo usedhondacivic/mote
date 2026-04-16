@@ -103,10 +103,24 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     control.init(clm).await;
     control.set_power_management(cyw43::PowerManagementMode::None).await;
 
-    // Update init state
+    let mac_addr = control.address().await;
+    let mac_str = alloc::format!(
+        "{:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
+        mac_addr[0],
+        mac_addr[1],
+        mac_addr[2],
+        mac_addr[3],
+        mac_addr[4],
+        mac_addr[5]
+    );
+    defmt::info!("MAC address: {}", mac_str.as_str());
+
     {
+        // Update init state
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
+        // Update mac address
+        configuration_state.mac = Some(mac_str);
     }
 
     let config = Config::dhcpv4(Default::default());

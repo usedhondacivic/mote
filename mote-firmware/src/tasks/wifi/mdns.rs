@@ -27,7 +27,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     // Wait for IPV4 to come up
     stack.wait_config_up().await;
     let ip = stack.config_v4().unwrap().address.address();
-    let hostname: String;
+    let mut hostname: String;
     info!("Got ip: {}", ip);
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
@@ -38,7 +38,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
 
     info!(
         "Running mDNS responder. It will be addressable using {}.local, so try to `ping {}.local`.",
-        "mote", "mote"
+        hostname, hostname
     );
 
     let udp_buffers = UdpBuffers::<4, 1500, 1500, 2>::new();
@@ -54,13 +54,6 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     );
 
     let (recv, send) = socket.split();
-
-    let host = Host {
-        hostname: &hostname,
-        ipv4: ip,
-        ipv6: Ipv6Addr::UNSPECIFIED,
-        ttl: Ttl::from_secs(60),
-    };
 
     let command_service = Service {
         name: "Mote Server",
@@ -96,6 +89,13 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
     }
 
     loop {
+        let host = Host {
+            hostname: &hostname,
+            ipv4: ip,
+            ipv6: Ipv6Addr::UNSPECIFIED,
+            ttl: Ttl::from_secs(60),
+        };
+
         match select(
             mdns.run(HostAnswersMdnsHandler::new(ServiceAnswers::new(
                 &host,
@@ -110,6 +110,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
                 warn!("mDNS exited with error: {:?}", e);
             }
             Either::Second(_) => {
+                hostname = CONFIGURATION_STATE.lock().await.uid.clone();
                 signal.signal(());
             }
         }

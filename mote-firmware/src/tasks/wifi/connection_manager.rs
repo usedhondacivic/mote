@@ -11,13 +11,14 @@ use mote_api::messages::host_to_mote::SetNetworkConnectionConfig;
 use mote_api::messages::mote_to_host::{BITResult, NetworkConnection};
 use {defmt_rtt as _, panic_probe as _};
 
+use crate::flash_config;
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 
 pub static WIFI_REQUEST_CONNECT: Channel<CriticalSectionRawMutex, SetNetworkConnectionConfig, 1> = Channel::new();
 pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
-async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) {
+async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) -> bool {
     async fn update_network_bit(current_network: Option<String>, result: BITResult) {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         configuration_state.current_network_connection = current_network;
@@ -41,8 +42,9 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
                 continue;
             }
 
+            flash_config::save_wifi(config.clone()).await;
             update_network_bit(Some(config.ssid), BITResult::Pass).await;
-            return;
+            return true;
         } else {
             info!("Attempting network join as open");
             if let Err(err) = control.join(&config.ssid, JoinOptions::new_open()).await {
@@ -50,12 +52,14 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
                 continue;
             }
 
+            flash_config::save_wifi(config.clone()).await;
             update_network_bit(Some(config.ssid), BITResult::Pass).await;
-            return;
+            return true;
         }
     }
 
     update_network_bit(Some(config.ssid), BITResult::Fail).await;
+    false
 }
 
 async fn run_network_scan<'a>(control: &mut cyw43::Control<'a>) {
@@ -117,9 +121,13 @@ pub async fn connection_manager_task(mut control: cyw43::Control<'static>) -> ! 
     // Populate network scan state
     run_network_scan(&mut control).await;
 
-    // Attempt to join whatever network is saved in flash
-    // TODO: Load config from flash, then attempt connect
-    // attempt_join_network(&mut control).await;
+    // Attempt to join saved networks in order (most recently connected first)
+    for saved_config in flash_config::load_wifi().await {
+        info!("Attempting auto-connect to {}", saved_config.ssid.as_str());
+        if attempt_join_network(&mut control, saved_config).await {
+            break;
+        }
+    }
 
     loop {
         match select(WIFI_REQUEST_CONNECT.receive(), WIFI_REQUEST_RESCAN.wait()).await {
