@@ -32,6 +32,10 @@ async fn handle_command(rx_message: host_to_mote::Message, link: &mut HostLink) 
 
 #[embassy_executor::task]
 pub async fn udp_server_task(stack: Stack<'static>) -> ! {
+    // Wait for IPV4 to come up
+    stack.wait_link_up().await;
+    stack.wait_config_up().await;
+
     let mut rx_meta = [PacketMetadata::EMPTY; 16];
     let mut rx_buffer = [0; 4096];
     let mut tx_meta = [PacketMetadata::EMPTY; 16];
