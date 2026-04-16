@@ -50,7 +50,7 @@ static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
 fn main() -> ! {
     // Set up for clock frequency of 200 MHz, setting all necessary defaults.
     let mut config = Config::new(ClockConfig::system_freq(200_000_000).unwrap());
-    config.clocks.core_voltage = CoreVoltage::V1_15;
+    config.clocks.core_voltage = CoreVoltage::V1_30;
 
     let p = embassy_rp::init(config);
     let r = split_resources!(p);
@@ -108,9 +108,6 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
     }
     info!("Flash config INIT complete");
     spawner.spawn(flash_manager::flash_manager_task()).unwrap();
-
-    info!("Gating on 1.5A capable before starting WIFI");
-    power_gate::gate_1_5_amp().await;
 
     wifi::init(spawner, r).await;
     info!("Wifi INIT complete");

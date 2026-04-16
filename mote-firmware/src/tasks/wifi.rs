@@ -132,11 +132,6 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     static RESOURCES: StaticCell<StackResources<4>> = StaticCell::new();
     let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
 
-    // Start connection manager task
-    spawner
-        .spawn(connection_manager::connection_manager_task(control))
-        .unwrap();
-
     // Start network task
     spawner.spawn(net_task(runner)).unwrap();
 
@@ -145,4 +140,9 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
 
     // Start the udp server (handles both commands and data offload)
     spawner.spawn(udp_server::udp_server_task(stack)).unwrap();
+
+    // Start connection manager task
+    spawner
+        .spawn(connection_manager::connection_manager_task(control))
+        .unwrap();
 }
