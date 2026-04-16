@@ -50,7 +50,7 @@ static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
 fn main() -> ! {
     // Set up for clock frequency of 200 MHz, setting all necessary defaults.
     let mut config = Config::new(ClockConfig::system_freq(200_000_000).unwrap());
-    config.clocks.core_voltage = CoreVoltage::V1_30;
+    config.clocks.core_voltage = CoreVoltage::V1_15;
 
     let p = embassy_rp::init(config);
     let r = split_resources!(p);
@@ -94,6 +94,12 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
     info!("Core 0 spawned");
 
     flash_config::init(flash_r.flash).await;
+    spawner.spawn(flash_manager::flash_manager_task()).unwrap();
+    info!("Flash INIT complete");
+
+    wifi::init(spawner, r).await;
+    info!("Wifi INIT complete");
+
     {
         // No saved UID — derive one from the RP2350 OTP chip ID so it is
         // stable across reboots and unique per device.
@@ -106,11 +112,6 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
         });
         CONFIGURATION_STATE.lock().await.uid = uid;
     }
-    info!("Flash config INIT complete");
-    spawner.spawn(flash_manager::flash_manager_task()).unwrap();
-
-    wifi::init(spawner, r).await;
-    info!("Wifi INIT complete");
 }
 
 #[embassy_executor::task]

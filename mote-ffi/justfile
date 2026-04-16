@@ -15,6 +15,7 @@ build-c:
 
 dev-setup:
     uv sync --all-extras --cache-dir .uv_cache
+    uv run maturin develop --features python_ffi
 
 prod-setup:
     uv sync --all-extras --no-dev --cache-dir .uv_cache
@@ -36,7 +37,7 @@ build: build-wasm
 
 # Examples
 
-rerun-demo:
+rerun-demo: dev-setup
     uv run rerun-demo
 
 # CI
