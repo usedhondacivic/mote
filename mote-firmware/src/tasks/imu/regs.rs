@@ -106,9 +106,11 @@ pub trait RegisterOption {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// --- CTRL1_XL --------------------------------------------------------------------------------------------------------
+// --- CTRL1_XL
+// --------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub enum AccelerometerOutput {
     PowerDown = 0b0000,
@@ -183,6 +185,7 @@ impl TryFrom<u8> for AccelerometerScale {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub enum AccelerometerBandwidth {
     Freq400 = 0b00,
@@ -204,9 +207,11 @@ impl RegisterOption for AccelerometerBandwidth {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// --- CTRL2_G --------------------------------------------------------------------------------------------------------
+// --- CTRL2_G
+// --------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub enum GyroscopeOutput {
     PowerDown = 0b0000,
@@ -306,6 +311,7 @@ impl TryFrom<u8> for GyroscopeFullScale {
 // }
 
 /// Bit fields for CTRL3_C
+#[allow(dead_code)]
 pub enum Ctrl3C {
     Boot = 7,
     BlockDataUpdate = 6,
@@ -318,6 +324,7 @@ pub enum Ctrl3C {
 }
 
 /// Bit fields for CTRL6_C
+#[allow(dead_code)]
 pub enum Ctrl6C {
     GyroEdgeTrigge = 7,
     GyroLevelTrigger = 6,
@@ -326,6 +333,7 @@ pub enum Ctrl6C {
 }
 
 /// Bit fields for CTRL6_G
+#[allow(dead_code)]
 pub enum Ctrl7G {
     HighPerformanceMode = 7,
     HighPassFilter = 6,

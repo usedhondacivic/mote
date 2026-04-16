@@ -7,25 +7,20 @@
 
 #![no_std]
 #![allow(unused)]
-use crate::tasks::imu::regs as regs;
-// mod regs;
-
-use arrayref::array_refs;
 use core::convert::TryFrom;
 
-use regs::*;
-
-pub use regs::{
-    AccelerometerBandwidth, AccelerometerOutput, AccelerometerScale, GyroscopeFullScale,
-    GyroscopeOutput,
-};
-
+// mod regs;
+use arrayref::array_refs;
 use embedded_hal_async::i2c::I2c;
+use regs::*;
+pub use regs::{AccelerometerBandwidth, AccelerometerOutput, AccelerometerScale, GyroscopeFullScale, GyroscopeOutput};
+
+use crate::tasks::imu::regs;
 
 /// Enum containing all possible types of errors when interacting with the IMU
 #[derive(Debug)]
 pub enum Error<E> {
-    CommunicationError(E),
+    Communication(E),
     ChipDetectFailed,
     RegisterReadFailed,
 }
@@ -33,7 +28,7 @@ pub enum Error<E> {
 // Allow converting the Error type from the I2C device to the error enum
 impl<E> From<E> for Error<E> {
     fn from(e: E) -> Self {
-        Error::CommunicationError(e)
+        Error::Communication(e)
     }
 }
 
@@ -77,18 +72,12 @@ where
     }
 
     /// Set the accelerometer output rate
-    pub async fn set_accelerometer_output(
-        &mut self,
-        output: AccelerometerOutput,
-    ) -> Result<(), Error<E>> {
+    pub async fn set_accelerometer_output(&mut self, output: AccelerometerOutput) -> Result<(), Error<E>> {
         self.write_register_option(Register::Ctrl1XL, output).await
     }
 
     /// Set the accelerometer operating range
-    pub async fn set_accelerometer_scale(
-        &mut self,
-        scale: AccelerometerScale,
-    ) -> Result<(), Error<E>> {
+    pub async fn set_accelerometer_scale(&mut self, scale: AccelerometerScale) -> Result<(), Error<E>> {
         match self.write_register_option(Register::Ctrl1XL, scale).await {
             Ok(()) => {
                 self.accelerometer_scale = Some(scale);
@@ -102,12 +91,8 @@ where
     }
 
     /// Set the accelerometer bandwidth filter
-    pub async fn set_accelerometer_bandwidth(
-        &mut self,
-        bandwidth: AccelerometerBandwidth,
-    ) -> Result<(), Error<E>> {
-        self.write_register_option(Register::Ctrl1XL, bandwidth)
-            .await
+    pub async fn set_accelerometer_bandwidth(&mut self, bandwidth: AccelerometerBandwidth) -> Result<(), Error<E>> {
+        self.write_register_option(Register::Ctrl1XL, bandwidth).await
     }
 
     /// Set the gyroscope output rate
@@ -138,15 +123,12 @@ where
             Ctrl6C::AccelHighPerformanceMode as u8,
         )
         .await?;
-        self.write_bit(
-            Register::Ctrl7G,
-            low_power as u8,
-            Ctrl7G::HighPerformanceMode as u8,
-        )
-        .await
+        self.write_bit(Register::Ctrl7G, low_power as u8, Ctrl7G::HighPerformanceMode as u8)
+            .await
     }
 
-    /// Read all three sensors in one transaction. Returns temperature, gyro, accelerometer.
+    /// Read all three sensors in one transaction. Returns temperature, gyro,
+    /// accelerometer.
     pub async fn read_all(&mut self) -> Result<(f32, (f32, f32, f32), (f32, f32, f32)), Error<E>> {
         let gyro_scale = self.read_gyroscope_scale().await?;
         let accel_scale = self.read_accelerometer_scale().await?;
@@ -213,10 +195,8 @@ where
         let temperature = ((hi as i16) << 8) | (lo as i16);
         // As float
         let temperature = temperature as f32;
-        // Converted given the temperature sensitively value 16 bits per C
-        let temperature = (temperature / 16.0) + 25.0;
-
-        temperature
+        // Converted given the temperature sensitively value 16 bits per C and reutrn
+        (temperature / 16.0) + 25.0
     }
 
     /// Check if there is new accelerometer data
@@ -268,11 +248,7 @@ where
         self.read_register(Register::StatusReg).await
     }
 
-    async fn write_register_option<RO: RegisterOption>(
-        &mut self,
-        register: Register,
-        ro: RO,
-    ) -> Result<(), Error<E>> {
+    async fn write_register_option<RO: RegisterOption>(&mut self, register: Register, ro: RO) -> Result<(), Error<E>> {
         self.write_bits(register, ro.value(), RO::mask(), RO::bit_offset())
             .await
     }
@@ -285,22 +261,11 @@ where
         RO::try_from(value).map_err(|_| Error::RegisterReadFailed)
     }
 
-    async fn write_bit(
-        &mut self,
-        register: Register,
-        value: u8,
-        shift: u8,
-    ) -> Result<(), Error<E>> {
+    async fn write_bit(&mut self, register: Register, value: u8, shift: u8) -> Result<(), Error<E>> {
         self.write_bits(register, value, 0x01, shift).await
     }
 
-    async fn write_bits(
-        &mut self,
-        register: Register,
-        new_value: u8,
-        mask: u8,
-        shift: u8,
-    ) -> Result<(), Error<E>> {
+    async fn write_bits(&mut self, register: Register, new_value: u8, mask: u8, shift: u8) -> Result<(), Error<E>> {
         let current_value = self.read_register(register).await?;
         let modified_value = (current_value & !(mask << shift)) | ((new_value & mask) << shift);
         self.write_register(register, modified_value).await
@@ -318,20 +283,13 @@ where
     // Read a byte from the given register
     async fn read_register(&mut self, register: Register) -> Result<u8, Error<E>> {
         let mut res = [0u8];
-        self.i2c
-            .write_read(self.addr, &[register.into()], &mut res)
-            .await?;
+        self.i2c.write_read(self.addr, &[register.into()], &mut res).await?;
         Ok(res[0])
     }
 
-    async fn read_registers<const N: usize>(
-        &mut self,
-        start_reg: Register,
-    ) -> Result<[u8; N], Error<E>> {
+    async fn read_registers<const N: usize>(&mut self, start_reg: Register) -> Result<[u8; N], Error<E>> {
         let mut res = [0u8; N];
-        self.i2c
-            .write_read(self.addr, &[start_reg.into()], &mut res)
-            .await?;
+        self.i2c.write_read(self.addr, &[start_reg.into()], &mut res).await?;
         Ok(res)
     }
 
