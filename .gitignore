@@ -5,3 +5,5 @@
 __pycache__/
 
 **/*.uf2
+
+mote-ffi/mote_link/mote_ffi.pyd

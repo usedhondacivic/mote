@@ -288,28 +288,6 @@ impl TryFrom<u8> for GyroscopeFullScale {
     }
 }
 
-// #[derive(Debug, Clone, Copy)]
-// pub enum GyroscopeFullScale125Dps {
-//     Disabled = 0,
-//     Enabled = 1,
-// }
-
-// impl RegisterOption for GyroscopeFullScale125Dps {
-//     fn value(&self) -> u8 {
-//         *self as u8
-//     }
-//     fn mask() -> u8 {
-//         0b1
-//     }
-//     fn bit_offset() -> u8 {
-//         1
-//     }
-// }
-
-// pub fn option_mask<T: RegisterOption>(opt: &T) -> u8 {
-//     0x01 << opt.bit_offset()
-// }
-
 /// Bit fields for CTRL3_C
 #[allow(dead_code)]
 pub enum Ctrl3C {

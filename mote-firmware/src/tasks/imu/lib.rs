@@ -9,7 +9,6 @@
 #![allow(unused)]
 use core::convert::TryFrom;
 
-// mod regs;
 use arrayref::array_refs;
 use embedded_hal_async::i2c::I2c;
 use regs::*;
