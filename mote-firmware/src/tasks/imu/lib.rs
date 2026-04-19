@@ -9,7 +9,6 @@
 #![allow(unused)]
 use core::convert::TryFrom;
 
-use arrayref::array_refs;
 use embedded_hal_async::i2c::I2c;
 use regs::*;
 pub use regs::{AccelerometerBandwidth, AccelerometerOutput, AccelerometerScale, GyroscopeFullScale, GyroscopeOutput};
@@ -132,7 +131,10 @@ where
         let gyro_scale = self.read_gyroscope_scale().await?;
         let accel_scale = self.read_accelerometer_scale().await?;
         let data = self.read_registers::<14>(Register::OutTempL).await?;
-        let (temp, gyro, accel) = array_refs!(&data, 2, 6, 6);
+
+        let temp: &[u8; 2] = data[0..2].try_into().unwrap();
+        let gyro: &[u8; 6] = data[2..8].try_into().unwrap();
+        let accel: &[u8; 6] = data[8..14].try_into().unwrap();
         Ok((
             Self::convert_temp_data(temp),
             Self::convert_gyro_data(gyro, gyro_scale),
