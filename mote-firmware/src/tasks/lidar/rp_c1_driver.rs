@@ -73,7 +73,6 @@ where
 
     async fn clear_read(&mut self) {
         let mut resp = [0; 256];
-        let _ = self.connection.flush().await;
         while let Ok(Ok(256)) = with_timeout(Duration::from_millis(200), self.connection.read(&mut resp)).await {
             // We read a full buffer, there might be more to read. Try again
         }

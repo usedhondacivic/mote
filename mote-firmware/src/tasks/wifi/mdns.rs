@@ -25,6 +25,7 @@ use crate::tasks::wifi::udp_server::UDP_SERVER_PORT;
 #[embassy_executor::task]
 pub async fn mdns_task(stack: Stack<'static>) -> ! {
     // Wait for IPV4 to come up
+    stack.wait_link_up().await;
     stack.wait_config_up().await;
     let ip = stack.config_v4().unwrap().address.address();
     let mut hostname: String;

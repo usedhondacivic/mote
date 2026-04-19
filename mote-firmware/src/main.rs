@@ -95,6 +95,12 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
     info!("Core 0 spawned");
 
     flash_config::init(flash_r.flash).await;
+    spawner.spawn(flash_manager::flash_manager_task()).unwrap();
+    info!("Flash INIT complete");
+
+    wifi::init(spawner, r).await;
+    info!("Wifi INIT complete");
+
     {
         // No saved UID — derive one from the RP2350 OTP chip ID so it is
         // stable across reboots and unique per device.
@@ -107,14 +113,6 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
         });
         CONFIGURATION_STATE.lock().await.uid = uid;
     }
-    info!("Flash config INIT complete");
-    spawner.spawn(flash_manager::flash_manager_task()).unwrap();
-
-    info!("Gating on 1.5A capable before starting WIFI");
-    power_gate::gate_1_5_amp().await;
-
-    wifi::init(spawner, r).await;
-    info!("Wifi INIT complete");
 }
 
 #[embassy_executor::task]

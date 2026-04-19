@@ -7,6 +7,15 @@
 }
 
 @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../assets/fonts/DejaVuSansMano/DejaVuSansMono.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+2800-U+28FF; /* Braille Patterns */
+}
+
+@font-face {
     font-family: 'monospace';
     src: url('../assets/fonts/DejaVuSansMano/DejaVuSansMono.ttf') format('truetype');
     font-weight: normal;
