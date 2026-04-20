@@ -173,7 +173,7 @@ pub async fn connection_manager_task(mut control: cyw43::Control<'static>) -> ! 
                 );
 
                 info!("Leaving current network (if any) before joining new one");
-                control.leave().await; 
+                control.leave().await;
 
                 attempt_join_network(&mut control, config).await;
             }

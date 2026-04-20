@@ -15,7 +15,8 @@ use crate::wifi::DATA_OFFLOAD_CHANNEL;
 // NUMBER OF MISSED IMU READS IN A ROW BEFORE WE FLAG A BIT FAILURE
 const MISSED_READ_THRESHOLD: u8 = 10;
 const INVALID_TEMPERATURE: f32 = 25.0; // value returned by get_sensor_data on read failure 
-                                        // (MUST be 25.0 since imu.read_all() may not return an error but just return 0 for all values, in this case the temp is read as 25)
+// (MUST be 25.0 since imu.read_all() may not return an error but just return 0
+// for all values, in this case the temp is read as 25)
 
 // returns temperature and (accel, gyro) IMU measurement
 pub async fn get_sensor_data(
@@ -67,18 +68,21 @@ async fn imu_task(r: ImuResources) {
         // get sensor data errored, update BIT and log, and missed read count
         if temp == INVALID_TEMPERATURE {
             missed_read_count += 1;
-            defmt::error!("Failed to read IMU sensor data. Missed reads in a row: {}, Waiting 5 seconds before attempting recovery", missed_read_count);
-            if missed_read_count >= MISSED_READ_THRESHOLD
-            {
+            defmt::error!(
+                "Failed to read IMU sensor data. Missed reads in a row: {}, Waiting 5 seconds before attempting recovery",
+                missed_read_count
+            );
+            if missed_read_count >= MISSED_READ_THRESHOLD {
                 {
                     let mut configuration_state = CONFIGURATION_STATE.lock().await;
                     update_bit_result(
                         &mut configuration_state.built_in_test.imu,
                         "Reading Values",
-                        BITResult::Fail
+                        BITResult::Fail,
                     );
                 }
-                // waiting here for a few seconds to allow the BIT state to be observed as failed before attempting recovery
+                // waiting here for a few seconds to allow the BIT state to be observed as
+                // failed before attempting recovery
                 embassy_time::Timer::after_secs(5).await;
 
                 // reclaim i2c resources
@@ -91,22 +95,26 @@ async fn imu_task(r: ImuResources) {
 
         embassy_time::Timer::after_millis(20).await;
     }
-
 }
 
-async fn reset_imu(mut i2c: I2c<'static, I2C1, embassy_rp::i2c::Async>) -> Lsm6ds3TRC<I2c<'static, I2C1, embassy_rp::i2c::Async>> {
+async fn reset_imu(
+    mut i2c: I2c<'static, I2C1, embassy_rp::i2c::Async>,
+) -> Lsm6ds3TRC<I2c<'static, I2C1, embassy_rp::i2c::Async>> {
     loop {
         defmt::info!("Resetting IMU");
 
         i2c = match Lsm6ds3TRC::new(i2c, 0x6A).await {
             Ok(mut driver) => {
                 let config_res: Result<(), lib::Error<embassy_rp::i2c::Error>> = async {
-                    driver.set_accelerometer_output(regs::AccelerometerOutput::Rate104).await?;
+                    driver
+                        .set_accelerometer_output(regs::AccelerometerOutput::Rate104)
+                        .await?;
                     driver.set_accelerometer_scale(regs::AccelerometerScale::G02).await?;
                     driver.set_gyroscope_output(regs::GyroscopeOutput::Rate104).await?;
                     driver.set_gyroscope_scale(regs::GyroscopeFullScale::Dps245).await?;
                     Ok(())
-                }.await;
+                }
+                .await;
 
                 match config_res {
                     Ok(_) => {
@@ -116,14 +124,16 @@ async fn reset_imu(mut i2c: I2c<'static, I2C1, embassy_rp::i2c::Async>) -> Lsm6d
                             update_bit_result(&mut state.built_in_test.imu, "Init", BITResult::Pass);
                             update_bit_result(&mut state.built_in_test.imu, "Reading Values", BITResult::Pass);
                         }
-                        return driver; 
+                        return driver;
                     }
                     Err(e) => {
                         match e {
-                            lib::Error::Communication(_) => defmt::error!("IMU Error: I2C Communication failed during config"),
+                            lib::Error::Communication(_) => {
+                                defmt::error!("IMU Error: I2C Communication failed during config")
+                            }
                             _ => defmt::error!("IMU Error: Unknown config error"),
                         }
-                        driver.release() 
+                        driver.release()
                     }
                 }
             }
@@ -147,7 +157,6 @@ async fn reset_imu(mut i2c: I2c<'static, I2C1, embassy_rp::i2c::Async>) -> Lsm6d
     }
 }
 
-
 pub async fn init(spawner: Spawner, r: ImuResources) {
     // setup bit state for config page
     {
@@ -165,5 +174,4 @@ pub async fn init(spawner: Spawner, r: ImuResources) {
     }
 
     spawner.spawn(imu_task(r)).unwrap();
-
 }
