@@ -14,7 +14,8 @@ use crate::wifi::DATA_OFFLOAD_CHANNEL;
 
 // NUMBER OF MISSED IMU READS IN A ROW BEFORE WE FLAG A BIT FAILURE
 const MISSED_READ_THRESHOLD: u8 = 10;
-const INVALID_TEMPERATURE: f32 = 25.0; // value returned by get_sensor_data on read failure
+const INVALID_TEMPERATURE: f32 = 25.0; // value returned by get_sensor_data on read failure 
+                                        // (MUST be 25.0 since imu.read_all() may not return an error but just return 0 for all values, in this case the temp is read as 25)
 
 // returns temperature and (accel, gyro) IMU measurement
 pub async fn get_sensor_data(
@@ -94,74 +95,58 @@ async fn imu_task(r: ImuResources) {
 }
 
 async fn reset_imu(mut i2c: I2c<'static, I2C1, embassy_rp::i2c::Async>) -> Lsm6ds3TRC<I2c<'static, I2C1, embassy_rp::i2c::Async>> {
-
-    let imu = 
-    loop { // attepmt to initialize and configure the IMU, if it fails, log the error and retry after a delay
+    loop {
         defmt::info!("Resetting IMU");
-        let (returned_i2c, result) = async {
-            // Attempt to create the driver
-            match Lsm6ds3TRC::new(i2c, 0x6A).await {
-                Ok(mut driver) => {
-                    // Try to configure it
-                    let config_res = async {
-                        driver.set_accelerometer_output(regs::AccelerometerOutput::Rate104).await?;
-                        driver.set_accelerometer_scale(regs::AccelerometerScale::G02).await?;
-                        driver.set_gyroscope_output(regs::GyroscopeOutput::Rate104).await?;
-                        driver.set_gyroscope_scale(regs::GyroscopeFullScale::Dps245).await?;
-                        Ok(())
-                    }.await;
 
-                    match config_res {
-                        Ok(_) => (None, Ok(driver)), // success, return the driver and don't return the i2c bus
-                        Err(e) => (Some(driver.release()), Err(e)), // config failed, return i2c bus for next loop and log the error
+        i2c = match Lsm6ds3TRC::new(i2c, 0x6A).await {
+            Ok(mut driver) => {
+                let config_res: Result<(), lib::Error<embassy_rp::i2c::Error>> = async {
+                    driver.set_accelerometer_output(regs::AccelerometerOutput::Rate104).await?;
+                    driver.set_accelerometer_scale(regs::AccelerometerScale::G02).await?;
+                    driver.set_gyroscope_output(regs::GyroscopeOutput::Rate104).await?;
+                    driver.set_gyroscope_scale(regs::GyroscopeFullScale::Dps245).await?;
+                    Ok(())
+                }.await;
+
+                match config_res {
+                    Ok(_) => {
+                        defmt::info!("IMU Initialized and Configured");
+                        {
+                            let mut state = CONFIGURATION_STATE.lock().await;
+                            update_bit_result(&mut state.built_in_test.imu, "Init", BITResult::Pass);
+                            update_bit_result(&mut state.built_in_test.imu, "Reading Values", BITResult::Pass);
+                        }
+                        return driver; 
+                    }
+                    Err(e) => {
+                        match e {
+                            lib::Error::Communication(_) => defmt::error!("IMU Error: I2C Communication failed during config"),
+                            _ => defmt::error!("IMU Error: Unknown config error"),
+                        }
+                        driver.release() 
                     }
                 }
-                Err((returned_bus, e)) => (Some(returned_bus), Err(e)), // init failed, Return the bus
             }
-        }.await;
-
-        match result {
-            Ok(driver) => break driver,
-            Err(e) => {
-                // 1. Reclaim the i2c bus if it was returned by the failed driver init or config attempt
-                if let Some(bus) = returned_i2c {
-                    i2c = bus;
-                }
-                else {
-                    defmt::error!("IMU initialization failed but no I2C bus was returned. This likely means the I2C bus is in a bad state and the IMU driver failed to reset it. Attempting to continue with the same I2C instance, but subsequent attempts may also fail until the bus is reset.");
-                    panic!("IMU initialization failed and no I2C bus was returned. This likely means the I2C bus is in a bad state and the IMU driver failed to reset it. Attempting to continue with the same I2C instance, but subsequent attempts may also fail until the bus is reset.");
-                }
-
-                // 2. Log the specific failure
+            Err((returned_bus, e)) => {
                 match e {
-                    lib::Error::Communication(_) => defmt::error!("IMU Error: I2C Communication failed"),
+                    lib::Error::Communication(_) => defmt::error!("IMU Error: I2C Communication failed during init"),
                     lib::Error::ChipDetectFailed => defmt::error!("IMU Error: Chip not detected"),
-                    _ => defmt::error!("IMU Error: Unknown setup error"),
+                    _ => defmt::error!("IMU Error: Unknown init error"),
                 }
-
-                // 3. Log the RESTART attempt BEFORE the timer to confirm logic reached here
-                defmt::warn!("IMU not initialized. Retrying in 5 seconds...");
-                
-                // 4. Update BIT state and wait
-                {
-                    let mut state = CONFIGURATION_STATE.lock().await;
-                    update_bit_result(&mut state.built_in_test.imu, "Init", BITResult::Fail);
-                }
-
-                embassy_time::Timer::after_secs(5).await;
+                returned_bus
             }
+        };
+
+        {
+            let mut state = CONFIGURATION_STATE.lock().await;
+            update_bit_result(&mut state.built_in_test.imu, "Init", BITResult::Fail);
         }
-    };
 
-    defmt::info!("IMU Initialized and Configured");
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.imu, "Init", BITResult::Pass);
-        update_bit_result(&mut configuration_state.built_in_test.imu, "Reading Values", BITResult::Pass);
+        defmt::warn!("IMU recovery: Retrying in 5 seconds...");
+        embassy_time::Timer::after_secs(5).await;
     }
-
-    imu
 }
+
 
 pub async fn init(spawner: Spawner, r: ImuResources) {
     // setup bit state for config page
