@@ -127,6 +127,10 @@ async fn reset_imu(mut i2c: I2c<'static, I2C1, embassy_rp::i2c::Async>) -> Lsm6d
                 if let Some(bus) = returned_i2c {
                     i2c = bus;
                 }
+                else {
+                    defmt::error!("IMU initialization failed but no I2C bus was returned. This likely means the I2C bus is in a bad state and the IMU driver failed to reset it. Attempting to continue with the same I2C instance, but subsequent attempts may also fail until the bus is reset.");
+                    panic!("IMU initialization failed and no I2C bus was returned. This likely means the I2C bus is in a bad state and the IMU driver failed to reset it. Attempting to continue with the same I2C instance, but subsequent attempts may also fail until the bus is reset.");
+                }
 
                 // 2. Log the specific failure
                 match e {
