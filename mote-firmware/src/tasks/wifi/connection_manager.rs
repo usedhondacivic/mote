@@ -46,7 +46,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
                     continue;
                 }
                 Ok(Err(err)) => {
-                    info!("join failed with status={}, attempt {} / 3", err.status, attempt);
+                    info!("join failed: {}, attempt {} / 3", err, attempt);
                     continue;
                 }
                 Ok(Ok(_)) => {}
@@ -64,7 +64,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
                     continue;
                 }
                 Ok(Err(err)) => {
-                    info!("join failed with status={}, attempt {} / 3", err.status, attempt);
+                    info!("join failed: {}, attempt {} / 3", err, attempt);
                     continue;
                 }
                 Ok(Ok(_)) => {}

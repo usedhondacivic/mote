@@ -114,7 +114,7 @@ pub async fn init(spawner: Spawner, r: UsbPowerDetectionResources) {
         }
     }
 
-    spawner.spawn(power_gate_task(r)).unwrap();
+    spawner.spawn(power_gate_task(r).unwrap());
 }
 
 // Block thread until 1.5A capability is advertised on USB cc1

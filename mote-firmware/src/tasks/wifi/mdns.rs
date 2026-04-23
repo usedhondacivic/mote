@@ -11,7 +11,7 @@ use edge_nal::UdpSplit;
 use edge_nal_embassy::{Udp, UdpBuffers};
 use embassy_futures::select::{Either, select};
 use embassy_net::Stack;
-use embassy_rp::clocks::RoscRng;
+use embassy_rp::pac;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
@@ -21,6 +21,48 @@ use {defmt_rtt as _, panic_probe as _};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 use crate::tasks::wifi::udp_server::UDP_SERVER_PORT;
+
+// TODO: Replace with embassy_rp::clocks::RoscRng once embassy-rp releases to
+// include  https://github.com/embassy-rs/embassy/commit/d75598c7ebd25777f7a690e5e6c7ae5b17993139
+struct RoscRnd;
+
+impl RoscRnd {
+    fn random_byte() -> u8 {
+        let random_reg = pac::ROSC.randombit();
+        let mut acc: u8 = 0;
+        for _ in 0..8 {
+            acc = (acc << 1) | random_reg.read().randombit() as u8;
+        }
+        acc
+    }
+}
+
+impl rand_core::TryRng for RoscRnd {
+    type Error = core::convert::Infallible;
+
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
+        let b = [
+            Self::random_byte(),
+            Self::random_byte(),
+            Self::random_byte(),
+            Self::random_byte(),
+        ];
+        Ok(u32::from_le_bytes(b))
+    }
+
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
+        let lo = self.try_next_u32()? as u64;
+        let hi = self.try_next_u32()? as u64;
+        Ok((hi << 32) | lo)
+    }
+
+    fn try_fill_bytes(&mut self, dst: &mut [u8]) -> Result<(), Self::Error> {
+        for byte in dst.iter_mut() {
+            *byte = Self::random_byte();
+        }
+        Ok(())
+    }
+}
 
 #[embassy_executor::task]
 pub async fn mdns_task(stack: Stack<'static>) -> ! {
@@ -67,16 +109,16 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
         txt_kvs: &[],
     };
 
-    let signal = Signal::new();
+    let signal: Signal<NoopRawMutex, ()> = Signal::new();
 
-    let mdns = io::Mdns::<NoopRawMutex, _, _, _, _>::new(
+    let mdns = io::Mdns::new(
         Some(Ipv4Addr::UNSPECIFIED),
         None,
         recv,
         send,
         recv_buf,
         send_buf,
-        |buf| RoscRng.fill_bytes(buf),
+        RoscRnd,
         &signal,
     );
 

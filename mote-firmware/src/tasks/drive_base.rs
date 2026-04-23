@@ -234,12 +234,5 @@ pub async fn init(
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
 ) {
-    spawner
-        .spawn(motor_task(
-            encoder_driver_r,
-            left_encoder_r,
-            right_encoder_r,
-            motor_driver_r,
-        ))
-        .unwrap();
+    spawner.spawn(motor_task(encoder_driver_r, left_encoder_r, right_encoder_r, motor_driver_r).unwrap());
 }

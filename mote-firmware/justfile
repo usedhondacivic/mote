@@ -2,9 +2,7 @@
 _default:
     just --list
 
-test:
-    cargo test
-
+# Build firmware
 build:
     cargo build --release
 
@@ -16,11 +14,21 @@ provision:
 
 # Deploy firmware to Mote
 deploy:
-    cargo run --release
+    DEFMT_LOG=info cargo run --release
 
+# Deploy firmware to Mote and run with debug logging
+debug:
+    DEFMT_LOG=debug cargo run --release
+
+# Deploy firmware to Mote and run with trace logging
+trace:
+    DEFMT_LOG=trace cargo run --release
+
+# Format all files
 format:
     cargo fmt
 
+# Lint all files
 lint:
     @echo "Linting mote-api"
     cargo clippy --all-features -- -D warnings
