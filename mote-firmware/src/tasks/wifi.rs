@@ -3,6 +3,7 @@ pub mod connection_manager;
 mod mdns;
 mod udp_server;
 
+use cyw43::aligned_bytes;
 use cyw43_pio::{DEFAULT_CLOCK_DIVIDER, PioSpi};
 use embassy_executor::Spawner;
 use embassy_net::{Config, StackResources};
@@ -73,13 +74,15 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     // ../../cyw43-firmware/43439A0_clm.bin --binary-format bin  --chip RP235x \
     // --base-address 0x10140000
     #[cfg(feature = "bake-cyw43-firmware")]
-    let fw = include_bytes!("../../cyw43-firmware/43439A0.bin");
+    let fw = aligned_bytes!("../../cyw43-firmware/43439A0.bin");
     #[cfg(feature = "bake-cyw43-firmware")]
-    let clm = include_bytes!("../../cyw43-firmware/43439A0_clm.bin");
+    let clm = aligned_bytes!("../../cyw43-firmware/43439A0_clm.bin");
     #[cfg(not(feature = "bake-cyw43-firmware"))]
     let fw = unsafe { core::slice::from_raw_parts(0x10100000 as *const u8, 230321) };
     #[cfg(not(feature = "bake-cyw43-firmware"))]
     let clm = unsafe { core::slice::from_raw_parts(0x10140000 as *const u8, 4752) };
+
+    let nvram = aligned_bytes!("../../cyw43-firmware/nvram_rp2040.bin");
 
     let pwr = Output::new(r.pwr, Level::Low);
     let cs = Output::new(r.cs, Level::High);
@@ -97,7 +100,7 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
 
     static STATE: StaticCell<cyw43::State> = StaticCell::new();
     let state = STATE.init(cyw43::State::new());
-    let (net_device, mut control, runner) = cyw43::new(state, pwr, spi, fw).await;
+    let (net_device, mut control, runner) = cyw43::new(state, pwr, spi, fw, nvram).await;
     spawner.spawn(cyw43_task(runner)).unwrap();
 
     control.init(clm).await;
