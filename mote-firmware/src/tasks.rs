@@ -69,8 +69,8 @@ assign_resources! {
 
 // also bind interrupts
 use embassy_rp::adc::InterruptHandler as ADCInterruptHandler;
-use embassy_rp::i2c::InterruptHandler as I2CInterruptHandler;
 use embassy_rp::dma::InterruptHandler as DMAInterruptHandler;
+use embassy_rp::i2c::InterruptHandler as I2CInterruptHandler;
 use embassy_rp::peripherals::{DMA_CH0, I2C1, PIO0, PIO1, PIO2, UART1, USB};
 use embassy_rp::pio::InterruptHandler as PIOInterruptHandler;
 use embassy_rp::uart::BufferedInterruptHandler as UARTInterruptHandler;
