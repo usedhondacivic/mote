@@ -12,7 +12,8 @@
     font-weight: normal;
     font-style: normal;
     font-display: swap;
-    unicode-range: U+2800-U+28FF; /* Braille Patterns */
+    /* Braille Patterns */
+    unicode-range: U+2800-28FF;
 }
 
 @font-face {
