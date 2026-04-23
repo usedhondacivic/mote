@@ -37,6 +37,26 @@ static POWER_GATE_WATCH: Watch<CriticalSectionRawMutex, PowerState, 3> = Watch::
 
 #[embassy_executor::task]
 async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: "Init".into(),
+            result: BITResult::Pass,
+        };
+        let comms_power = BIT {
+            name: "7.5W Capable (enables WIFI)".into(),
+            result: BITResult::Waiting,
+        };
+        let motor_power = BIT {
+            name: "15W Capable (enables drive base)".into(),
+            result: BITResult::Waiting,
+        };
+        for test in [init, comms_power, motor_power] {
+            configuration_state.built_in_test.power.push(test);
+        }
+    }
+
     let mut adc = Adc::new(r.adc, Irqs, Config::default());
     let mut cc1 = Channel::new_pin(r.cc1, Pull::Down);
     let mut cc2 = Channel::new_pin(r.cc2, Pull::Down);
@@ -94,26 +114,6 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
 }
 
 pub async fn init(spawner: Spawner, r: UsbPowerDetectionResources) {
-    // Init BIT
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
-            name: "Init".into(),
-            result: BITResult::Pass,
-        };
-        let comms_power = BIT {
-            name: "7.5W Capable (enables WIFI)".into(),
-            result: BITResult::Waiting,
-        };
-        let motor_power = BIT {
-            name: "15W Capable (enables drive base)".into(),
-            result: BITResult::Waiting,
-        };
-        for test in [init, comms_power, motor_power] {
-            configuration_state.built_in_test.power.push(test);
-        }
-    }
-
     spawner.spawn(power_gate_task(r).unwrap());
 }
 

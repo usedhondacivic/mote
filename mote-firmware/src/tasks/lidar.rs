@@ -27,6 +27,22 @@ impl From<Point> for mote_to_host::Point {
 
 #[embassy_executor::task]
 async fn lidar_state_machine_task(r: RplidarC1Resources) {
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: "Init".into(),
+            result: BITResult::Waiting,
+        };
+        let check_health = BIT {
+            name: "Check Health".into(),
+            result: BITResult::Waiting,
+        };
+        for test in [init, check_health] {
+            configuration_state.built_in_test.lidar.push(test);
+        }
+    }
+
     let mut config = Config::default();
     config.baudrate = 460800;
     config.stop_bits = StopBits::STOP1;
@@ -45,6 +61,12 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
     let mut valid_points = 0;
 
     let mut driver = RPLidarC1::new(uart);
+
+    // Update init state
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        update_bit_result(&mut configuration_state.built_in_test.lidar, "Init", BITResult::Pass);
+    }
 
     loop {
         state = match state {
@@ -101,28 +123,6 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 }
 
 pub async fn init(spawner: Spawner, r: RplidarC1Resources) {
-    // Init BIT
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
-            name: "Init".into(),
-            result: BITResult::Waiting,
-        };
-        let check_health = BIT {
-            name: "Check Health".into(),
-            result: BITResult::Waiting,
-        };
-        for test in [init, check_health] {
-            configuration_state.built_in_test.lidar.push(test);
-        }
-    }
-
     // Start task
     spawner.spawn(lidar_state_machine_task(r).unwrap());
-
-    // Update init state
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.lidar, "Init", BITResult::Pass);
-    }
 }
