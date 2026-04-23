@@ -1,4 +1,4 @@
-use defmt::error;
+use defmt::{error, info};
 use embassy_executor::Spawner;
 use embassy_futures::select::select4;
 use embassy_rp::pio::{Instance, Pio};
@@ -11,7 +11,9 @@ use pid::Pid;
 use crate::tasks::drive_base::encoder::PioEncoder;
 use crate::tasks::drive_base::hbridge::PwmBridge;
 use crate::tasks::wifi::{DATA_OFFLOAD_CHANNEL, MOTOR_COMMAND_CHANNEL};
-use crate::tasks::{DRV8833Resources, EncoderDriverResources, Irqs, LeftEncoderResources, RightEncoderResources};
+use crate::tasks::{
+    DRV8833Resources, EncoderDriverResources, Irqs, LeftEncoderResources, RightEncoderResources, power_gate,
+};
 
 mod encoder;
 mod hbridge;
@@ -115,6 +117,10 @@ async fn motor_task(
     right_encoder_r: RightEncoderResources,
     motor_driver_r: DRV8833Resources,
 ) {
+    info!("Gating on 3A capable before starting drive base");
+    power_gate::gate_3_amp().await;
+    info!("Power supply is 3A capable");
+
     // Setup PWM
     let desired_freq_hz = 25_000;
     let clock_freq_hz = embassy_rp::clocks::clk_sys_freq();

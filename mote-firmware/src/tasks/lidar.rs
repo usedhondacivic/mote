@@ -1,5 +1,6 @@
 mod rp_c1_driver;
 
+use defmt::info;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{BufferedUart, Config, DataBits, Parity, StopBits};
 use mote_api::messages::mote_to_host;
@@ -8,8 +9,8 @@ use static_cell::StaticCell;
 
 use super::{Irqs, RplidarC1Resources};
 use crate::helpers::update_bit_result;
-use crate::tasks::CONFIGURATION_STATE;
 use crate::tasks::lidar::rp_c1_driver::{LidarState, Point, RPLidarC1};
+use crate::tasks::{CONFIGURATION_STATE, power_gate};
 use crate::wifi::DATA_OFFLOAD_CHANNEL;
 
 const MAX_POINTS_PER_SCAN_MESSAGE: usize = 100;
@@ -42,6 +43,10 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
             configuration_state.built_in_test.lidar.push(test);
         }
     }
+
+    info!("Gating on 1.5A capable before starting LiDAR");
+    power_gate::gate_1_5_amp().await;
+    info!("Power supply is 1.5A capable");
 
     let mut config = Config::default();
     config.baudrate = 460800;
