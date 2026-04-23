@@ -173,5 +173,5 @@ pub async fn init(spawner: Spawner, r: ImuResources) {
         configuration_state.built_in_test.imu.push(health_bit);
     }
 
-    spawner.spawn(imu_task(r)).unwrap();
+    spawner.spawn(imu_task(r).unwrap());
 }
