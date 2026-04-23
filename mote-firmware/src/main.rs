@@ -68,8 +68,8 @@ fn main() -> ! {
         move || {
             let executor1 = EXECUTOR1.init(Executor::new());
             executor1.run(|spawner| {
-                spawner
-                    .spawn(core1_task(
+                spawner.spawn(
+                    core1_task(
                         spawner,
                         r.usb_serial,
                         r.lidar_uart,
@@ -79,40 +79,27 @@ fn main() -> ! {
                         r.right_encoder,
                         r.drv8833_resources,
                         r.usb_power_detection,
-                    ))
-                    .unwrap()
+                    )
+                    .unwrap(),
+                )
             });
         },
     );
 
     let executor0 = EXECUTOR0.init(Executor::new());
 
-    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi, r.flash)).unwrap());
+    executor0.run(|spawner| spawner.spawn(core0_task(spawner, r.wifi, r.flash).unwrap()));
 }
 
 #[embassy_executor::task]
 async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources) {
     info!("Core 0 spawned");
 
-    flash_config::init(flash_r.flash).await;
-    spawner.spawn(flash_manager::flash_manager_task()).unwrap();
+    spawner.spawn(flash_manager::flash_manager_task(flash_r).unwrap());
     info!("Flash INIT complete");
 
     wifi::init(spawner, r).await;
     info!("Wifi INIT complete");
-
-    {
-        // No saved UID — derive one from the RP2350 OTP chip ID so it is
-        // stable across reboots and unique per device.
-        let uid = flash_config::load_uid().await.unwrap_or_else(|| {
-            let default_uid = embassy_rp::otp::get_chipid()
-                .map(|id| alloc::format!("mote-{:016x}", id))
-                .unwrap_or("mote-unknown".into());
-            info!("No saved UID, using chip-derived default: {}", default_uid.as_str());
-            default_uid
-        });
-        CONFIGURATION_STATE.lock().await.uid = uid;
-    }
 }
 
 #[embassy_executor::task]

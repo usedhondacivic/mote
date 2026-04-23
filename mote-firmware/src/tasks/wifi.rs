@@ -3,12 +3,14 @@ pub mod connection_manager;
 mod mdns;
 mod udp_server;
 
+use cyw43::{SpiBus, aligned_bytes};
 use cyw43_pio::{DEFAULT_CLOCK_DIVIDER, PioSpi};
 use embassy_executor::Spawner;
 use embassy_net::{Config, StackResources};
 use embassy_rp::clocks::RoscRng;
+use embassy_rp::dma::Channel as DmaChannel;
 use embassy_rp::gpio::{Level, Output};
-use embassy_rp::peripherals::{DMA_CH0, PIO0};
+use embassy_rp::peripherals::PIO0;
 use embassy_rp::pio::Pio;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
@@ -26,7 +28,7 @@ pub static MOTOR_COMMAND_CHANNEL: Channel<CriticalSectionRawMutex, host_to_mote:
     Channel::new();
 
 #[embassy_executor::task]
-async fn cyw43_task(runner: cyw43::Runner<'static, Output<'static>, PioSpi<'static, PIO0, 0, DMA_CH0>>) -> ! {
+async fn cyw43_task(runner: cyw43::Runner<'static, SpiBus<Output<'static>, PioSpi<'static, PIO0, 0>>>) -> ! {
     runner.run().await
 }
 
@@ -73,17 +75,24 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     // ../../cyw43-firmware/43439A0_clm.bin --binary-format bin  --chip RP235x \
     // --base-address 0x10140000
     #[cfg(feature = "bake-cyw43-firmware")]
-    let fw = include_bytes!("../../cyw43-firmware/43439A0.bin");
+    let fw = aligned_bytes!("../../cyw43-firmware/43439A0.bin");
     #[cfg(feature = "bake-cyw43-firmware")]
-    let clm = include_bytes!("../../cyw43-firmware/43439A0_clm.bin");
+    let clm = aligned_bytes!("../../cyw43-firmware/43439A0_clm.bin");
     #[cfg(not(feature = "bake-cyw43-firmware"))]
-    let fw = unsafe { core::slice::from_raw_parts(0x10100000 as *const u8, 230321) };
+    let fw = unsafe {
+        &*(core::ptr::slice_from_raw_parts(0x10100000 as *const u8, 230321) as *const cyw43::Aligned<cyw43::A4, [u8]>)
+    };
     #[cfg(not(feature = "bake-cyw43-firmware"))]
-    let clm = unsafe { core::slice::from_raw_parts(0x10140000 as *const u8, 4752) };
+    let clm = unsafe {
+        &*(core::ptr::slice_from_raw_parts(0x10140000 as *const u8, 4752) as *const cyw43::Aligned<cyw43::A4, [u8]>)
+    };
+
+    let nvram = aligned_bytes!("../../cyw43-firmware/nvram_rp2040.bin");
 
     let pwr = Output::new(r.pwr, Level::Low);
     let cs = Output::new(r.cs, Level::High);
     let mut pio = Pio::new(r.pio, Irqs);
+    let dma = DmaChannel::new(r.dma, Irqs);
     let spi = PioSpi::new(
         &mut pio.common,
         pio.sm0,
@@ -92,13 +101,13 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
         cs,
         r.dio,
         r.clk,
-        r.dma,
+        dma,
     );
 
     static STATE: StaticCell<cyw43::State> = StaticCell::new();
     let state = STATE.init(cyw43::State::new());
-    let (net_device, mut control, runner) = cyw43::new(state, pwr, spi, fw).await;
-    spawner.spawn(cyw43_task(runner)).unwrap();
+    let (net_device, mut control, runner) = cyw43::new(state, pwr, spi, fw, nvram).await;
+    spawner.spawn(cyw43_task(runner).unwrap());
 
     control.init(clm).await;
     control.set_power_management(cyw43::PowerManagementMode::None).await;
@@ -133,16 +142,14 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
 
     // Start network task
-    spawner.spawn(net_task(runner)).unwrap();
+    spawner.spawn(net_task(runner).unwrap());
 
     // Start mdns responder
-    spawner.spawn(mdns::mdns_task(stack)).unwrap();
+    spawner.spawn(mdns::mdns_task(stack).unwrap());
 
     // Start the udp server (handles both commands and data offload)
-    spawner.spawn(udp_server::udp_server_task(stack)).unwrap();
+    spawner.spawn(udp_server::udp_server_task(stack).unwrap());
 
     // Start connection manager task
-    spawner
-        .spawn(connection_manager::connection_manager_task(control))
-        .unwrap();
+    spawner.spawn(connection_manager::connection_manager_task(control).unwrap());
 }
