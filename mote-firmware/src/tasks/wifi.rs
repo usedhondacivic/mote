@@ -124,14 +124,6 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     );
     defmt::info!("MAC address: {}", mac_str.as_str());
 
-    {
-        // Update init state
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
-        // Update mac address
-        configuration_state.mac = Some(mac_str);
-    }
-
     let config = Config::dhcpv4(Default::default());
 
     // Generate random seed
@@ -140,6 +132,14 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     // Init network stack
     static RESOURCES: StaticCell<StackResources<4>> = StaticCell::new();
     let (stack, runner) = embassy_net::new(net_device, config, RESOURCES.init(StackResources::new()), seed);
+
+    {
+        // Update init state
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
+        // Update mac address
+        configuration_state.mac = Some(mac_str);
+    }
 
     // Start network task
     spawner.spawn(net_task(runner).unwrap());

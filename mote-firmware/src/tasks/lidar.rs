@@ -1,5 +1,6 @@
 mod rp_c1_driver;
 
+use defmt::info;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{BufferedUart, Config, DataBits, Parity, StopBits};
 use mote_api::messages::mote_to_host;
@@ -8,8 +9,8 @@ use static_cell::StaticCell;
 
 use super::{Irqs, RplidarC1Resources};
 use crate::helpers::update_bit_result;
-use crate::tasks::CONFIGURATION_STATE;
 use crate::tasks::lidar::rp_c1_driver::{LidarState, Point, RPLidarC1};
+use crate::tasks::{CONFIGURATION_STATE, power_gate};
 use crate::wifi::DATA_OFFLOAD_CHANNEL;
 
 const MAX_POINTS_PER_SCAN_MESSAGE: usize = 100;
@@ -27,6 +28,26 @@ impl From<Point> for mote_to_host::Point {
 
 #[embassy_executor::task]
 async fn lidar_state_machine_task(r: RplidarC1Resources) {
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: "Init".into(),
+            result: BITResult::Waiting,
+        };
+        let check_health = BIT {
+            name: "Check Health".into(),
+            result: BITResult::Waiting,
+        };
+        for test in [init, check_health] {
+            configuration_state.built_in_test.lidar.push(test);
+        }
+    }
+
+    info!("Gating on 1.5A capable before starting LiDAR");
+    power_gate::gate_1_5_amp().await;
+    info!("Power supply is 1.5A capable");
+
     let mut config = Config::default();
     config.baudrate = 460800;
     config.stop_bits = StopBits::STOP1;
@@ -45,6 +66,12 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
     let mut valid_points = 0;
 
     let mut driver = RPLidarC1::new(uart);
+
+    // Update init state
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        update_bit_result(&mut configuration_state.built_in_test.lidar, "Init", BITResult::Pass);
+    }
 
     loop {
         state = match state {
@@ -101,28 +128,6 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
 }
 
 pub async fn init(spawner: Spawner, r: RplidarC1Resources) {
-    // Init BIT
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
-            name: "Init".into(),
-            result: BITResult::Waiting,
-        };
-        let check_health = BIT {
-            name: "Check Health".into(),
-            result: BITResult::Waiting,
-        };
-        for test in [init, check_health] {
-            configuration_state.built_in_test.lidar.push(test);
-        }
-    }
-
     // Start task
     spawner.spawn(lidar_state_machine_task(r).unwrap());
-
-    // Update init state
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.lidar, "Init", BITResult::Pass);
-    }
 }

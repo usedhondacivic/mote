@@ -1,5 +1,6 @@
 use core::cmp::{max, min};
 
+use defmt::{Format, debug, trace};
 use embassy_executor::Spawner;
 use embassy_rp::adc::{Adc, Channel, Config};
 use embassy_rp::gpio::Pull;
@@ -11,7 +12,7 @@ use mote_api::messages::mote_to_host::{BIT, BITResult};
 use crate::helpers::update_bit_result;
 use crate::tasks::{CONFIGURATION_STATE, Irqs, UsbPowerDetectionResources};
 
-#[derive(Clone, PartialEq, defmt::Format)]
+#[derive(Clone, PartialEq, Debug, Format)]
 enum PowerState {
     Invalid,
     Disconnected,
@@ -23,11 +24,12 @@ enum PowerState {
 impl From<u16> for PowerState {
     fn from(value: u16) -> Self {
         let v = (value as f32 * 3.3) / 4096.0;
+        trace!("Read power state voltage: {}", v);
         match v {
-            v if v > 0.0 && v < 0.15 => Self::Disconnected,
-            v if v > 0.25 && v < 0.61 => Self::Max500ma,
-            v if v > 0.70 && v < 1.16 => Self::Max1_5a,
-            v if v > 1.31 => Self::Max3a,
+            v if (0.0..=0.15).contains(&v) => Self::Disconnected,
+            v if (0.15..=0.61).contains(&v) => Self::Max500ma,
+            v if (0.61..=1.16).contains(&v) => Self::Max1_5a,
+            v if v > 1.16 => Self::Max3a,
             _ => Self::Invalid,
         }
     }
@@ -37,6 +39,26 @@ static POWER_GATE_WATCH: Watch<CriticalSectionRawMutex, PowerState, 3> = Watch::
 
 #[embassy_executor::task]
 async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
+    // Init BIT
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        let init = BIT {
+            name: "Init".into(),
+            result: BITResult::Pass,
+        };
+        let comms_power = BIT {
+            name: "7.5W Capable (enables WIFI)".into(),
+            result: BITResult::Waiting,
+        };
+        let motor_power = BIT {
+            name: "15W Capable (enables drive base)".into(),
+            result: BITResult::Waiting,
+        };
+        for test in [init, comms_power, motor_power] {
+            configuration_state.built_in_test.power.push(test);
+        }
+    }
+
     let mut adc = Adc::new(r.adc, Irqs, Config::default());
     let mut cc1 = Channel::new_pin(r.cc1, Pull::Down);
     let mut cc2 = Channel::new_pin(r.cc2, Pull::Down);
@@ -53,8 +75,7 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
         let upper = PowerState::from(max(cc1_reading, cc2_reading));
 
         // https://global.discourse-cdn.com/digikey/original/3X/c/9/c9109631c71df719fc2dd3c426ccf3c69949f388.png
-
-        let state = match (lower, upper) {
+        let state = match (&lower, &upper) {
             (PowerState::Invalid, _) => PowerState::Invalid,
             (_, PowerState::Invalid) => PowerState::Invalid,
             (PowerState::Disconnected, PowerState::Disconnected) => PowerState::Disconnected,
@@ -63,6 +84,10 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
             (PowerState::Disconnected, PowerState::Max3a) => PowerState::Max3a,
             _ => PowerState::Invalid,
         };
+        debug!(
+            "Read power state {} from {} and {} with raw readings {} and {}",
+            state, lower, upper, cc1_reading, cc2_reading
+        );
 
         if state != last_state {
             {
@@ -95,26 +120,6 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
 }
 
 pub async fn init(spawner: Spawner, r: UsbPowerDetectionResources) {
-    // Init BIT
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
-            name: "Init".into(),
-            result: BITResult::Pass,
-        };
-        let comms_power = BIT {
-            name: "7.5W Capable (enables WIFI)".into(),
-            result: BITResult::Waiting,
-        };
-        let motor_power = BIT {
-            name: "15W Capable (enables drive base)".into(),
-            result: BITResult::Waiting,
-        };
-        for test in [init, comms_power, motor_power] {
-            configuration_state.built_in_test.power.push(test);
-        }
-    }
-
     spawner.spawn(power_gate_task(r).unwrap());
 }
 
