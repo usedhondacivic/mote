@@ -53,7 +53,6 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
         let upper = PowerState::from(max(cc1_reading, cc2_reading));
 
         // https://global.discourse-cdn.com/digikey/original/3X/c/9/c9109631c71df719fc2dd3c426ccf3c69949f388.png
-        // defmt::info!("Power state readings - CC1: {} , CC2: {} ", lower, upper);
 
         let state = match (lower, upper) {
             (PowerState::Invalid, _) => PowerState::Invalid,
