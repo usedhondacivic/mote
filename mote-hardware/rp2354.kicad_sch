@@ -3397,6 +3397,17 @@
 		)
 		(uuid "3b254282-94b9-483d-864d-783eec081304")
 	)
+	(text "SWD JST SH 1.00 mm"
+		(exclude_from_sim no)
+		(at 291.084 206.248 0)
+		(effects
+			(font
+				(size 1.905 1.905)
+			)
+			(justify bottom)
+		)
+		(uuid "3e0918fb-8227-43a8-8076-a0c76fbc5d36")
+	)
 	(text "USB"
 		(exclude_from_sim no)
 		(at 39.116 224.028 0)
@@ -3407,6 +3418,17 @@
 			(justify left bottom)
 		)
 		(uuid "43a7a1c0-f51d-4a7a-88c0-7ab7be612e26")
+	)
+	(text "SWD 2.5mm pin header"
+		(exclude_from_sim no)
+		(at 344.932 206.756 0)
+		(effects
+			(font
+				(size 1.905 1.905)
+			)
+			(justify bottom)
+		)
+		(uuid "60298d14-09dc-490c-aeca-0b3103ef2e74")
 	)
 	(text "IMU"
 		(exclude_from_sim no)
@@ -3462,6 +3484,17 @@
 			(justify left bottom)
 		)
 		(uuid "b04b9624-7a3b-4945-ab2a-10ccd65cb3e9")
+	)
+	(text "UART 2.5mm pin header"
+		(exclude_from_sim no)
+		(at 346.456 224.79 0)
+		(effects
+			(font
+				(size 1.905 1.905)
+			)
+			(justify bottom)
+		)
+		(uuid "bb32f999-b4ff-4003-ab40-4fb6bc0794f7")
 	)
 	(text "Wireless"
 		(exclude_from_sim no)
@@ -3853,6 +3886,16 @@
 	)
 	(wire
 		(pts
+			(xy 330.2 214.63) (xy 350.52 214.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0355816e-b7eb-48b8-a578-a0ae462d2c26")
+	)
+	(wire
+		(pts
 			(xy 161.29 121.92) (xy 176.53 121.92)
 		)
 		(stroke
@@ -3930,16 +3973,6 @@
 			(type default)
 		)
 		(uuid "0e32a18c-80dc-4cc1-9d18-b5bf574457a5")
-	)
-	(wire
-		(pts
-			(xy 330.2 217.17) (xy 350.52 217.17)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0ed85035-fba1-4d33-9d7a-2e6666e1634c")
 	)
 	(wire
 		(pts
@@ -4033,16 +4066,6 @@
 	)
 	(wire
 		(pts
-			(xy 345.44 231.14) (xy 350.52 231.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1b574482-7f99-48a2-b8ed-6dbb9f424698")
-	)
-	(wire
-		(pts
 			(xy 223.52 44.45) (xy 223.52 46.99)
 		)
 		(stroke
@@ -4060,16 +4083,6 @@
 			(type default)
 		)
 		(uuid "1cb7c62f-a970-4230-a6e2-44d0b766df93")
-	)
-	(wire
-		(pts
-			(xy 350.52 233.68) (xy 330.2 233.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1f779aa1-49ac-4b99-95a4-41053086ccc8")
 	)
 	(polyline
 		(pts
@@ -4220,6 +4233,16 @@
 			(type default)
 		)
 		(uuid "2d90e84a-3be4-4e7e-84c7-f4ad6f676cf6")
+	)
+	(wire
+		(pts
+			(xy 335.28 233.68) (xy 350.52 233.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2db8d32f-54b3-4050-99b2-69335cc24328")
 	)
 	(wire
 		(pts
@@ -4953,6 +4976,16 @@
 	)
 	(wire
 		(pts
+			(xy 335.28 217.17) (xy 350.52 217.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "752eb8bf-8839-4d75-a2d3-25b6a69fe116")
+	)
+	(wire
+		(pts
 			(xy 83.82 101.6) (xy 97.79 101.6)
 		)
 		(stroke
@@ -5360,16 +5393,6 @@
 			(type default)
 		)
 		(uuid "9d0374e3-2523-4b09-9303-44c38f61d2b2")
-	)
-	(wire
-		(pts
-			(xy 345.44 214.63) (xy 350.52 214.63)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9d4ec3b7-6f22-4b37-a86f-5a03392f5cde")
 	)
 	(wire
 		(pts
@@ -5820,6 +5843,16 @@
 			(type default)
 		)
 		(uuid "d44d6fc9-79bc-446b-960b-1ef388275ae6")
+	)
+	(wire
+		(pts
+			(xy 350.52 231.14) (xy 330.2 231.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d5fe87e3-756d-4e13-9fdf-37c10cf937f6")
 	)
 	(wire
 		(pts
@@ -6421,16 +6454,6 @@
 		)
 		(uuid "2feaf117-bef6-4fd1-b7ee-45651f5e711e")
 	)
-	(label "SWD"
-		(at 330.2 217.17 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "3153c0f1-6c4f-441e-bb2f-80c3e252a8f6")
-	)
 	(label "+1v1"
 		(at 57.15 73.66 180)
 		(effects
@@ -6631,16 +6654,6 @@
 		)
 		(uuid "6c543060-8e0c-4b3e-945a-7892922d4a49")
 	)
-	(label "UART0_TX"
-		(at 330.2 233.68 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "718296af-b550-49e3-b786-b3e939bf0a57")
-	)
 	(label "XOUT"
 		(at 83.82 127 0)
 		(effects
@@ -6670,6 +6683,16 @@
 			(justify right bottom)
 		)
 		(uuid "7ddb98ee-0c20-4407-9c4f-cdb8264181a3")
+	)
+	(label "SWD"
+		(at 330.2 214.63 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "800c856e-0ea1-4883-bb2b-a4e08ac496d8")
 	)
 	(label "GPIO22"
 		(at 176.53 142.24 180)
@@ -6991,6 +7014,16 @@
 		)
 		(uuid "eb866932-4171-4ce7-9fe8-e3611d3b3ad3")
 	)
+	(label "UART0_TX"
+		(at 330.2 231.14 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ee830bb8-3db0-49cf-909a-ab2ae71d1872")
+	)
 	(label "~{USB_BOOT}"
 		(at 58.42 97.79 0)
 		(effects
@@ -7095,6 +7128,17 @@
 			(justify left)
 		)
 		(uuid "2db5ebe2-0695-42da-8be0-deec42a54b41")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 335.28 217.17 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2de079ea-aa1a-462d-b197-9efdfe5116a4")
 	)
 	(hierarchical_label "CC1"
 		(shape input)
@@ -7228,17 +7272,6 @@
 		)
 		(uuid "8fbace9b-5f82-4d46-818c-e228dfe6f7cb")
 	)
-	(hierarchical_label "GND"
-		(shape passive)
-		(at 345.44 231.14 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "9a831f33-80f2-40b8-a4c5-3a9373b431e3")
-	)
 	(hierarchical_label "lidar_tx"
 		(shape output)
 		(at 43.18 248.92 0)
@@ -7305,17 +7338,6 @@
 		)
 		(uuid "c57ea9b7-4dc9-4f74-b85f-7ea5493620ca")
 	)
-	(hierarchical_label "GND"
-		(shape passive)
-		(at 345.44 214.63 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d3132af7-e972-407e-861d-6968ce0e7ce7")
-	)
 	(hierarchical_label "motor_left_encoder_b"
 		(shape output)
 		(at 158.75 237.49 0)
@@ -7381,6 +7403,17 @@
 			(justify left)
 		)
 		(uuid "eacbb662-3a10-4a7c-a113-8d0b40e03261")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 335.28 233.68 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ec07da90-7808-476a-a7d5-fca0ccff2ac6")
 	)
 	(hierarchical_label "GND"
 		(shape passive)

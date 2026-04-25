@@ -905,6 +905,17 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "JST PH 2.00mm connectors"
+		(exclude_from_sim no)
+		(at 198.628 117.602 0)
+		(effects
+			(font
+				(size 1.905 1.905)
+			)
+			(justify bottom)
+		)
+		(uuid "893b1886-5de2-4641-9bdd-126f78493532")
+	)
 	(text "1A current limit\n[CHOP = (0.2V / RSENSE)]"
 		(exclude_from_sim no)
 		(at 96.52 103.378 0)
