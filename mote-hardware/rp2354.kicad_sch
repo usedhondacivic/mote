@@ -11,169 +11,6 @@
 		(company "github.com/empriselab/mote-core")
 	)
 	(lib_symbols
-		(symbol "Connector:Conn_01x02_Pin"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "J"
-				(at 0 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "Conn_01x02_Pin"
-				(at 0 -5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Generic connector, single row, 01x02, script generated"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "connector"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "Connector*:*_1x??_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Conn_01x02_Pin_1_1"
-				(rectangle
-					(start 0.8636 0.127)
-					(end 0 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start 0.8636 -2.413)
-					(end 0 -2.667)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy 0.8636 0)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -2.54) (xy 0.8636 -2.54)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at 5.08 0 180)
-					(length 3.81)
-					(name "Pin_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 -2.54 180)
-					(length 3.81)
-					(name "Pin_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Connector:Conn_01x03_Pin"
 			(pin_names
 				(offset 1.016)
@@ -4096,7 +3933,7 @@
 	)
 	(wire
 		(pts
-			(xy 335.28 217.17) (xy 350.52 217.17)
+			(xy 330.2 217.17) (xy 350.52 217.17)
 		)
 		(stroke
 			(width 0)
@@ -4196,6 +4033,16 @@
 	)
 	(wire
 		(pts
+			(xy 345.44 231.14) (xy 350.52 231.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1b574482-7f99-48a2-b8ed-6dbb9f424698")
+	)
+	(wire
+		(pts
 			(xy 223.52 44.45) (xy 223.52 46.99)
 		)
 		(stroke
@@ -4216,7 +4063,7 @@
 	)
 	(wire
 		(pts
-			(xy 350.52 231.14) (xy 335.28 231.14)
+			(xy 350.52 233.68) (xy 330.2 233.68)
 		)
 		(stroke
 			(width 0)
@@ -5536,7 +5383,7 @@
 	)
 	(wire
 		(pts
-			(xy 335.28 212.09) (xy 350.52 212.09)
+			(xy 330.2 212.09) (xy 350.52 212.09)
 		)
 		(stroke
 			(width 0)
@@ -6316,7 +6163,7 @@
 	)
 	(wire
 		(pts
-			(xy 350.52 228.6) (xy 335.28 228.6)
+			(xy 350.52 228.6) (xy 330.2 228.6)
 		)
 		(stroke
 			(width 0)
@@ -6415,7 +6262,7 @@
 		(uuid "0031e8cd-b152-4686-9f51-ca9ba76b5a94")
 	)
 	(label "UART0_RX"
-		(at 335.28 228.6 0)
+		(at 330.2 228.6 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6575,7 +6422,7 @@
 		(uuid "2feaf117-bef6-4fd1-b7ee-45651f5e711e")
 	)
 	(label "SWD"
-		(at 335.28 217.17 0)
+		(at 330.2 217.17 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6785,7 +6632,7 @@
 		(uuid "6c543060-8e0c-4b3e-945a-7892922d4a49")
 	)
 	(label "UART0_TX"
-		(at 335.28 231.14 0)
+		(at 330.2 233.68 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7165,7 +7012,7 @@
 		(uuid "fa5b4764-9007-48d2-893a-32354092d973")
 	)
 	(label "SWCLK"
-		(at 335.28 212.09 0)
+		(at 330.2 212.09 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7380,6 +7227,17 @@
 			(justify left)
 		)
 		(uuid "8fbace9b-5f82-4d46-818c-e228dfe6f7cb")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 345.44 231.14 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9a831f33-80f2-40b8-a4c5-3a9373b431e3")
 	)
 	(hierarchical_label "lidar_tx"
 		(shape output)
@@ -9240,6 +9098,88 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:Conn_01x03_Pin")
+		(at 355.6 231.14 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp yes)
+		(fields_autoplaced yes)
+		(uuid "49f6d283-a276-46a4-9019-644e2f945efc")
+		(property "Reference" "J5"
+			(at 356.87 229.8699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "Conn_01x03_Pin"
+			(at 356.87 232.4099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
+			(at 355.6 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 355.6 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x03, script generated"
+			(at 355.6 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" ""
+			(at 355.6 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "16e78f19-3e02-4cec-b507-34967cd8f04d")
+		)
+		(pin "3"
+			(uuid "20c529f1-d63e-4cd8-bfce-cf72ed34c761")
+		)
+		(pin "1"
+			(uuid "d12269e1-f3f7-4356-8fd5-fb86b89dddb2")
+		)
+		(instances
+			(project "mote-hardware"
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
+					(reference "J5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 39.37 82.55 0)
 		(unit 1)
@@ -10060,82 +10000,6 @@
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
 					(reference "C8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Conn_01x02_Pin")
-		(at 355.6 231.14 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp yes)
-		(uuid "a5f07420-071c-4a28-bc87-709894fb5321")
-		(property "Reference" "J3"
-			(at 358.394 228.346 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "Conn_01x02_Pin"
-			(at 364.744 230.632 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-			(at 355.6 231.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 355.6 231.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x02, script generated"
-			(at 355.6 231.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB_CORRECTION" ""
-			(at 355.6 231.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "3e42796c-977b-4b1f-9b37-f0ec7a4540bd")
-		)
-		(pin "2"
-			(uuid "867b9c2e-7092-475a-84a0-a0925f332599")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/8aa6d869-37ab-4fd7-8af1-9416ab877c54"
-					(reference "J3")
 					(unit 1)
 				)
 			)
