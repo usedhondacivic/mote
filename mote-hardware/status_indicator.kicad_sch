@@ -1058,7 +1058,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
 			(at 72.39 104.14 90)
 			(effects
 				(font
@@ -1155,7 +1155,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
 			(at 204.47 97.79 90)
 			(effects
 				(font
@@ -1250,7 +1250,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 90"
 			(at 134.62 104.14 0)
 			(effects
 				(font
@@ -1351,7 +1351,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 90"
 			(at 87.63 104.14 0)
 			(effects
 				(font
@@ -1452,7 +1452,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 90"
 			(at 111.76 104.14 0)
 			(effects
 				(font
@@ -1546,7 +1546,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
 			(at 215.9 109.22 0)
 			(effects
 				(font
@@ -1634,7 +1634,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
 			(at 204.47 109.22 0)
 			(effects
 				(font
@@ -1797,7 +1797,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
 			(at 215.9 97.79 90)
 			(effects
 				(font

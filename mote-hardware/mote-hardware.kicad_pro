@@ -661,7 +661,7 @@
           "group_by": false,
           "label": "JLCPCB_CORRECTION",
           "name": "JLCPCB_CORRECTION",
-          "show": false
+          "show": true
         }
       ],
       "filter_string": "",
