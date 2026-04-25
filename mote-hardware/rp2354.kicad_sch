@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "Mote")
-		(date "2026-03-31")
-		(rev "V0.0.0")
+		(date "2026-04-25")
+		(rev "V0.1.0")
 		(company "github.com/empriselab/mote-core")
 	)
 	(lib_symbols
