@@ -6494,7 +6494,7 @@
 		)
 		(uuid "0d1675e0-d217-42db-a8da-64169ef16faa")
 	)
-	(label "GPIO29"
+	(label "GPIO29_ADC3"
 		(at 293.37 111.76 0)
 		(effects
 			(font
