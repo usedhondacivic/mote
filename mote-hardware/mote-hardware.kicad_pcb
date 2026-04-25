@@ -5366,13 +5366,26 @@
 				)
 			)
 		)
+		(property "LCSC" "C49302697"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "cd084c2b-0386-4cc8-a29a-dce904d3b0bf")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/8aa6d869-37ab-4fd7-8af1-9416ab877c54/d0cdf63b-9df4-4942-aa0b-9f937c27732a")
 		(sheetname "/rp2354/")
 		(sheetfile "rp2354.kicad_sch")
 		(solder_mask_margin 0.1)
 		(solder_paste_margin -0.05)
-		(attr smd exclude_from_bom)
+		(attr smd)
 		(fp_rect
 			(start -7.25 -8.25)
 			(end 7.25 8.25)

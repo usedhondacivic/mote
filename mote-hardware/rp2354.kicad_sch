@@ -10416,7 +10416,7 @@
 		(at 336.55 116.84 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -10465,6 +10465,15 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" ""
+			(at 336.55 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C49302697"
 			(at 336.55 116.84 0)
 			(effects
 				(font
