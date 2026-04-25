@@ -65,6 +65,10 @@
           "Component has thermal vias"
         ],
         [
+          "lib_footprint_mismatch|90063000|74573600|fbe19e8e-57c2-4bba-ab98-b08f56b7e62c|00000000-0000-0000-0000-000000000000",
+          "Updated footprint to make thermal reliefs on ground layer"
+        ],
+        [
           "starved_thermal|101561000|88469000|a5c95b9d-1c43-4337-923c-843ac4c15290|9a91b33e-2629-4f43-9200-bd33571b76fd|F.Cu",
           "Thermal relief not required"
         ]
