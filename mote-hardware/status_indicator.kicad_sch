@@ -713,15 +713,6 @@
 		(at 142.24 104.14)
 		(uuid "b19809a5-b047-4db2-b71f-58e41e532d3d")
 	)
-	(bus_entry
-		(at 111.76 104.14)
-		(size 2.54 2.54)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0b12fb94-bb66-4bed-82d2-252b59d6800d")
-	)
 	(wire
 		(pts
 			(xy 134.62 92.71) (xy 134.62 96.52)
