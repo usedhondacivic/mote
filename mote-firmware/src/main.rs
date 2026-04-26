@@ -129,11 +129,7 @@ async fn core1_task(
 
     imu::init(spawner, imu_r).await;
     info!("IMU INIT complete");
-
-    info!("Gating on 3A capable before starting drive base");
-    power_gate::gate_3_amp().await;
-    info!("Power supply is 3A capable");
-
+    
     drive_base::init(
         spawner,
         motor_driver_r,
