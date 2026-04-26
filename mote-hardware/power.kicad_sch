@@ -2032,7 +2032,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" "0; 0; 0"
+		(property "JLCPCB_CORRECTION" "0; -1.4605; 0"
 			(at 66.04 99.06 0)
 			(effects
 				(font

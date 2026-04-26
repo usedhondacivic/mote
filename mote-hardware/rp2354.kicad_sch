@@ -9838,7 +9838,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" "0; 0; 0"
+		(property "JLCPCB_CORRECTION" "0; 0; 180"
 			(at 294.64 213.36 0)
 			(effects
 				(font
@@ -10650,7 +10650,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" "0; 0; 0"
+		(property "JLCPCB_CORRECTION" "0; 0; 180"
 			(at 66.04 82.55 0)
 			(effects
 				(font
