@@ -73,6 +73,7 @@ fn main() -> ! {
                         spawner,
                         r.usb_serial,
                         r.lidar_uart,
+                        r.imu,
                         r.encoder_driver,
                         r.left_encoder,
                         r.right_encoder,
@@ -106,6 +107,7 @@ async fn core1_task(
     spawner: Spawner,
     usb_r: UsbSerialResources,
     lidar_r: RplidarC1Resources,
+    imu_r: ImuResources,
     encoder_driver_r: EncoderDriverResources,
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
@@ -124,6 +126,9 @@ async fn core1_task(
 
     lidar::init(spawner, lidar_r).await;
     info!("LiDAR INIT complete");
+
+    imu::init(spawner, imu_r).await;
+    info!("IMU INIT complete");
 
     drive_base::init(
         spawner,

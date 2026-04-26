@@ -87,6 +87,7 @@ rand_core = { version = "0.10", default-features = false }
 fixed = "1.29"
 pid = "4.0"
 embedded-hal = "1.0"
+embedded-hal-async = "1.0"
 embedded-alloc = "0.7"
 
 [profile.release]

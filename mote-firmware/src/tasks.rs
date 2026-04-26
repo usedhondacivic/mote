@@ -1,5 +1,6 @@
 pub mod drive_base;
 pub mod flash_manager;
+pub mod imu;
 pub mod lidar;
 pub mod power_gate;
 pub mod usb_serial;
@@ -69,7 +70,8 @@ assign_resources! {
 // also bind interrupts
 use embassy_rp::adc::InterruptHandler as ADCInterruptHandler;
 use embassy_rp::dma::InterruptHandler as DMAInterruptHandler;
-use embassy_rp::peripherals::{DMA_CH0, PIO0, PIO1, PIO2, UART1, USB};
+use embassy_rp::i2c::InterruptHandler as I2CInterruptHandler;
+use embassy_rp::peripherals::{DMA_CH0, I2C1, PIO0, PIO1, PIO2, UART1, USB};
 use embassy_rp::pio::InterruptHandler as PIOInterruptHandler;
 use embassy_rp::uart::BufferedInterruptHandler as UARTInterruptHandler;
 use embassy_rp::usb::InterruptHandler as USBInterruptHandler;
@@ -82,6 +84,7 @@ bind_interrupts!(pub struct Irqs {
     PIO1_IRQ_0 => PIOInterruptHandler<PIO1>;
     PIO2_IRQ_0 => PIOInterruptHandler<PIO2>;
     USBCTRL_IRQ => USBInterruptHandler<USB>;
+    I2C1_IRQ => I2CInterruptHandler<I2C1>;
 });
 
 // and init global configuration state

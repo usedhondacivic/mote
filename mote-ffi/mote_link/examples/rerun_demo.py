@@ -130,8 +130,8 @@ async def run_main():
                 ],
             ),
             rrb.Vertical(
-                # rrb.TimeSeriesView(name="Accel", origin="/imu/accel"),
-                # rrb.TimeSeriesView(name="Gyro", origin="/imu/gyro"),
+                rrb.TimeSeriesView(name="Accel", origin="/imu/accel"),
+                rrb.TimeSeriesView(name="Gyro", origin="/imu/gyro"),
                 *wheel_rows,
             ),
         ),
