@@ -129,7 +129,7 @@ async fn core1_task(
 
     imu::init(spawner, imu_r).await;
     info!("IMU INIT complete");
-    
+
     drive_base::init(
         spawner,
         motor_driver_r,
