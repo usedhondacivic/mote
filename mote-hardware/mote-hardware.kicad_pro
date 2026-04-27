@@ -57,9 +57,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.0,
-          "height": 0.895,
-          "width": 1.47
+          "drill": 0.65,
+          "height": 0.65,
+          "width": 0.65
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -79,7 +79,16 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "footprint_type_mismatch|100076000|93069000|421239bb-fffb-4f3b-aee6-240057e47bf7|00000000-0000-0000-0000-000000000000",
+          "Thermal vias, intentional"
+        ],
+        [
+          "lib_footprint_mismatch|90063000|74573600|fbe19e8e-57c2-4bba-ab98-b08f56b7e62c|00000000-0000-0000-0000-000000000000",
+          "Updated thermal pads to be ground, intentional"
+        ]
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -131,7 +140,7 @@
         "starved_thermal": "error",
         "text_height": "warning",
         "text_on_edge_cuts": "error",
-        "text_thickness": "warning",
+        "text_thickness": "ignore",
         "through_hole_pad_without_hole": "error",
         "too_many_vias": "error",
         "track_angle": "error",
