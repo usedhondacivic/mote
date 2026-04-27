@@ -87,6 +87,22 @@
         [
           "lib_footprint_mismatch|90063000|74573600|fbe19e8e-57c2-4bba-ab98-b08f56b7e62c|00000000-0000-0000-0000-000000000000",
           "Updated thermal pads to be ground, intentional"
+        ],
+        [
+          "silk_edge_clearance|63738118|141825272|0e7fb3c0-0123-42e3-886c-f2aa16911627|8c961922-599d-4a6d-a8e2-bce0535424c2",
+          "big silk screen :p"
+        ],
+        [
+          "silk_over_copper|78272733|134701624|8c961922-599d-4a6d-a8e2-bce0535424c2|00000000-0000-0000-0000-000000000000",
+          "big silk screen :p"
+        ],
+        [
+          "silk_overlap|102238322|114489129|b56e012c-8a3c-4bec-aaed-b755b0bea71c|ccda3a4e-6d73-43fe-8c84-fbf5c097d2d3",
+          "big silk screen :p"
+        ],
+        [
+          "silk_overlap|102870000|113919000|b56e012c-8a3c-4bec-aaed-b755b0bea71c|d7d119fb-74e1-4162-8a5d-d4ba223fd434",
+          "big silk screen :p"
         ]
       ],
       "meta": {
