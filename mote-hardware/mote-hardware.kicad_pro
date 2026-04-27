@@ -1,6 +1,26 @@
 {
   "board": {
-    "3dviewports": [],
+    "3dviewports": [
+      {
+        "name": "3/4",
+        "ww": 1.0,
+        "wx": 16.733318328857422,
+        "wy": 2.418260335922241,
+        "wz": -16.510562896728516,
+        "xw": 0.0,
+        "xx": -0.7211624979972839,
+        "xy": 0.5422698259353638,
+        "xz": -0.4311240315437317,
+        "yw": 0.0,
+        "yx": 0.6666831374168396,
+        "yy": 0.7124000191688538,
+        "yz": -0.219133660197258,
+        "zw": 0.0,
+        "zx": 0.18830308318138123,
+        "zy": -0.4454541802406311,
+        "zz": -0.8752784729003906
+      }
+    ],
     "design_settings": {
       "defaults": {
         "apply_defaults_to_fp_fields": false,
@@ -59,20 +79,7 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [
-        [
-          "footprint_type_mismatch|100076000|93069000|421239bb-fffb-4f3b-aee6-240057e47bf7|00000000-0000-0000-0000-000000000000",
-          "Component has thermal vias"
-        ],
-        [
-          "lib_footprint_mismatch|90063000|74573600|fbe19e8e-57c2-4bba-ab98-b08f56b7e62c|00000000-0000-0000-0000-000000000000",
-          "Updated footprint to make thermal reliefs on ground layer"
-        ],
-        [
-          "starved_thermal|101561000|88469000|a5c95b9d-1c43-4337-923c-843ac4c15290|9a91b33e-2629-4f43-9200-bd33571b76fd|F.Cu",
-          "Thermal relief not required"
-        ]
-      ],
+      "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
