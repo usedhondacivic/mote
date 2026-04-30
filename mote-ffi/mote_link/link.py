@@ -319,8 +319,18 @@ class MoteClient:
         This method will open an interactive discovery prompt.
         Use this method if you do not know the ip or unique ID of your robot and your network supports MDNS.
         """
-        self.ip = await _chose_from_mdns_service("_mote-api._udp.local.")
-        await self._open_connection()
+        try:
+            self.ip = await _chose_from_mdns_service("_mote-api._udp.local.")
+            await self._open_connection()
+        except MoteConnectionError:
+            loop = asyncio.get_event_loop()
+            ip_str = await loop.run_in_executor(
+                None,
+                lambda: input(
+                    "Could not find Motes using autodiscovery. Enter Mote IP address (x.x.x.x): "
+                ),
+            )
+            await self.connect_with_ip(ipaddress.IPv4Address(ip_str.strip()))
 
     async def connect_with_uid(self, uid: str):
         """
