@@ -9,7 +9,7 @@ First time contributors are recommended to read through the documentation, then 
 `mote-core` contains the core libraries required for Mote to function. It includes the following components:
 
 - `mote-firmware`
-    - Embedded firmware for the RP2350 MCU
+    - Embedded firmware for the RP2354 MCU
 - `mote-api`
     - Defines message types and serialization protocols for communicating with Mote
 - `mote-ffi`
