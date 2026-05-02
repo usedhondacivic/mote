@@ -4,32 +4,44 @@
 
 # Getting Started
 
-- [Quick Start]()
+- [Kit Assembly](./getting_started/kit-assembly.md)
+- [Configuration](./getting_started/configuration.md)
+- [Hello Mote](./getting_started/hello-world.md)
 
-# Tutorials
-
-- [Kit Assembly]()
+# Guides
 
 - [Python]()
-    - [Teleop]()
     - [Visualization]()
+    - [Teleop]()
 
 - [Rust]()
-    - [Teleop]()
     - [Visualization]()
+    - [Teleop]()
 
-- [ROS2]()
+- [ROS Noetic (EOL)]()
+    - [Visualization]()
     - [Teleop]()
     - [Nav2]()
 
+- [ROS2]()
+    - [Visualization]()
+    - [Teleop]()
+    - [Nav2]()
+
+
+# Hardware Sourcing
+
+- [Methods of Acquiring a Mote](./hardware-sourcing/acquire.md)
+- [Bill of Materials](./hardware-sourcing/bom.md)
+- [Ordering Circuit Boards](./hardware-sourcing/circuit-boards.md)
+- [3D Printed Parts](./hardware-sourcing/printed.md)
+
 # Advanced
 
-- [Hardware Sourcing]()
 - [Contributing](./advanced/contributing/contributing.md)
     - [Development Environment](./advanced/contributing/dev_env.md)
     - [Building, Testing, Running, and Releasing](./advanced/contributing/build_test_deploy.md)
     - [Hardware](./advanced/contributing/hardware.md)
-    - [FAQ](./advanced/contributing/faq.md)
 # Misc
 
 - [Project Philosophy]()
