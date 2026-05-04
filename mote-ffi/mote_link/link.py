@@ -94,7 +94,7 @@ class SetUID:
 class WheelJointState:
     effort_percent: float
     velocity_rad_per_s: float
-    postition_rad: float
+    position_rad: float
 
 
 @dataclass
