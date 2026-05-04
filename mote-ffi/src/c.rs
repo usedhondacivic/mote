@@ -3,17 +3,21 @@
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int};
 
-use mote_api::{MoteLink, messages::host_to_mote};
+use mote_api::{MoteLink, messages::{host_to_mote, mote_to_host}};
+
+use crate::MoteCommsFFI;
+
+type MoteLinkFFI = MoteCommsFFI<1400, mote_to_host::Message, host_to_mote::Message>;
 
 pub struct MoteLinkHandle {
-    inner: MoteLink,
+    inner: MoteLinkFFI,
 }
 
 /// Create a new MoteLink handle. The returned pointer must be freed with `mote_link_free`.
 #[unsafe(no_mangle)]
 pub extern "C" fn mote_link_new() -> *mut MoteLinkHandle {
     Box::into_raw(Box::new(MoteLinkHandle {
-        inner: MoteLink::new(),
+        inner: MoteCommsFFI::from(MoteLink::new()),
     }))
 }
 
@@ -44,11 +48,7 @@ pub unsafe extern "C" fn mote_link_send(
         Ok(s) => s,
         Err(_) => return -1,
     };
-    let msg: host_to_mote::Message = match serde_json::from_str(json) {
-        Ok(m) => m,
-        Err(_) => return -1,
-    };
-    match handle.inner.send(msg) {
+    match handle.inner.send(json) {
         Ok(_) => 0,
         Err(_) => -1,
     }
@@ -68,7 +68,7 @@ pub unsafe extern "C" fn mote_link_poll_transmit(
     buf_len: c_int,
 ) -> c_int {
     let handle = unsafe { &mut *handle };
-    match handle.inner.poll_transmit() {
+    match handle.inner.link.poll_transmit() {
         Some(bytes) => {
             if bytes.len() > buf_len as usize {
                 return -1;
@@ -94,7 +94,7 @@ pub unsafe extern "C" fn mote_link_handle_receive(
 ) -> c_int {
     let handle = unsafe { &mut *handle };
     let bytes = unsafe { std::slice::from_raw_parts(buf, buf_len as usize) };
-    handle.inner.handle_receive(bytes);
+    handle.inner.link.handle_receive(bytes);
     0
 }
 
@@ -113,11 +113,7 @@ pub unsafe extern "C" fn mote_link_poll_receive(
 ) -> c_int {
     let handle = unsafe { &mut *handle };
     match handle.inner.poll_receive() {
-        Ok(Some(msg)) => {
-            let json = match serde_json::to_string(&msg) {
-                Ok(s) => s,
-                Err(_) => return -1,
-            };
+        Ok(Some(json)) => {
             let cstr = match CString::new(json) {
                 Ok(s) => s,
                 Err(_) => return -1,
