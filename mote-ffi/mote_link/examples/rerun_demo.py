@@ -165,7 +165,7 @@ async def run_main():
                     print(f"Got system state {message}")
 
         async def sine_wave_command_loop():
-            amplitude = 3.0  # rad/s
+            amplitude = 6.0  # rad/s
             period = 4.0  # seconds
             dt = 0.05  # 20 Hz command rate
             t = 0.0
