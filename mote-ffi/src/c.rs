@@ -3,7 +3,10 @@
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int};
 
-use mote_api::{MoteLink, messages::{host_to_mote, mote_to_host}};
+use mote_api::{
+    MoteLink,
+    messages::{host_to_mote, mote_to_host},
+};
 
 use crate::MoteCommsFFI;
 
