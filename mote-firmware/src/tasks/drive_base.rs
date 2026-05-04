@@ -22,9 +22,9 @@ mod hbridge;
 /// This is specific to each model of TT motor, right now we use:
 /// https://category.yahboom.net/products/encoder-tt-motor?srsltid=AfmBOooIQxn2e-jyW08981J7uv54Ng7IHo0c9PmTH5pefo1hFxmwZq3i
 /// We may want to make this a configurable value to support different motors.
-const ENCODER_PULSES_PER_ROTATION: u16 = 2340;
+const ENCODER_PULSES_PER_ROTATION: u16 = 630;
 /// Stiction prevents commands lower than this % from causing motion.
-const MOTOR_DEADBAND_PERCENT: u8 = 60;
+const MOTOR_DEADBAND_PERCENT: u8 = 52;
 /// PDI commands lower than this % are filtered to prevent chattering due to
 /// gearbox hysteresis.
 const CONTROL_DEADBAND_PERCENT: f32 = 2.;
@@ -53,9 +53,7 @@ struct Motor<'d, T: SetDutyCycle, P: Instance, const SM: usize> {
 impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
     fn new(bridge: PwmBridge<T>, encoder: PioEncoder<'d, P, SM>) -> Self {
         let ouput_limit = 100. - MOTOR_DEADBAND_PERCENT as f32;
-        let pid = *Pid::<f32>::new(0., ouput_limit)
-            .p(10.0, ouput_limit)
-            .i(1.0, ouput_limit);
+        let pid = *Pid::<f32>::new(0., ouput_limit).p(8.0, ouput_limit).i(2.0, ouput_limit);
 
         Self {
             bridge,
@@ -75,7 +73,7 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
         self.pid.setpoint(setpoint);
     }
 
-    /// Step the motor's PDI loop, targeting the latest setpoint commanded by
+    /// Step the motor's PID loop, targeting the latest setpoint commanded by
     /// set_setpoint
     async fn step(&mut self, dt_ms: u64) {
         let dt = dt_ms as f32 / 1000.;
