@@ -1190,7 +1190,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "PTVS7V5Z1USK"
+		(property "Value" "PTVS6V0S1UR"
 			(at 149.098 100.838 0)
 			(effects
 				(font
@@ -1199,7 +1199,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
+		(property "Footprint" "Diode_SMD:D_SOD-123"
 			(at 139.065 99.06 0)
 			(effects
 				(font
@@ -1218,6 +1218,24 @@
 			)
 		)
 		(property "Description" "7.5V, 2200W TVS unidirectional diode, DSN1608-2"
+			(at 143.51 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 143.51 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C18723426"
 			(at 143.51 99.06 0)
 			(effects
 				(font
@@ -1259,7 +1277,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "PTVS5V0Z1USK"
+		(property "Value" "PTVS5V0S1UR-FS"
 			(at 158.75 100.584 0)
 			(effects
 				(font
@@ -1268,7 +1286,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
+		(property "Footprint" "Diode_SMD:D_SOD-123"
 			(at 149.225 99.06 0)
 			(effects
 				(font
@@ -1287,6 +1305,24 @@
 			)
 		)
 		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
+			(at 153.67 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 153.67 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380694"
 			(at 153.67 99.06 0)
 			(effects
 				(font
@@ -1328,7 +1364,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "PTVS5V0Z1USK"
+		(property "Value" "PTVS5V0S1UR-FS"
 			(at 166.116 100.076 90)
 			(effects
 				(font
@@ -1337,7 +1373,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
+		(property "Footprint" "Diode_SMD:D_SOD-123"
 			(at 159.385 99.06 0)
 			(effects
 				(font
@@ -1357,6 +1393,24 @@
 		)
 		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
 			(at 163.83 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 163.83 99.06 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380694"
+			(at 163.83 99.06 90)
 			(effects
 				(font
 					(size 1.27 1.27)

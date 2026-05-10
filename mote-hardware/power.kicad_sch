@@ -1423,7 +1423,7 @@
 	)
 	(text "ESD Protection"
 		(exclude_from_sim no)
-		(at 144.018 123.952 0)
+		(at 147.066 108.204 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -1444,7 +1444,7 @@
 		(uuid "8c7c2b94-1978-4e96-8e8b-416b1bf3225e")
 	)
 	(junction
-		(at 135.89 146.05)
+		(at 114.3 146.05)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "10b374cc-d19c-495b-827d-2dff3f8fc8c9")
@@ -1466,6 +1466,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4eb8e496-5a43-410a-a012-f753ef3f67b5")
+	)
+	(junction
+		(at 124.46 146.05)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "505f4edd-fce9-4f70-a0df-99b3b1152df3")
 	)
 	(junction
 		(at 146.05 146.05)
@@ -1490,6 +1496,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "89cf7193-682e-4c2b-9f88-22e2fe68a55d")
+	)
+	(junction
+		(at 134.62 146.05)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "bafa3c1c-094b-420a-9f8a-b08926d9a18f")
 	)
 	(junction
 		(at 102.87 77.47)
@@ -1521,7 +1533,17 @@
 	)
 	(wire
 		(pts
-			(xy 156.21 134.62) (xy 156.21 137.16)
+			(xy 124.46 146.05) (xy 134.62 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "05986ab2-0639-417a-89b3-9004aae292e6")
+	)
+	(wire
+		(pts
+			(xy 156.21 125.73) (xy 156.21 137.16)
 		)
 		(stroke
 			(width 0)
@@ -1551,7 +1573,7 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 146.05) (xy 135.89 144.78)
+			(xy 114.3 146.05) (xy 114.3 144.78)
 		)
 		(stroke
 			(width 0)
@@ -1561,7 +1583,7 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 146.05) (xy 146.05 146.05)
+			(xy 114.3 146.05) (xy 124.46 146.05)
 		)
 		(stroke
 			(width 0)
@@ -1601,6 +1623,16 @@
 	)
 	(wire
 		(pts
+			(xy 162.56 116.84) (xy 124.46 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ce3f110-9088-4bc2-800e-2cc805c4960f")
+	)
+	(wire
+		(pts
 			(xy 81.28 67.31) (xy 78.74 67.31)
 		)
 		(stroke
@@ -1608,6 +1640,16 @@
 			(type default)
 		)
 		(uuid "2e9d2caa-fcb9-4712-bdf4-9c6a2d6d2092")
+	)
+	(wire
+		(pts
+			(xy 124.46 144.78) (xy 124.46 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "315c93b5-ffe1-42e1-bed5-c720238cbb57")
 	)
 	(wire
 		(pts
@@ -1631,7 +1673,7 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 146.05) (xy 135.89 147.32)
+			(xy 114.3 146.05) (xy 114.3 147.32)
 		)
 		(stroke
 			(width 0)
@@ -1661,7 +1703,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 127) (xy 162.56 127)
+			(xy 146.05 123.19) (xy 162.56 123.19)
 		)
 		(stroke
 			(width 0)
@@ -1688,6 +1730,16 @@
 			(type default)
 		)
 		(uuid "4e345858-9919-41a6-8637-89f40f9e12f3")
+	)
+	(wire
+		(pts
+			(xy 134.62 120.65) (xy 134.62 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e8e1813-d020-41b1-bb26-2ba7fc8cb802")
 	)
 	(wire
 		(pts
@@ -1721,6 +1773,16 @@
 	)
 	(wire
 		(pts
+			(xy 134.62 146.05) (xy 146.05 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6c87fd9e-5698-4b4f-9115-612f846b996a")
+	)
+	(wire
+		(pts
 			(xy 78.74 62.23) (xy 106.68 62.23)
 		)
 		(stroke
@@ -1738,6 +1800,16 @@
 			(type default)
 		)
 		(uuid "8096bf6d-6327-4e36-a81f-e4699ba384eb")
+	)
+	(wire
+		(pts
+			(xy 134.62 144.78) (xy 134.62 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "85678129-42e1-4f04-be7c-b164ffb629fb")
 	)
 	(wire
 		(pts
@@ -1851,7 +1923,7 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 135.89) (xy 135.89 137.16)
+			(xy 114.3 135.89) (xy 114.3 137.16)
 		)
 		(stroke
 			(width 0)
@@ -1871,7 +1943,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 127) (xy 146.05 137.16)
+			(xy 146.05 123.19) (xy 146.05 137.16)
 		)
 		(stroke
 			(width 0)
@@ -1941,6 +2013,26 @@
 	)
 	(wire
 		(pts
+			(xy 162.56 120.65) (xy 134.62 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dbe12c89-e8af-4afa-b913-5c38b0d5f0af")
+	)
+	(wire
+		(pts
+			(xy 124.46 116.84) (xy 124.46 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e3b29e69-a48e-4026-beb9-ec625a468e77")
+	)
+	(wire
+		(pts
 			(xy 81.28 68.58) (xy 81.28 67.31)
 		)
 		(stroke
@@ -1951,7 +2043,7 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 134.62) (xy 156.21 134.62)
+			(xy 162.56 125.73) (xy 156.21 125.73)
 		)
 		(stroke
 			(width 0)
@@ -2009,6 +2101,17 @@
 		)
 		(uuid "fd8242db-1224-421f-a7f0-0bd58e2ba463")
 	)
+	(hierarchical_label "CC1"
+		(shape output)
+		(at 162.56 116.84 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "079ca4f7-38cf-4d51-8e35-da74fbfe2e9c")
+	)
 	(hierarchical_label "GND"
 		(shape passive)
 		(at 63.5 100.33 270)
@@ -2033,7 +2136,7 @@
 	)
 	(hierarchical_label "USB_D+"
 		(shape bidirectional)
-		(at 162.56 134.62 0)
+		(at 162.56 125.73 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2044,7 +2147,7 @@
 	)
 	(hierarchical_label "VBUS"
 		(shape passive)
-		(at 135.89 135.89 90)
+		(at 114.3 135.89 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2132,7 +2235,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 135.89 147.32 270)
+		(at 114.3 147.32 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2174,9 +2277,20 @@
 		)
 		(uuid "cba0bdb2-eb37-400b-ad52-2cfa2750c8aa")
 	)
+	(hierarchical_label "CC2"
+		(shape output)
+		(at 162.56 120.65 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f50dc246-fc45-4725-9068-d467493a023c")
+	)
 	(hierarchical_label "USB_D-"
 		(shape bidirectional)
-		(at 162.56 127 0)
+		(at 162.56 123.19 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2446,6 +2560,180 @@
 		)
 	)
 	(symbol
+		(lib_id "Diode:PTVS7V5Z1USK")
+		(at 134.62 140.97 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "02eefd60-63d6-43bf-b470-09e9fb510dbd")
+		(property "Reference" "D25"
+			(at 137.668 142.748 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "PTVS6V0S1UR"
+			(at 140.208 142.748 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 130.175 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS7V5Z1USK.pdf"
+			(at 134.62 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "7.5V, 2200W TVS unidirectional diode, DSN1608-2"
+			(at 134.62 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 134.62 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C18723426"
+			(at 134.62 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1a1dff99-e6b1-4bc5-b168-ce9d79f1646b")
+		)
+		(pin "2"
+			(uuid "ed921cb3-66a7-4066-bfc9-5b350b03fa09")
+		)
+		(instances
+			(project "mote-hardware"
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/b87252c5-15f5-4304-a4f0-d9bd6e688e51"
+					(reference "D25")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Diode:PTVS7V5Z1USK")
+		(at 124.46 140.97 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "473ca252-c95a-4940-bc28-577c7d567d29")
+		(property "Reference" "D24"
+			(at 127.508 142.748 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "PTVS6V0S1UR"
+			(at 130.048 142.748 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 120.015 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS7V5Z1USK.pdf"
+			(at 124.46 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "7.5V, 2200W TVS unidirectional diode, DSN1608-2"
+			(at 124.46 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 124.46 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C18723426"
+			(at 124.46 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "daf3db6d-5ab6-43e8-b905-e5a0ab30a6f1")
+		)
+		(pin "2"
+			(uuid "2df870db-8fa3-4626-9b49-30f71a1469f8")
+		)
+		(instances
+			(project "mote-hardware"
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/b87252c5-15f5-4304-a4f0-d9bd6e688e51"
+					(reference "D24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Connector:USB_C_Receptacle_USB2.0_16P")
 		(at 63.5 69.85 0)
 		(unit 1)
@@ -2578,7 +2866,7 @@
 	)
 	(symbol
 		(lib_id "Diode:PTVS7V5Z1USK")
-		(at 135.89 140.97 270)
+		(at 114.3 140.97 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2586,7 +2874,7 @@
 		(dnp no)
 		(uuid "8face23a-c151-405d-9fc8-57458b0dc14a")
 		(property "Reference" "D13"
-			(at 138.938 142.748 0)
+			(at 117.348 142.748 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2594,8 +2882,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "PTVS7V5Z1USK"
-			(at 141.478 142.748 0)
+		(property "Value" "PTVS6V0S1UR"
+			(at 119.888 142.748 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2603,8 +2891,8 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
-			(at 131.445 140.97 0)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 109.855 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2613,7 +2901,7 @@
 			)
 		)
 		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS7V5Z1USK.pdf"
-			(at 135.89 140.97 0)
+			(at 114.3 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2622,7 +2910,25 @@
 			)
 		)
 		(property "Description" "7.5V, 2200W TVS unidirectional diode, DSN1608-2"
-			(at 135.89 140.97 0)
+			(at 114.3 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 114.3 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C18723426"
+			(at 114.3 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2663,7 +2969,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "PTVS5V0Z1USK"
+		(property "Value" "PTVS5V0S1UR-FS"
 			(at 151.13 142.494 0)
 			(effects
 				(font
@@ -2672,7 +2978,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
+		(property "Footprint" "Diode_SMD:D_SOD-123"
 			(at 141.605 140.97 0)
 			(effects
 				(font
@@ -2691,6 +2997,24 @@
 			)
 		)
 		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
+			(at 146.05 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 146.05 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380694"
 			(at 146.05 140.97 0)
 			(effects
 				(font
@@ -2819,7 +3143,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "PTVS5V0Z1USK"
+		(property "Value" "PTVS5V0S1UR-FS"
 			(at 158.496 141.986 90)
 			(effects
 				(font
@@ -2828,7 +3152,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
+		(property "Footprint" "Diode_SMD:D_SOD-123"
 			(at 151.765 140.97 0)
 			(effects
 				(font
@@ -2848,6 +3172,24 @@
 		)
 		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
 			(at 156.21 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 156.21 140.97 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380694"
+			(at 156.21 140.97 90)
 			(effects
 				(font
 					(size 1.27 1.27)
