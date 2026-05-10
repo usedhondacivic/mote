@@ -1,6 +1,26 @@
 {
   "board": {
-    "3dviewports": [],
+    "3dviewports": [
+      {
+        "name": "3/4",
+        "ww": 1.0,
+        "wx": 16.733318328857422,
+        "wy": 2.418260335922241,
+        "wz": -16.510562896728516,
+        "xw": 0.0,
+        "xx": -0.7211624979972839,
+        "xy": 0.5422698259353638,
+        "xz": -0.4311240315437317,
+        "yw": 0.0,
+        "yx": 0.6666831374168396,
+        "yy": 0.7124000191688538,
+        "yz": -0.219133660197258,
+        "zw": 0.0,
+        "zx": 0.18830308318138123,
+        "zy": -0.4454541802406311,
+        "zz": -0.8752784729003906
+      }
+    ],
     "design_settings": {
       "defaults": {
         "apply_defaults_to_fp_fields": false,
@@ -37,9 +57,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.0,
-          "height": 0.895,
-          "width": 1.47
+          "drill": 0.65,
+          "height": 0.65,
+          "width": 0.65
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -62,11 +82,27 @@
       "drc_exclusions": [
         [
           "footprint_type_mismatch|100076000|93069000|421239bb-fffb-4f3b-aee6-240057e47bf7|00000000-0000-0000-0000-000000000000",
-          "Component has thermal vias"
+          "Thermal vias, intentional"
         ],
         [
-          "starved_thermal|101561000|88469000|a5c95b9d-1c43-4337-923c-843ac4c15290|9a91b33e-2629-4f43-9200-bd33571b76fd|F.Cu",
-          "Thermal relief not required"
+          "lib_footprint_mismatch|90063000|74573600|fbe19e8e-57c2-4bba-ab98-b08f56b7e62c|00000000-0000-0000-0000-000000000000",
+          "Updated thermal pads to be ground, intentional"
+        ],
+        [
+          "silk_edge_clearance|52638829|53510423|8d9c9891-d1f1-494b-986f-434cf7cce3af|8c961922-599d-4a6d-a8e2-bce0535424c2",
+          "Big silk screen :)"
+        ],
+        [
+          "silk_over_copper|78743764|135168887|8c961922-599d-4a6d-a8e2-bce0535424c2|00000000-0000-0000-0000-000000000000",
+          "Big silk screen :)"
+        ],
+        [
+          "silk_overlap|102416122|118476929|b56e012c-8a3c-4bec-aaed-b755b0bea71c|ccda3a4e-6d73-43fe-8c84-fbf5c097d2d3",
+          "Intentional"
+        ],
+        [
+          "silk_overlap|103047800|117906800|b56e012c-8a3c-4bec-aaed-b755b0bea71c|d7d119fb-74e1-4162-8a5d-d4ba223fd434",
+          "Intentional"
         ]
       ],
       "meta": {
@@ -120,7 +156,7 @@
         "starved_thermal": "error",
         "text_height": "warning",
         "text_on_edge_cuts": "error",
-        "text_thickness": "warning",
+        "text_thickness": "ignore",
         "through_hole_pad_without_hole": "error",
         "too_many_vias": "error",
         "track_angle": "error",
@@ -552,7 +588,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "mote-hardware.step",
       "svg": "",
       "vrml": ""
     },
@@ -615,13 +651,13 @@
           "group_by": true,
           "label": "Footprint",
           "name": "Footprint",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
           "label": "Datasheet",
           "name": "Datasheet",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
@@ -657,15 +693,15 @@
           "group_by": false,
           "label": "JLCPCB_CORRECTION",
           "name": "JLCPCB_CORRECTION",
-          "show": false
+          "show": true
         }
       ],
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": true,
       "name": "",
-      "sort_asc": true,
-      "sort_field": "JLCPCB_CORRECTION"
+      "sort_asc": false,
+      "sort_field": "${EXCLUDE_FROM_BOM}"
     },
     "connection_grid_size": 50.0,
     "drawing": {

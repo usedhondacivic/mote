@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2026-03-31")
-		(rev "V0.0.0")
+		(date "2026-04-25")
+		(rev "V0.1.0")
 		(company "github.com/empriselab/mote-core")
 	)
 	(lib_symbols
@@ -240,6 +240,304 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Diode:PTVS5V0Z1USK"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "PTVS5V0Z1USK"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
+				(at 0 -4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "TVS diode"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "*DSN1608?2*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "PTVS5V0Z1USK_0_1"
+				(polyline
+					(pts
+						(xy -1.27 -1.27) (xy -1.27 1.27) (xy -0.762 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy -1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "PTVS5V0Z1USK_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Diode:PTVS7V5Z1USK"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "PTVS7V5Z1USK"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
+				(at 0 -4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS7V5Z1USK.pdf"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "7.5V, 2200W TVS unidirectional diode, DSN1608-2"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "TVS diode"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "*DSN1608?2*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "PTVS7V5Z1USK_0_1"
+				(polyline
+					(pts
+						(xy -1.27 -1.27) (xy -1.27 1.27) (xy -0.762 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy -1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "PTVS7V5Z1USK_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Mechanical:MountingHole"
 			(pin_names
 				(offset 1.016)
@@ -324,9 +622,20 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "ESD Protection"
+		(exclude_from_sim no)
+		(at 151.638 82.042 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+			(justify bottom)
+		)
+		(uuid "7ecbc110-932b-4794-98ff-1eee20bb9e4d")
+	)
 	(text "UART"
 		(exclude_from_sim no)
-		(at 106.68 85.598 0)
+		(at 87.63 84.328 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -337,7 +646,7 @@
 	)
 	(text "Mounting"
 		(exclude_from_sim no)
-		(at 158.242 84.836 0)
+		(at 206.502 83.566 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -346,13 +655,35 @@
 		)
 		(uuid "ffb40122-55c4-4a5c-90b4-3db66b0bb751")
 	)
+	(junction
+		(at 153.67 104.14)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "838a313d-1f09-4f9c-90c0-62bb458fc5e1")
+	)
+	(junction
+		(at 143.51 104.14)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9f310195-0460-4eb5-a0c2-01eda43e7c40")
+	)
 	(no_connect
-		(at 105.41 105.41)
+		(at 86.36 104.14)
 		(uuid "0ef831bb-d078-49d4-8df0-f8d320c78ef3")
 	)
 	(wire
 		(pts
-			(xy 100.33 97.79) (xy 105.41 97.79)
+			(xy 153.67 85.09) (xy 170.18 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "158f1347-c2dd-454d-b19b-50ef1793d09c")
+	)
+	(wire
+		(pts
+			(xy 81.28 96.52) (xy 86.36 96.52)
 		)
 		(stroke
 			(width 0)
@@ -362,27 +693,57 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 102.87) (xy 105.41 102.87)
+			(xy 170.18 92.71) (xy 163.83 92.71)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "563d160d-3522-45b8-85fe-8218a2778876")
+		(uuid "43167ede-7237-4121-9c29-5c9e79ccd20d")
 	)
 	(wire
 		(pts
-			(xy 100.33 95.25) (xy 105.41 95.25)
+			(xy 80.01 93.98) (xy 86.36 93.98)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "6829f4b6-a49c-40ba-81d0-01a150c43fc8")
+		(uuid "4ea658b8-8e39-47c1-921e-e3e6e87c4844")
 	)
 	(wire
 		(pts
-			(xy 100.33 100.33) (xy 105.41 100.33)
+			(xy 153.67 104.14) (xy 163.83 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "543ef40c-85f9-4485-bf95-ea16d28085a4")
+	)
+	(wire
+		(pts
+			(xy 163.83 104.14) (xy 163.83 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5851d54a-759f-42bc-89a3-4761f7bf2174")
+	)
+	(wire
+		(pts
+			(xy 143.51 104.14) (xy 153.67 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6148de17-a48a-4f3e-9e5f-d08322519499")
+	)
+	(wire
+		(pts
+			(xy 81.28 99.06) (xy 86.36 99.06)
 		)
 		(stroke
 			(width 0)
@@ -390,20 +751,143 @@
 		)
 		(uuid "8264d520-9268-45a0-be56-4c4dcf70e1ff")
 	)
-	(hierarchical_label "+5v"
+	(wire
+		(pts
+			(xy 163.83 92.71) (xy 163.83 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "921700da-83c6-47df-8eb0-039c656154c5")
+	)
+	(wire
+		(pts
+			(xy 153.67 104.14) (xy 153.67 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "92ef06ae-4685-4266-b1e5-cf5b6dd44c62")
+	)
+	(wire
+		(pts
+			(xy 143.51 104.14) (xy 143.51 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "abecdb80-b188-43f6-9cef-b179de505f27")
+	)
+	(wire
+		(pts
+			(xy 143.51 104.14) (xy 143.51 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "af93efb4-bc17-4fbf-8957-0d7da875be8b")
+	)
+	(wire
+		(pts
+			(xy 80.01 105.41) (xy 80.01 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cc24fe5d-2274-40c7-bf6f-7f0573e5bfa1")
+	)
+	(wire
+		(pts
+			(xy 80.01 90.17) (xy 80.01 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ccc748f1-28aa-4414-a069-655d04813283")
+	)
+	(wire
+		(pts
+			(xy 153.67 85.09) (xy 153.67 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d450304d-c086-470e-9788-65140ef1888e")
+	)
+	(wire
+		(pts
+			(xy 143.51 93.98) (xy 143.51 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d5ebc593-0324-42b9-89f2-416f65c82e66")
+	)
+	(wire
+		(pts
+			(xy 80.01 101.6) (xy 86.36 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e278e979-021d-4dee-9399-5d5d5299b163")
+	)
+	(hierarchical_label "GND"
 		(shape passive)
-		(at 100.33 95.25 180)
+		(at 143.51 105.41 270)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
+		(uuid "0c402abd-83d7-464a-b870-7087dd8f1b61")
+	)
+	(hierarchical_label "+5v"
+		(shape passive)
+		(at 143.51 93.98 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "36fb1553-b54e-46b6-a8ad-04b3441047c2")
+	)
+	(hierarchical_label "TX"
+		(shape output)
+		(at 170.18 85.09 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "87f415f6-40e5-4c10-8200-67fcbbec9183")
+	)
+	(hierarchical_label "+5v"
+		(shape passive)
+		(at 80.01 90.17 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
 		(uuid "8e4505f9-00e3-4463-8317-b41fb5dfc1b5")
 	)
 	(hierarchical_label "TX"
 		(shape output)
-		(at 100.33 97.79 180)
+		(at 81.28 96.52 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -414,7 +898,18 @@
 	)
 	(hierarchical_label "RX"
 		(shape input)
-		(at 100.33 100.33 180)
+		(at 170.18 92.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bfe3f270-647b-4520-9ff8-12d6ffc2b63f")
+	)
+	(hierarchical_label "RX"
+		(shape input)
+		(at 81.28 99.06 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -425,7 +920,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 100.33 102.87 180)
+		(at 80.01 105.41 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -436,7 +931,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
-		(at 165.1 91.44 0)
+		(at 213.36 90.17 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -445,7 +940,7 @@
 		(fields_autoplaced yes)
 		(uuid "05c6753f-29bb-4152-aa52-d135ec4ab5d1")
 		(property "Reference" "H1"
-			(at 167.64 90.1699 0)
+			(at 215.9 88.8999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -454,7 +949,7 @@
 			)
 		)
 		(property "Value" "M2.5 loose"
-			(at 167.64 92.7099 0)
+			(at 215.9 91.4399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -463,7 +958,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
-			(at 165.1 91.44 0)
+			(at 213.36 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -472,7 +967,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 165.1 91.44 0)
+			(at 213.36 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -481,7 +976,7 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
-			(at 165.1 91.44 0)
+			(at 213.36 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -490,7 +985,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" ""
-			(at 165.1 91.44 0)
+			(at 213.36 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -509,7 +1004,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
-		(at 165.1 101.6 0)
+		(at 213.36 100.33 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -518,7 +1013,7 @@
 		(fields_autoplaced yes)
 		(uuid "0667c299-d1c3-46ba-958a-9e63a1037107")
 		(property "Reference" "H3"
-			(at 167.64 100.3299 0)
+			(at 215.9 99.0599 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -527,7 +1022,7 @@
 			)
 		)
 		(property "Value" "M2.5 loose"
-			(at 167.64 102.8699 0)
+			(at 215.9 101.5999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -536,7 +1031,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
-			(at 165.1 101.6 0)
+			(at 213.36 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -545,7 +1040,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 165.1 101.6 0)
+			(at 213.36 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -554,7 +1049,7 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
-			(at 165.1 101.6 0)
+			(at 213.36 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -563,7 +1058,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" ""
-			(at 165.1 101.6 0)
+			(at 213.36 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -582,7 +1077,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x05")
-		(at 110.49 100.33 0)
+		(at 91.44 99.06 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -591,7 +1086,7 @@
 		(fields_autoplaced yes)
 		(uuid "0d9f9e3c-8eed-4ac7-936d-68b6e71f604b")
 		(property "Reference" "J2"
-			(at 113.03 99.0599 0)
+			(at 93.98 97.7899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -600,7 +1095,7 @@
 			)
 		)
 		(property "Value" "JST_XH2.54-SP"
-			(at 113.03 101.5999 0)
+			(at 93.98 100.3299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -609,7 +1104,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_XH_B5B-XH-A_1x05_P2.50mm_Vertical"
-			(at 110.49 100.33 0)
+			(at 91.44 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -618,7 +1113,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 110.49 100.33 0)
+			(at 91.44 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -627,7 +1122,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x05, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 110.49 100.33 0)
+			(at 91.44 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -636,7 +1131,7 @@
 			)
 		)
 		(property "LCSC" "C157991"
-			(at 110.49 100.33 0)
+			(at 91.44 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -644,8 +1139,8 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB_CORRECTION" ""
-			(at 110.49 100.33 0)
+		(property "JLCPCB_CORRECTION" "4.953; 0; 180"
+			(at 91.44 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -678,8 +1173,269 @@
 		)
 	)
 	(symbol
+		(lib_id "Diode:PTVS7V5Z1USK")
+		(at 143.51 99.06 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5152e374-12d9-407b-b67b-933f8d3a7cb4")
+		(property "Reference" "D12"
+			(at 146.558 100.838 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "PTVS6V0S1UR"
+			(at 149.098 100.838 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 139.065 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS7V5Z1USK.pdf"
+			(at 143.51 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "7.5V, 2200W TVS unidirectional diode, DSN1608-2"
+			(at 143.51 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 143.51 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C18723426"
+			(at 143.51 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fd313ab4-c204-4630-a606-ce05974f5f88")
+		)
+		(pin "2"
+			(uuid "0b4cd1cc-e015-421d-bb9b-e891cbaa21a0")
+		)
+		(instances
+			(project "mote-hardware"
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/0a44614a-b30e-47eb-9b35-85ffdcfad2e9"
+					(reference "D12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Diode:PTVS5V0Z1USK")
+		(at 153.67 99.06 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "60db5168-7f48-4192-94ab-33e47fa75c9d")
+		(property "Reference" "D15"
+			(at 156.21 100.584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "PTVS5V0S1UR-FS"
+			(at 158.75 100.584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 149.225 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
+			(at 153.67 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
+			(at 153.67 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 153.67 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380694"
+			(at 153.67 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2f55797d-3bd8-4405-8e84-a63b446bfc6c")
+		)
+		(pin "2"
+			(uuid "9341ad48-97c3-4169-b17d-0c50a6c6ad1f")
+		)
+		(instances
+			(project "mote-hardware"
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/0a44614a-b30e-47eb-9b35-85ffdcfad2e9"
+					(reference "D15")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Diode:PTVS5V0Z1USK")
+		(at 163.83 99.06 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7bbf4ba3-922e-437e-a89b-1556a5a2a0ce")
+		(property "Reference" "D16"
+			(at 166.116 97.536 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "PTVS5V0S1UR-FS"
+			(at 166.116 100.076 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 159.385 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
+			(at 163.83 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
+			(at 163.83 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB_CORRECTION" "0; 0; 0"
+			(at 163.83 99.06 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380694"
+			(at 163.83 99.06 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "265b5532-0611-495e-b918-4bd4c954bc1c")
+		)
+		(pin "2"
+			(uuid "f2b31219-8aad-45e7-9d3f-1e0df0297d16")
+		)
+		(instances
+			(project "mote-hardware"
+				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/0a44614a-b30e-47eb-9b35-85ffdcfad2e9"
+					(reference "D16")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Mechanical:MountingHole")
-		(at 165.1 96.52 0)
+		(at 213.36 95.25 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -688,7 +1444,7 @@
 		(fields_autoplaced yes)
 		(uuid "b704a75d-7472-4a75-8508-6a622c283db4")
 		(property "Reference" "H2"
-			(at 167.64 95.2499 0)
+			(at 215.9 93.9799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -697,7 +1453,7 @@
 			)
 		)
 		(property "Value" "M2.5 loose"
-			(at 167.64 97.7899 0)
+			(at 215.9 96.5199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -706,7 +1462,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
-			(at 165.1 96.52 0)
+			(at 213.36 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -715,7 +1471,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 165.1 96.52 0)
+			(at 213.36 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -724,7 +1480,7 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
-			(at 165.1 96.52 0)
+			(at 213.36 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -733,7 +1489,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" ""
-			(at 165.1 96.52 0)
+			(at 213.36 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -752,7 +1508,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
-		(at 165.1 106.68 0)
+		(at 213.36 105.41 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -761,7 +1517,7 @@
 		(fields_autoplaced yes)
 		(uuid "e818f8b4-853f-4a54-99ee-5e635a15e2f1")
 		(property "Reference" "H4"
-			(at 167.64 105.4099 0)
+			(at 215.9 104.1399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -770,7 +1526,7 @@
 			)
 		)
 		(property "Value" "M2.5 loose"
-			(at 167.64 107.9499 0)
+			(at 215.9 106.6799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -779,7 +1535,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
-			(at 165.1 106.68 0)
+			(at 213.36 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -788,7 +1544,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 165.1 106.68 0)
+			(at 213.36 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -797,7 +1553,7 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
-			(at 165.1 106.68 0)
+			(at 213.36 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -806,7 +1562,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" ""
-			(at 165.1 106.68 0)
+			(at 213.36 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)

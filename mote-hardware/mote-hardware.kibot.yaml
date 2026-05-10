@@ -8,3 +8,11 @@ outputs:
     dir: .
     options:
       output: ibom.html
+
+  - name: schematic_pdf
+    comment: Schematic PDF
+    type: pdf_sch_print
+    dir: .
+    options:
+      output: schematic.pdf
+

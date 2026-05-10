@@ -33,7 +33,7 @@ jobs:
             mote-hardware.kicad_pcb \
             jlcpcb/
 
-      - name: Generate IBOM
+      - name: Generate IBOM and schematic PDF
         working-directory: mote-hardware
         run: kibot -b mote-hardware.kicad_pcb -e mote-hardware.kicad_sch -c mote-hardware.kibot.yaml
 
@@ -45,6 +45,7 @@ jobs:
             mote-hardware/jlcpcb/bom.csv
             mote-hardware/jlcpcb/pos.csv
             mote-hardware/ibom.html
+            mote-hardware/schematic.pdf
 
   redeploy-pages:
     needs: release-hardware
