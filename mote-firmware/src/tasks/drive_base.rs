@@ -63,7 +63,7 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
             joint_state: WheelJointState {
                 effort_percent: 0.0,
                 velocity_rad_per_s: 0.0,
-                postition_rad: 0.0,
+                position_rad: 0.0,
             },
         }
     }
@@ -102,7 +102,7 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
         }
 
         // Update the joint state
-        self.joint_state.postition_rad = encoder_pulses_to_rad(self.encoder_value);
+        self.joint_state.position_rad = encoder_pulses_to_rad(self.encoder_value);
         self.joint_state.velocity_rad_per_s = measurement / dt;
         self.joint_state.effort_percent = deadband_adjusted_output;
     }

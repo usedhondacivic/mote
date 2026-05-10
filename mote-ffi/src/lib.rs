@@ -35,7 +35,7 @@ where
     in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 
-    link: MoteComms<MTU, I, O>,
+    pub(crate) link: MoteComms<MTU, I, O>,
 }
 
 impl<const MTU: usize, I, O> From<MoteComms<MTU, I, O>> for MoteCommsFFI<MTU, I, O>
@@ -62,7 +62,7 @@ where
     I: Serialize + for<'de> Deserialize<'de>, // Input type
     O: Serialize + for<'de> Deserialize<'de>, // Output type
 {
-    fn new(link: MoteComms<MTU, I, O>) -> Self {
+    pub(crate) fn new(link: MoteComms<MTU, I, O>) -> Self {
         Self {
             link,
             in_type: PhantomData,
@@ -71,12 +71,12 @@ where
     }
 
     /// Queue a message to be sent
-    fn send(&mut self, json: &str) -> Result<(), Error> {
+    pub(crate) fn send(&mut self, json: &str) -> Result<(), Error> {
         let msg: O = serde_json::from_str(json)?;
         self.link.send(msg).map_err(|e| e.into())
     }
 
-    fn poll_transmit(&mut self) -> Result<Option<String>, Error> {
+    pub(crate) fn poll_transmit(&mut self) -> Result<Option<String>, Error> {
         if let Some(payload) = self.link.poll_transmit() {
             Ok(Some(serde_json::to_string(&payload)?))
         } else {
@@ -84,13 +84,13 @@ where
         }
     }
 
-    fn handle_receive(&mut self, json: &str) -> Result<(), Error> {
+    pub(crate) fn handle_receive(&mut self, json: &str) -> Result<(), Error> {
         let packet: Vec<u8> = serde_json::from_str(json)?;
         self.link.handle_receive(&packet);
         Ok(())
     }
 
-    fn poll_receive(&mut self) -> Result<Option<String>, Error> {
+    pub(crate) fn poll_receive(&mut self) -> Result<Option<String>, Error> {
         if let Some(v) = self.link.poll_receive()? {
             Ok(Some(serde_json::to_string(&v)?))
         } else {

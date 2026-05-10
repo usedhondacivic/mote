@@ -82,12 +82,12 @@ class TestRoundTrip:
                 "left": {
                     "effort_percent": 0.5,
                     "velocity_rad_per_s": 1.0,
-                    "postition_rad": 0.0,
+                    "position_rad": 0.0,
                 },
                 "right": {
                     "effort_percent": 0.3,
                     "velocity_rad_per_s": 0.8,
-                    "postition_rad": 0.1,
+                    "position_rad": 0.1,
                 },
             }
         }

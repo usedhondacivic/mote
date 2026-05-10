@@ -25,7 +25,7 @@ def _log_drive_base_state(state: DriveBaseState):
             f"drive_base/{side}/velocity_rad_per_s",
             rr.Scalars(wheel.velocity_rad_per_s),
         )
-        rr.log(f"drive_base/{side}/position_rad", rr.Scalars(wheel.postition_rad))
+        rr.log(f"drive_base/{side}/position_rad", rr.Scalars(wheel.position_rad))
 
 
 def _log_imu_measurement(imu: IMUMeasurement):

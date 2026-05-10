@@ -23,7 +23,7 @@ pub struct Point {
 pub struct WheelJointState {
     pub effort_percent: f32,
     pub velocity_rad_per_s: f32,
-    pub postition_rad: f32,
+    pub position_rad: f32,
 }
 
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
