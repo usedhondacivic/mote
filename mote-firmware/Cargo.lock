@@ -1328,6 +1328,7 @@ dependencies = [
  "rand_core 0.10.1",
  "serde",
  "serde_with",
+ "smart-leds",
  "static_cell",
 ]
 

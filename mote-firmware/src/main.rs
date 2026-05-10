@@ -72,6 +72,7 @@ fn main() -> ! {
                     core1_task(
                         spawner,
                         r.usb_serial,
+                        r.status_led,
                         r.lidar_uart,
                         r.imu,
                         r.encoder_driver,
@@ -106,6 +107,7 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
 async fn core1_task(
     spawner: Spawner,
     usb_r: UsbSerialResources,
+    status_led_r: StatusLedResources,
     lidar_r: RplidarC1Resources,
     imu_r: ImuResources,
     encoder_driver_r: EncoderDriverResources,
@@ -117,6 +119,8 @@ async fn core1_task(
     info!("Core 1 spawned");
 
     /* Initial configuration state is set in core0_task after flash init */
+    status_led::init(spawner, status_led_r).await;
+    info!("Status LEDs INIT complete");
 
     usb_serial::init(spawner, usb_r).await;
     info!("USB Serial INIT complete");
