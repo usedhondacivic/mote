@@ -23,4 +23,4 @@ Mote is the product of the many lessons learned during that effort.
 ## Contributing
 
 Want to patch a bug, add a feature, or otherwise improve Mote?
-Checkout [the contribution guide](https://empriselab.github.io/mote-core/advanced/contributing/contributing.html).
+Checkout [the contribution guide](https://empriselab.github.io/mote/advanced/contributing/contributing.html).
